@@ -19,24 +19,6 @@
         <button class = "med circle study"> STUDY</button>
         <button class = "small circle ft"> FT</button>
     </main>
-
-    <script>
-    const circleButtons = document.querySelectorAll('.circle');
-    circleButtons.forEach(button => {
-        let x, y;
-        if (button.classList.conatains('big')){
-            x = 30 + Math.random() * 20;
-            y = 20 + Math.random() * 20;
-        }
-        else{
-            x = Math.random() * 80;
-            y = Math.random() * 80;
-        }
-       
-        button.style.left = x + '%';
-        button.style.top = y + '%';
-    });
-</script>
 </body>
 
 </html>

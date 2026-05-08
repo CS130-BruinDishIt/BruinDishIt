@@ -186,7 +186,7 @@
 .circle
 {
     position: absolute;
-    border: 2px solid black;
+    border: 3px solid rgb(47, 14, 132);
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -222,17 +222,17 @@
 }
 
 .bplate {
-  left: 30%;
+  left: 35%;
   top: 25%;
 }
 
 .deneve {
-  left: 50%;
+  left: 55%;
   top: 40%;
 }
 
 .epicuria {
-  left: 15%;
+  left: 25%;
   top: 60%;
 }
 
@@ -242,17 +242,17 @@
 }
 
 .bcafe {
-  left: 20%;
+  left: 25%;
   top: 10%;
 }
 
 .rende {
-  left: 10%;
+  left: 15%;
   top: 35%;
 }
 
 .drey {
-  left: 45%;
+  left: 50%;
   top: 10%;
 }
 
@@ -262,8 +262,8 @@
 }
 
 .study {
-  left: 40%;
-  top: 70%;
+  left: 45%;
+  top: 60%;
 }
 
 .ft {

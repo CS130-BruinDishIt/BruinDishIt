@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
+import Navbar from './Navbar.jsx'
 import './App.css'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
 
   return (
     <>
+    <Navbar />
       <div className="ticks"></div>
         <section className="circle-layout">
           <button class="big circle bplate"> BPLATE</button>

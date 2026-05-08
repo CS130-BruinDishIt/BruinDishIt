@@ -1,0 +1,100 @@
+body
+{
+    background-color: #95B9C7;
+    margin: 0;
+    font-family: "Marker Felt", Arial;
+}
+
+.circle-layout
+{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+.circle
+{
+    position: absolute;
+    border: 2px solid black;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    font-size: 20px;
+    color: #022d02;
+}
+
+.circle:hover
+{
+    transform: scale(1.08);
+}
+
+.big
+{
+    width: 200px;
+    height: 200px;
+    font-size: 30px;
+}
+
+.med
+{
+    width: 150px;
+    height: 150px;
+    font-size: 25px;
+}
+
+.small
+{
+    width: 100px;
+    height: 100px;
+    font-size: 18px;
+}
+
+.bplate {
+  left: 30%;
+  top: 25%;
+}
+
+.deneve {
+  left: 50%;
+  top: 40%;
+}
+
+.epicuria {
+  left: 15%;
+  top: 60%;
+}
+
+.feast {
+  left: 65%;
+  top: 20%;
+}
+
+.bcafe {
+  left: 20%;
+  top: 10%;
+}
+
+.rende {
+  left: 10%;
+  top: 35%;
+}
+
+.drey {
+  left: 45%;
+  top: 10%;
+}
+
+.cafe1919 {
+  left: 75%;
+  top: 35%;
+}
+
+.study {
+  left: 40%;
+  top: 70%;
+}
+
+.ft {
+  left: 70%;
+  top: 65%;
+}

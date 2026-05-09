@@ -221,12 +221,12 @@
     font-size: 18px;
 }
 
-.bplate {
+.bruin-plate {
   left: 35%;
   top: 25%;
 }
 
-.deneve {
+.de-neve {
   left: 55%;
   top: 40%;
 }
@@ -241,12 +241,12 @@
   top: 20%;
 }
 
-.bcafe {
+.bruin-cafe {
   left: 25%;
   top: 10%;
 }
 
-.rende {
+.rendezvous {
   left: 15%;
   top: 35%;
 }
@@ -256,7 +256,7 @@
   top: 10%;
 }
 
-.cafe1919 {
+.cafe-1919 {
   left: 75%;
   top: 35%;
 }
@@ -269,4 +269,8 @@
 .ft {
   left: 70%;
   top: 65%;
+}
+
+body {
+  padding-top: 70px;
 }

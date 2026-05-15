@@ -1,49 +1,29 @@
-      {/* //   <button className="big circle bplate" onClick={() => navigate("/dining/bruin-plate")}>
-      //     BPLATE</button>
-      //   <button className="big circle deneve" onClick={() => navigate("/dining/de-neve")}>
-      //     DE NEVE</button>
-      //   <button className="big circle epicuria" onClick={() => navigate("/dining/epicuria")}>
-      //     EPICURIA</button>
-      //   <button className="med circle feast" onClick={() => navigate("/dining/feast")}>
-      //     FEAST</button>
-      //   <button className="med circle bcafe" onClick={() => navigate("/dining/bcafe")}>
-      //     BCAFE</button>
-      //   <button className="med circle rende" onClick={() => navigate("/dining/rende")}>
-      //     RENDE</button>
-      //   <button className="med circle drey" onClick={() => navigate("/dining/drey")}>
-      //     DREY</button>
-      //   <button className="med circle cafe1919" onClick={() => navigate("/dining/cafe-1919")}>
-      //     CAFE 1919</button>
-      //   <button className="med circle study" onClick={() => navigate("/dining/study")}>
-      //     STUDY</button>
-      //   <button className="small circle ft" onClick={() => navigate("/dining/ft")}>
-      //     FT</button> */}
 export const diningLocations = [
-    {
+    { // breakfast lunch dinner
         id: "bruin-plate",
         name: "Bruin Plate",
         shortname: "Bplate",
         level: "big"
     },
-    {
-        id: "de-neve",
+    { // breakfast lunch dinner extended dinner
+        id: "de-neve-dining",
         name: "De Neve",
         shortname: "De Neve",
         level: "big"
     },
-    {
-        id: "epicuria",
+    { // lunch dinner 
+        id: "epicuria-at-covel",
         name: "Epicuria",
         shortname: "Epicuria",
         level: "big"
     },
-    {
-        id: "feast",
+    { // dinner
+        id: "spice-kitchen",
         name: "Feast",
         shortname: "Feast",
         level: "med"
     },
-    {
+    { // allday
         id: "bruin-cafe",
         name: "Bruin Cafe",
         shortname: "Bcafe",
@@ -55,20 +35,20 @@ export const diningLocations = [
         shortname: "Rende",
         level: "med"
     },
-    {
-        id: "drey",
+    { // allday
+        id: "the-drey",
         name: "The Drey",
         shortname: "Drey",
         level: "med"
     },
-    {
+    {// dinner
         id: "cafe-1919",
         name: "Cafe 1919",
         shortname: "Cafe 1919",
         level: "med"
     },
-    {
-        id: "study",
+    { // allday
+        id: "the-study-at-hedrick",
         name: "The Study at Hedrick",
         shortname: "Study",
         level: "med"
@@ -79,4 +59,9 @@ export const diningLocations = [
         shortname: "FT",
         level: "small"
     },
+    // "epicuria-at-ackerman": {
+    // "bruin-bowl": {
+    // "meal-swipe-exchange": {
+    // "sack-lunch-program"
+
 ];

@@ -10,8 +10,8 @@ const Navbar = () => {
         <img src={forkKnifeIcon} alt="" className="home-icon" />
       </Link>
 
-      <Link to="/login" className="profile-button">
-        <span className="profile-text">LOGIN</span>
+      <Link to="/signin" className="profile-button">
+        <span className="profile-text">SIGN IN</span>
         <span className="profile-circle">
           <img src={profileIcon} alt="" className="profile-icon" />
         </span>

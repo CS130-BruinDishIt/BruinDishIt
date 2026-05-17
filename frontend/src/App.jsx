@@ -1,5 +1,6 @@
 import Navbar from './Navbar.jsx'
 import SignIn from './SignIn.jsx'
+import SignUp from './SignUp.jsx'
 import './App.css'
 
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/dining/:name" element={<DiningPage />} />
       </Routes>
     </>

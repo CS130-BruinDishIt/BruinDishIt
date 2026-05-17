@@ -1,4 +1,4 @@
-.sign-in-page {
+.sign-up-page {
   padding-top: 72px;
   min-height: 100vh;
   display: flex;
@@ -8,18 +8,18 @@
   color: var(--text-h);
 }
 
-.sign-in-page h1 {
+.sign-up-page h1 {
   margin-bottom: 42px;
 }
 
-.sign-in-form {
+.sign-up-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
   width: 320px;
 }
 
-.sign-in-form input {
+.sign-up-form input {
   padding: 12px 14px;
   border: 2px solid var(--border);
   border-radius: 8px;
@@ -30,14 +30,14 @@
 }
 
 /* one glow for hover and focus */
-.sign-in-form input:hover,
-.sign-in-form input:focus {
+.sign-up-form input:hover,
+.sign-up-form input:focus {
   border-color: var(--accent);
   outline: none;
   box-shadow: 0 0 0 1px var(--accent);
 }
 
-.sign-in-form button {
+.sign-up-form button {
   padding: 12px 14px;
   border: 2px solid black;
   border-radius: 8px;
@@ -49,23 +49,7 @@
   transition: transform 0.3s ease;
 }
 
-.sign-in-form button:hover {
-  transform: scale(1.05);
-  background: #2979d3;
-}
-
-.new-user-text {
-  font-size: 14px;
-  color: white;
-  margin-top: 8px;
-  text-align: center;
-}
-
-.new-user-text a{
-  color: #8fc3ff;
-}
-
-.new-user-text a:hover{
-  text-decoration: underline;
-  color: #2979d3;
+.sign-up-form button:hover {
+    transform: scale(1.05);
+    background: #2979d3;
 }

@@ -34,7 +34,7 @@
 .sign-in-form input:focus {
   border-color: var(--accent);
   outline: none;
-  box-shadow: 0 0 0 2px var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
 .sign-in-form button {
@@ -51,4 +51,20 @@
 
 .sign-in-form button:hover {
   transform: scale(1.05);
+}
+
+.new-user-text {
+  font-size: 14px;
+  color: white;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.new-user-text a{
+  color: #8fc3ff;
+}
+
+.new-user-text a:hover{
+  text-decoration: underline;
+  color: #2979d3;
 }

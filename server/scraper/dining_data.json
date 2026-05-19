@@ -6,7 +6,7 @@
         "Amaranth Bowl w/ Winter Squash & Apple"
       ],
       "Harvest": [
-        "Southwest Chicken & Egg White Scramble",
+        "Caramelized Pork and Egg w/Brown Rice",
         "Scrambled Eggs",
         "Scrambled Egg Whites",
         "Vegan Scrambled Eggs",
@@ -14,12 +14,12 @@
         "Turkey Bacon"
       ],
       "Stone Fired": [
-        "Oat & Whole Wheat Waffle",
-        "A\u00e7a\u00ed-Blackberry Topping",
+        "Four Grain Waffles",
+        "Mango Blueberry Compote",
         "Waffle"
       ],
       "Simply Grilled": [
-        "Crunchy French Toast w/ Pistachio Butter & Pineapple",
+        "Tri-Color Quinoa Pancake w/ Blueberries",
         "Vegan Pancake"
       ],
       "Fruit": [
@@ -28,31 +28,29 @@
         "Green Grapes",
         "Red Grapes",
         "Pineapple",
-        "Watermelon",
-        "Oranges"
+        "Watermelon"
       ],
       "Sweet Bites": [
+        "Multi-Grain Bread",
+        "Raisin Walnut Bread",
         "Whole Wheat Sourdough Bread",
-        "Peach Ginger Quickbread",
+        "Boston Brown Quickbread",
+        "Cranberry Orange Quickbread",
         "Almond Cashew Butter",
         "Mango Blueberry Compote",
-        "Chocolate Peanut Butter",
-        "Banana Nut Quickbread",
-        "Olive Oil Mocha Bread",
-        "Vegan Cranberry Orange Quickbread",
-        "Pineapple Compote",
-        "Pomegranate & Date Compote"
+        "Peanut Butter",
+        "Cacao Butter"
       ],
       "Yogurt Bar": [
         "Lowfat Cottage Cheese",
         "Lowfat Greek Yogurt",
         "Vegan Vanilla Coconut Yogurt",
-        "Peach Yogurt",
+        "Strawberry Yogurt",
         "Wild Blueberries",
         "Mango"
       ],
       "Beverage Special": [
-        "Lemon, Raspberry, & Mint Water"
+        "Strawberry Basil Water"
       ],
       "Greens 'N More": [
         "Whole Wheat Bagel",
@@ -60,47 +58,42 @@
         "Low Fat Cream Cheese",
         "Cheese Whipped Creamy Spread",
         "Avocado Topping",
-        "Pesto Cream Cheese"
+        "Onion & Chive Cream Cheese"
       ],
       "Cereal / Oatmeal": [
         "Oatmeal",
-        "Cream of Rice Cereal"
+        "White Polenta"
       ]
     },
     "lunch": {
       "hours": "11:00 a.m. - 2:00 p.m.",
       "Soups": [
-        "Steak & Mushroom Soup",
-        "Creamy Tomato Basil Soup"
+        "Chicken Tortilla Soup",
+        "Potato Leek Soup"
       ],
       "Freshly Bowled": [
-        "Grilled Chicken Pasta w/ Almond Tahini Sauce",
-        "Lemon Dill Tofu, Bulgur Wheat, & Cucumber Salad Bowl"
+        "Tempeh Scramble Veggie Bowl",
+        "Creamy Mushroom Pasta"
       ],
       "Harvest": [
-        "Chicken, Farro, & Mixed Greens Salad",
-        "Corn & White Bean Chowder",
-        "Crostini"
+        "Baja Caesar Salad w/ Chipotle Chicken",
+        "Baja Caesar Salad"
       ],
       "Farmstand": [
         "Frijoles de la Olla",
         "Brown Calrose Rice",
-        "Mixed Grains--Farro, Wheatberry, & Brown Rice",
-        "Chinese Kale w/ Toasted Garlic",
-        "Roasted Cauliflower",
-        "South Carolina Style BBQ Chicken Wings",
-        "Farm Stand Special",
-        "Mushroom-Spinach Lasagna"
+        "Mixed Grains -- Lentil, Chickpea, Quinoa & Brown Rice",
+        "Roasted Summer Squash w/ Caramelized Onions",
+        "Sauteed Bok Choy"
       ],
       "Stone Fired": [
-        "Lamb, Tomato, Onion & Jalapeno Flatbread",
-        "Marinated Roma Tomato Pizza"
+        "Chicken, Arugula, & Radish Flatbread",
+        "Layered Vegetable Flatbread"
       ],
       "Simply Grilled": [
-        "Banh Mi Turkey Slider",
-        "Herb de Provence Marinated Grilled Chicken Thigh",
-        "Peppercorn-Crusted Portobello Stacker",
-        "Potato & Red Pepper Hash"
+        "Black Bean & Brown Rice Stacker",
+        "Grilled Dijon Chicken Thigh",
+        "Baked Yukon Gold Potato"
       ],
       "Fruit": [
         "Cantaloupe",
@@ -108,22 +101,20 @@
         "Red Grapes",
         "Pineapple",
         "Watermelon",
-        "Kiwi",
-        "Oranges"
+        "Strawberries"
       ],
       "Sweet Bites": [
-        "Banana Nut Quickbread",
+        "Multi-Grain Bread",
         "Raisin Walnut Bread",
-        "Olive Oil Mocha Quickbread",
-        "Peach Ginger Quickbread",
-        "Coconut Pineapple Bread",
-        "Blueberry Princess Bar",
+        "Whole Wheat Sourdough Bread",
+        "Zucchini Chocolate Bar",
+        "Boston Brown Quickbread",
+        "Cranberry Orange Quickbread",
         "Almond Butter",
-        "Raspberry Ginger Oat Bar",
-        "Pomegranate & Date Compote",
-        "Chocolate Peanut Butter",
-        "Pineapple Compote",
-        "Oranges"
+        "Mango Blueberry Compote",
+        "Peanut Butter",
+        "Cacao Butter",
+        "Citrus Marmalade"
       ],
       "Yogurt Bar": [
         "Lowfat Greek Yogurt",
@@ -132,7 +123,7 @@
         "Mango"
       ],
       "Beverage Special": [
-        "Lemon, Raspberry, & Mint Water",
+        "Strawberry Basil Water",
         "Apple Spritzer",
         "Cranberry Spritzer",
         "Orange Spritzer"
@@ -157,33 +148,34 @@
     "dinner": {
       "hours": "5:00 p.m. - 9:00 p.m.",
       "Soups": [
-        "Steak & Mushroom Soup",
-        "Creamy Tomato Basil Soup"
+        "Chicken Tortilla Soup",
+        "Potato Leek Soup"
       ],
       "Freshly Bowled": [
-        "Arabic Chicken Bowl w/ Red Cabbage & Whole Wheat Pita",
-        "Lentil, Beet, Wheat Berry, & Kale Bowl"
+        "Savory Picadillo Bowl",
+        "Seitan, Brown Rice, Kale, & Carrot Bowl"
       ],
       "Harvest": [
-        "Spiced Catfish w/ Cardamom Quinoa & Raita",
-        "Stuffed Peppers w/ Roasted Vegetables & Farro"
+        "Roasted Onion & Celery Seed Chicken",
+        "Giardiniera",
+        "Summer Roasted Red Pepper Bisque",
+        "Crostini"
       ],
       "Farmstand": [
         "Frijoles de la Olla",
         "Brown Calrose Rice",
-        "Red Quinoa",
-        "Pan Roasted Mushrooms w/ Onions",
-        "Black Eyed Peas & Collard Greens",
-        "Polenta"
+        "Quinoa",
+        "Oven Roasted Red Beets",
+        "Saut\u00e9ed Spinach"
       ],
       "Stone Fired": [
-        "Canadian Ham & Swiss Cheese Flatbread",
-        "Asparagus & Mushroom Flatbread"
+        "Spicy Pork Tortilla Pizza",
+        "Kale Pesto Summer Squash Parmesan Flatbread"
       ],
       "Simply Grilled": [
-        "Grilled Mole-Spiced Turkey",
-        "Grilled Persian Style Tofu",
-        "Baked Yukon Gold Potato"
+        "Mojo-Marinated Flank Steak",
+        "Grilled Yellow Squash",
+        "Yukon Gold Potato Wedges"
       ],
       "Fruit": [
         "Cantaloupe",
@@ -191,21 +183,21 @@
         "Red Grapes",
         "Pineapple",
         "Watermelon",
-        "Kiwi"
+        "Strawberries"
       ],
       "Sweet Bites": [
         "Multi-Grain Bread",
         "Raisin Walnut Bread",
         "Whole Wheat Sourdough Bread",
-        "Fudgy Brownie",
-        "Coconut Pineapple Bread",
-        "Peach Ginger Quickbread",
-        "Chocolate & Raspberry Trifle",
-        "Almond Cashew Butter",
+        "Zucchini Chocolate Bar",
+        "Boston Brown Quickbread",
+        "Cranberry Orange Quickbread",
+        "Chocolate Budino w/ Basil Seed Caviar",
         "Mango Blueberry Compote",
-        "Chocolate Peanut Butter",
-        "Celery & Apple Compote",
-        "A\u00e7a\u00ed-Blackberry Topping"
+        "Almond Cashew Butter",
+        "Peanut Butter",
+        "Cacao Butter",
+        "Citrus Marmalade"
       ],
       "Yogurt Bar": [
         "Lowfat Greek Yogurt",
@@ -214,7 +206,7 @@
         "Mango"
       ],
       "Beverage Special": [
-        "Raspberry Water",
+        "Pineapple Water",
         "Apple Spritzer",
         "Cranberry Spritzer",
         "Orange Spritzer"
@@ -241,39 +233,37 @@
     "dinner": {
       "hours": "5:00 p.m. - 9:00 p.m.",
       "Bruin Wok": [
-        "Pad See Eew",
-        "Baby Bok Choy Stir Fry",
-        "Jasmine Rice"
+        "Shrimp Fried Rice",
+        "Young Chow Vegetable Fried Rice"
       ],
       "Spice Kitchen": [
-        "Vietnamese Noodle Bowl with Lemongrass Chicken",
-        "Vietnamese Noodle Bowl with Tofu"
+        "Chef's Special",
+        "Baby Bok Choy Stir Fry"
       ],
       "Stone Oven": [
-        "Banh Xeo (Pork and Shrimp Crepe)",
-        "Banh Xeo Crepe"
+        "Cheese Pizza"
       ],
       "Iron Grill": [
-        "Thai BBQ Chicken Sandwich",
-        "Thai Basil Tofu Sandwich",
+        "Kurobuta Sausage Hot Dog",
+        "Ao Nori Fries",
         "Grilled Lemongrass Chili Chicken"
       ],
       "Sweets Station": [
-        "Thai Steamed Cakes",
-        "Vietnamese Coffee Jello Cubes",
-        "Oreo Mousse",
-        "Old-Fashioned Oatmeal Raisin Cookie",
+        "Honey Sponge Cake",
+        "Green Tea Mousse",
+        "Fudge Brownie",
+        "Classic Chocolate Chip Cookie",
         "Tropical Fruits",
-        "Banana",
         "Fuji Apple",
-        "Oranges"
+        "Oranges",
+        "Banana"
       ],
       "Hot Food Bar": [
-        "Thai Coconut Chicken Soup",
-        "Tomato Egg Drop Soup",
+        "Tonjiru (Japanese Pork & Vegetable Soup)",
         "Asian Stir Fry",
         "Brown Calrose Rice",
-        "Sticky Rice"
+        "Sticky Rice",
+        "Egg Drop Soup"
       ],
       "Feast Salad Bar": [
         "Salad Bar"
@@ -284,11 +274,13 @@
     "breakfast": {
       "hours": "7:00 a.m. - 10:00 a.m.",
       "The Front Burner": [
-        "Huevos Rancheros"
+        "Bruin Scramble",
+        "Vegetarian Bruin Scramble",
+        "Potato O'Brien"
       ],
       "The Kitchen": [
         "Scrambled Eggs",
-        "Smoked Polish Sausage",
+        "Bacon",
         "Buttery Hash Browns",
         "Fried Eggs",
         "Tomatillo Salsa"
@@ -300,11 +292,11 @@
       "The Grill": [
         "Bodega Egg & Bacon Roll",
         "Tater Tots",
-        "The Griddler"
+        "Egg Benedict Sandwich"
       ],
       "Harvest Kitchen": [
         "Oatmeal",
-        "Grits"
+        "Cream of Rice Cereal"
       ],
       "Seasonal Sides": [
         "Plain Bagel",
@@ -327,51 +319,51 @@
         "Cantaloupe"
       ],
       "The Sweet Stop": [
-        "Vanilla Glazed Cake Donut",
+        "Apple Fritter",
         "Mini Croissant",
-        "Mini Apple Danish",
-        "Mocha Chocolate Chip Muffin"
+        "Mini Maple Pecan Danish",
+        "Vegan Banana Quickbread"
       ]
     },
     "lunch": {
       "hours": "11:00 a.m. - 2:00 p.m.",
       "Theme of the Day": [
-        "Caribbean"
+        "Hawaiian Islands"
       ],
       "The Front Burner": [
-        "Camarones Guisados",
+        "Hawaiian Shrimp",
         "Steamed Rice",
-        "Hearty Vegetable Stew"
+        "Peppered Beyond Steak"
       ],
       "The Kitchen": [
-        "Oven Roasted Mojito Chicken",
-        "Fried Yuca",
-        "Cuban-Style Tofu Escabeche"
+        "Huli Huli Roasted Chicken",
+        "Roasted Green Beans",
+        "Coconut Crusted Tofu"
       ],
       "The Pizzeria": [
-        "Jerk Shrimp Pizza",
+        "Luau Pizza",
         "Cheese Pizza",
-        "Pepperoni Pizza"
+        "Pepperoni Deluxe Pizza"
       ],
       "The Grill": [
         "Bruin Burger",
         "Bruin Cheeseburger",
         "LA Hot Chicken Sandwich",
-        "Turkey Bacon Avocado Burger",
-        "Peppa Chicken Sandwich",
+        "Big Island Burger",
+        "Chicken Katsu Sandwich",
         "Beyond Burger"
       ],
       "Harvest Kitchen": [
-        "Honey Lime Chicken Thighs",
+        "Pineapple Marinated Chicken Thigh",
         "Cilantro Rice",
-        "Cuban Black Beans",
-        "Steak & Mushroom Soup",
-        "Potato Leek Soup"
+        "Spicy Lentil",
+        "Chicken Noodle Soup",
+        "Creamy Tomato Basil Soup"
       ],
       "Seasonal Sides": [
-        "Garlicky Green Beans",
-        "Roasted Carrots w/ Smoked Jalape\u00f1o Butter",
-        "Roasted Fingerling Potato"
+        "Roasted Broccoli w/ Garlic",
+        "Roasted Cauliflower w/ Chile & Lime",
+        "Pan Roasted Mushrooms with Onions"
       ],
       "Field Greens Bar": [
         "Ranch Dressing",
@@ -382,18 +374,15 @@
       "Market Salads & Fruit": [
         "Watermelon",
         "Pineapple",
-        "Cantaloupe",
-        "Cauliflower, Raisin, & Almond Salad w. Curry Vinaigrette",
-        "Squash, Black Bean, & Poblano Salad",
-        "Larchmont Chicken Salad"
+        "Cantaloupe"
       ],
       "The Sweet Stop": [
-        "Cheesecake",
-        "Old-Fashioned Oatmeal Raisin Cookie",
-        "Key Lime Pie",
-        "Raspberry Princess Bar",
-        "Blackberry Peach Crisp",
-        "Maple Walnut Blondies",
+        "White Cupcake",
+        "White Chocolate Chip Cookie w/ Cranberries",
+        "Dutch Apple Pie",
+        "Cranberry Crunch Bar",
+        "Oreo Mousse",
+        "Deep Dish Blackout Cake",
         "Yogurt Bar",
         "Ice Cream & Frozen Yogurt Bar"
       ]
@@ -401,41 +390,43 @@
     "dinner": {
       "hours": "5:00 p.m. - 9:00 p.m.",
       "Theme of the Day": [
-        "Special Theme Dinner: Soccer World Cup Kickoff Dinner"
+        "Hawaiian Islands"
       ],
       "The Front Burner": [
-        "Tacos de Camaron Gobernador Estilo Sinaloa",
-        "Beyond Beef Tacos"
+        "Mahi Mahi Seared Fish",
+        "Spicy Pineapple Salsa",
+        "Coconut Rice",
+        "Garlic Lemon Tofu"
       ],
       "The Kitchen": [
-        "Roasted Beef Ribs",
-        "Roasted Fingerling Potato",
-        "Criolla Salsa",
-        "Beyond Beef Tips"
+        "Hawaiian Roasted Pork",
+        "Hawaiian Macaroni Salad",
+        "Beyond Chicken Tenders"
       ],
       "The Pizzeria": [
-        "Detroit-Style Pepperoni Pizza",
-        "Ham & Roasted Pepper Pizza",
-        "Elote Pizza"
+        "Luau Pizza",
+        "Cheese Pizza",
+        "Pepperoni Deluxe Pizza"
       ],
       "The Grill": [
-        "BBQ Bacon Cheeseburger",
-        "Beyond Burger",
-        "Coney Island Hot Dog",
-        "LA Hot Chicken Wings",
-        "Curly Fries"
+        "Bruin Burger",
+        "Bruin Cheeseburger",
+        "LA Hot Chicken Sandwich",
+        "Big Island Burger",
+        "Chicken Katsu Sandwich",
+        "Beyond Burger"
       ],
       "Harvest Kitchen": [
-        "Lemon Cod",
-        "Brazilian Corn Porridge",
-        "Brazilian Saffron Rice",
-        "Spicy Bean Soup",
-        "Portuguese Sausage & Bean Soup"
+        "Pineapple Marinated Chicken Thigh",
+        "Spicy Lentil",
+        "Cilantro Rice",
+        "Chicken Noodle Soup",
+        "Creamy Tomato Basil Soup"
       ],
       "Seasonal Sides": [
-        "Garlicky Green Beans",
-        "Fresh Glazed Carrots",
-        "Brazilian Style Mustard Greens"
+        "Roasted Broccoli w/ Garlic",
+        "Roasted Cauliflower w/ Chile & Lime",
+        "Pan Roasted Mushrooms with Onions"
       ],
       "Field Greens Bar": [
         "Ranch Dressing",
@@ -446,25 +437,17 @@
       "Market Salads & Fruit": [
         "Watermelon",
         "Cantaloupe",
-        "Pineapple",
-        "Vegan Confetti Slaw",
-        "Tropical Pineapple Salad",
-        "Hearts of Palm & Cherry Tomato Salad",
-        "Specialty Bread",
-        "Honey Whipped Butter",
-        "Bacon Whipped Butter",
-        "Smoked Jalapeno Whipped Butter",
-        "Black Bean & Corn Salsa",
-        "Wild Mushroom Escabeche",
-        "Jalape\u00f1o Peppers",
-        "Habanero Pickled Red Onions"
+        "Pineapple"
       ],
       "The Sweet Stop": [
-        "De Neve Themed Dessert",
-        "De Neve Themed Cookie",
-        "Cheesecake",
-        "Flan",
-        "Strawberry Shortcake"
+        "White Cupcake",
+        "White Chocolate Chip Cookie w/ Cranberries",
+        "Dutch Apple Pie",
+        "Cranberry Crunch Bar",
+        "Oreo Mousse",
+        "Deep Dish Blackout Cake",
+        "Yogurt Bar",
+        "Ice Cream & Frozen Yogurt Bar"
       ]
     },
     "extended dinner": {
@@ -485,44 +468,40 @@
       "hours": "11:00 a.m. - 3:00 p.m.",
       "Capri": [
         "Build-Your-Own Pasta Bowl",
-        "Cavatappi Pasta",
-        "Halal Chicken Thigh",
-        "French Green Lentils",
-        "Spicy Marinara Sauce",
-        "Alfredo Sauce",
-        "Roasted Broccolini",
-        "Caramelized Onion"
+        "NOODLES BOWTIE FARFALLE",
+        "Roasted Seafood Mix",
+        "Cannellini Beans",
+        "Pomodoro",
+        "Sun Dried Tomato Cream Sauce",
+        "Roasted Cauliflower",
+        "Roasted Marinated Cherry Tomatoes"
       ],
       "Psistaris": [
-        "Shrimp, Spinach, & Feta Pita",
-        "Chickpeas Fritters",
-        "Greek Lemon Herb Potatoes",
-        "Roasted Butternut Squash",
-        "Roasted Peppers & Peas w/ Dill",
+        "Persian Joojeh Saffron Lemon Chicken Wings",
+        "Corn Couscous Fritter",
+        "Lebanese Lentil & Bulgur Pilaf w/ Roasted Squash",
+        "Fiery Spiced Cauliflower",
+        "Roasted Mushrooms",
         "Greek Salad",
         "Moroccan Couscous Salad",
         "Golden Beet & Greens Salad w/ Blood Orange Mint Vinaigrette"
       ],
       "Alimenti": [
-        "Polenta",
-        "Spicy Pomodoro Gnocchi",
-        "Lentil Soup",
-        "Beef Barley Soup",
-        "Salad Bar Selection",
-        "Flank Steak w/ Harissa Dry Rub"
+        "Pomegranate Lamb",
+        "Greek Style Black-Eyed Pea Stew w/ Kale",
+        "Chicken Noodle Soup",
+        "Creamy Tomato Basil Soup",
+        "Salad Bar Selection"
       ],
       "Dolce": [
         "Classic Chocolate Chip Cookie",
-        "Snickerdoodle Cookies",
-        "Moroccan Spiced Chocolate Mousse",
-        "Tiramisu",
-        "Pistachio Raspberry Tart",
+        "Greek Cinnamon Olive Oil Cookies",
+        "Lemon & Honey Panna Cotta",
+        "Strawberry Mousse Cake",
+        "Brown Butter Tart",
         "Yogurt Bar"
       ],
       "Mezze": [
-        "Roasted Pork Loin",
-        "Bulgur Wheat",
-        "Crusty Grilled Cheese Sandwich",
         "Focaccia",
         "Lavash Chips",
         "Sun-Dried Tomato Pesto",
@@ -530,84 +509,63 @@
         "Parsley Pesto",
         "Hummus",
         "Tzatziki",
-        "Grilled Salsa Verde Chicken",
+        "Fava Bean Dip with Dill",
         "Muhammara (Spicy Roasted Pepper Dip)",
         "Artichoke Spinach Dip",
+        "Cauliflower Skordalia Spread",
         "Smoked Mozzarella Spread",
+        "Paprika Garlic Spread",
         "Tunisian Vegetable Dip",
         "Morrocan Spicy Lentil Dip",
         "White Bean, Feta, & Za'atar Spread",
         "Zhug",
-        "Toum",
-        "Dolma"
+        "Garlic Lebneh",
+        "Htipiti Feta Spread",
+        "Marinated Red Grape Tomatoes",
+        "Pitted Kalamata Olives",
+        "Pickled Vegetables",
+        "Dolma",
+        "Grated Parmesan Cheese"
       ],
       "Capri Pizza": [
         "Cheese Pizza",
         "Pepperoni Pizza",
-        "Pizza Romano",
+        "Brisket & Sundried Tomato Pizza",
         "Caesar Salad",
         "Greek Salad",
         "Moroccan Couscous Salad",
         "Golden Beet & Greens Salad w/ Blood Orange Mint Vinaigrette"
-      ],
-      ".": [
-        "Honey Strained Light Amber",
-        "Banana Peppers",
-        "Feta Valbresco Block",
-        "Olives Black Sliced",
-        "Gala Apple",
-        "Granny Smith Apple",
-        "Orange",
-        "Bananas",
-        "Watermelon",
-        "Whole Clementine Variety Tangerine",
-        "Coffee",
-        "Coffee Espresso Whole Bean",
-        "Coffee Espresso Whole Bean Decaf",
-        "Coffee Rainforest Bold",
-        "Coffee Rainforest Bold-Decaf",
-        "Apple Cinnamon Tea",
-        "Chamomile Tea",
-        "Earl Grey Tea",
-        "Mint Tea",
-        "Cranberry Apple Tea",
-        "White Orange Spice Tea",
-        "Gunpowder Green Tea",
-        "Iced Blueberry Hibiscus Tea",
-        "Iced Tea Tropical",
-        "Lemon Tea",
-        "SP Granulated Sugar"
       ]
     },
     "dinner": {
       "hours": "5:00 p.m. - 9:00 p.m.",
       "Capri": [
-        "Rigatoni w/ Roman Style Meat Sauce",
-        "Pistachio pesto pasta"
+        "Chicken Fettuccine Alfredo",
+        "Garlic Basil Fettuccine"
       ],
       "Psistaris": [
-        "Spanish Salmon",
-        "Arancini",
-        "Braised Spicy Lentils w/ Potatoes & Tomatoes",
-        "Roasted Butternut Squash",
-        "Roasted Peppers & Peas w/ Dill",
+        "Lemon & Sage Marinated Pork Chops",
+        "Eggplant \"Bacon\" BLT Sandwich",
+        "Carrot-Cumin Farro",
+        "Italian Style Broccoli & Cauliflower",
+        "Roasted Eggplant",
         "Greek Salad",
         "Moroccan Couscous Salad",
         "Golden Beet & Greens Salad w/ Blood Orange Mint Vinaigrette"
       ],
       "Alimenti": [
-        "Mallorca Lamb & Potato Saute",
-        "Polenta Cake w/ Sauteed Wild Mushroom & Chermoula",
-        "Beef Barley Soup",
-        "Lentil Soup",
+        "Lasagna Bolognese",
+        "Lasagna Impossible Bolognese",
+        "Chicken Noodle Soup",
+        "Creamy Tomato Basil Soup",
         "Salad Bar Selection"
       ],
       "Dolce": [
+        "Greek Cinnamon Olive Oil Cookies",
         "Classic Chocolate Chip Cookie",
-        "Snickerdoodle Cookies",
-        "Moroccan Spiced Chocolate Mousse",
-        "Tiramisu",
-        "Pistachio Raspberry Tart",
+        "Lemon & Honey Panna Cotta",
+        "Strawberry Mousse Cake",
+        "Brown Butter Tart",
         "Yogurt Bar"
       ],
       "Mezze": [
@@ -626,7 +584,7 @@
         "Morrocan Spicy Lentil Dip",
         "White Bean, Feta, & Za'atar Spread",
         "Garlic Lebneh",
-        "Htipiti",
+        "Htipiti Feta Spread",
         "Cauliflower Skordalia Spread",
         "Fava Bean Dip with Dill",
         "Tunisian Vegetable Dip",
@@ -634,55 +592,16 @@
         "Pitted Kalamata Olives",
         "Pickled Vegetables",
         "Dolma",
-        "Grated Parmesan Cheese",
-        "Herbed Rice Pilaf",
-        "North African Spiced Pork w/ Oven Roasted Tomatoes & Fregola",
-        "Grilled Fresh Herb Chicken",
-        "Lahanodolmades"
+        "Grated Parmesan Cheese"
       ],
       "Capri Pizza": [
         "Cheese Pizza",
         "Pepperoni Pizza",
-        "Spanikopita Pizza",
+        "Seafood Marinara Pizza",
         "Caesar Salad",
         "Greek Salad",
         "Moroccan Couscous Salad",
         "Golden Beet & Greens Salad w/ Blood Orange Mint Vinaigrette"
-      ],
-      ".": [
-        "Honey Strained Light Amber",
-        "Banana Peppers",
-        "Feta Valbresco Block",
-        "Olives Black Sliced",
-        "Gala Apple",
-        "Granny Smith Apple",
-        "Orange",
-        "Bananas",
-        "Watermelon",
-        "Whole Clementine Variety Tangerine",
-        "Coffee",
-        "Coffee Espresso Whole Bean",
-        "Coffee Espresso Whole Bean Decaf",
-        "Coffee Rainforest Bold",
-        "Coffee Rainforest Bold-Decaf",
-        "Apple Cinnamon Tea",
-        "Chamomile Tea",
-        "Earl Grey Tea",
-        "Mint Tea",
-        "Cranberry Apple Tea",
-        "White Orange Spice Tea",
-        "Gunpowder Green Tea",
-        "Iced Blueberry Hibiscus Tea",
-        "Iced Tea Tropical",
-        "Lemon Tea",
-        "SP Granulated Sugar"
-      ],
-      "..": [
-        "Pizza Dough",
-        "White Hoagie Torpedo Roll",
-        "Panini Roll",
-        "Fluffy Potato Bun",
-        "Focaccia"
       ]
     }
   },
@@ -738,7 +657,48 @@
       ]
     }
   },
-  "bruin-bowl": {},
+  "bruin-bowl": {
+    "breakfast": {
+      "hours": "Closed",
+      "Bruin Bowl Base": [
+        "Power Greens Blend",
+        "Kale",
+        "Spinach",
+        "Golden Beet & Greens Salad w/ Blood Orange Mint Vinaigrette",
+        "Wild Rice Blend",
+        "Herbed Farro",
+        "Green Lentils"
+      ],
+      "Signature Items": [
+        "Honey Lime Chicken Thigh",
+        "Grilled Salmon",
+        "Garlic Beef Flank Steak",
+        "Spicy Beyond Meatballs",
+        "BBQ Cauliflower",
+        "Harissa Tofu"
+      ],
+      "Toppers": [
+        "Shaved Parmesan Cheese",
+        "Sliced Banana Pepper",
+        "Roasted Corn",
+        "Sunflower Seeds",
+        "Edamame Topping",
+        "Julienne Red Onion",
+        "Cucumber",
+        "Cherry Tomatoes",
+        "Feta Cheese",
+        "Marinated Olives"
+      ],
+      "Bruin Bowl Sauces": [
+        "Avocado Vinaigrette",
+        "Balsamic Vinaigrette",
+        "Caesar Salad Dressing",
+        "Cider Vinaigrette",
+        "Red Wine Vinaigrette",
+        "Classic Chocolate Chip Cookie"
+      ]
+    }
+  },
   "bruin-cafe": {
     "allday": {
       "hours": {
@@ -747,11 +707,31 @@
         "dinner": "5:00 p.m. - 9:00 p.m.",
         "extended dinner": "Closed"
       },
+      "BREAKFAST SPECIALS": [
+        "Build-Your-Own Breakfast Bowl",
+        "Build-Your-Own Breakfast Burrito",
+        "Bruin Waffle Plate",
+        "Parfait Fresh Berry",
+        "Parfait Oatmeal Blueberry & Apple",
+        "Fresh Fruit Cup",
+        "Oatmeal",
+        "Instant Oatmeal - Baked Apple",
+        "Multi Grain Cheerios",
+        "Cheerios Cereal",
+        "Honey Nut Cheerios Cereal",
+        "Lucky Charms Cereal",
+        "Cinnamon Toast Crunch Cereal",
+        "Cocoa Puffs",
+        "Trix Cereal",
+        "Rice Chex Cereal"
+      ],
       "DAILY SPECIALS": [
-        "Blackened Chicken Bowl"
+        "Chili Hot Dog",
+        "Korean Style Hot Dog",
+        "Mexican Style Hot Dog",
+        "Wedge Cut Fries"
       ],
       "TOASTED SANDWICHES": [
-        "Galaxy Wrap",
         "Ham & Swiss Sandwich",
         "Roasted Turkey & Provolone Sandwich",
         "Smoky BBQ Sandwich",
@@ -832,9 +812,7 @@
         "Caribbean Island Smoothie",
         "Bruin Fresh Smoothie",
         "Smoothie #15: Chocolate Banana",
-        "Smoothie #06: Alooooha",
-        "Frozen Butter Beer",
-        "Sakura Bowl"
+        "Smoothie #06: Alooooha"
       ],
       "FAIR TRADE COFFEE & TEA": [
         "Caf\u00e9 Latte",
@@ -902,7 +880,7 @@
     "dinner": {
       "hours": "5:00 p.m. - 9:00 p.m.",
       "SPECIALS": [
-        "Thu - Lasagna Bolognese"
+        "Mon - Monte Bianco"
       ],
       "INSALATE": [
         "Caesar",
@@ -1027,8 +1005,8 @@
       ],
       "SANDWICHES": [
         "Mozzarella Di Bufala Sandwich",
-        "Pistachio Mortadella Sandwich",
-        "Chicken Gyro Sandwich"
+        "Chicken Gyro Sandwich",
+        "Pistachio Mortadella Sandwich"
       ],
       "BEER & WINE": [
         "Dark Horse Chardonnay",
@@ -1065,6 +1043,7 @@
         "Chicken Caesar Salad",
         "Cucumber Dill & Salmon Salad",
         "Dijon Tempeh Salad",
+        "Louie Shrimp & Avocado Salad",
         "Pepper Steak Salad"
       ],
       "SANDWICHES": [
@@ -1073,18 +1052,18 @@
         "Egg Salad Sandwich",
         "Peanut Butter & Strawberry Preserves Sandwich",
         "Roast Beef Sandwich",
-        "Tuna Salad Croissant",
+        "Ham & Swiss Croissant",
         "Ultimate BLT Sandwich",
         "Chipotle Turkey Club Sandwich",
         "Caprese Sandwich"
       ],
       "Bento Boxes": [
-        "Chicken Katsu Bento Box",
-        "Crispy Seitan Bento Box"
+        "Korean Beef Bulgogi Bento Box",
+        "Impossible Mapo Tofu Bento Box"
       ],
       "Noodle Bowls": [
-        "Tan Tan Ramen Noodle Soup",
-        "Vegetarian Miso Ramen"
+        "Beef Pho",
+        "Vegetable Pho Noodle Soup"
       ],
       "Sushi": [
         "California Roll",
@@ -1092,20 +1071,19 @@
         "Cucumber & Avocado Roll"
       ],
       "Lunch Bowls": [
-        "Carne Asada Bowl",
-        "Bean & Cheese Bowl"
+        "Teriyaki Chicken Bowl",
+        "Impossible Bowl"
       ],
       "HOT ENTR\u00c9ES": [
-        "Bratwurst Sandwich"
+        "Polish Sausage Sandwich"
       ],
       "Dinner Bowls": [
-        "Orange Chicken Bowl"
+        "Paneer Butter Masala",
+        "Chicken Tikka Masala"
       ],
       "DINNER ENTR\u00c9ES": [
-        "Spaghetti & Meatballs",
-        "Pasta w/ Eggplant, Tomatoes, & Olives",
-        "Bucatini Cacio E Pepe Pasta",
-        "Spaghetti w/ Garlic Basil Tomatoes"
+        "Kansas Chicken Bowl",
+        "Garden Vegetable Macaroni & Cheese"
       ],
       "CAKES & TARTS": [
         "Mango Chia Pudding with Yogurt Mousse",
@@ -1141,7 +1119,7 @@
       ],
       "Capri Pizza": [
         "Classic Cheese Pizza",
-        "BBQ Chicken Pizza"
+        "Pepperoni Pizza"
       ]
     }
   },
@@ -1219,8 +1197,8 @@
         "Strawberry Hibiscus Lemonade",
         "Mango Mint",
         "Beets Booster",
-        "Vitamin C Booster",
-        "Greens & More Booster"
+        "Greens & More Booster",
+        "Vitamin C Booster"
       ],
       "Kombucha on Tap": [
         "Pink Lady Apple Kombucha",
@@ -1240,8 +1218,8 @@
       ],
       "Fries": [
         "Swiss Fondue Frites",
-        "Beef Chili Fondue Fries",
-        "Fish & Chips"
+        "Fondue Frites w/ Rasher",
+        "Beef Chili Fondue Fries"
       ],
       "Plates": [
         "Bavarian Pretzel and Sausage Platter"

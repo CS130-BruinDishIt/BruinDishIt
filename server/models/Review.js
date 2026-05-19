@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
   // tells what the review is for
@@ -54,4 +54,4 @@ const reviewSchema = new mongoose.Schema({
 
 const Review = mongoose.model("Review", reviewSchema);
 
-module.exports = mongoose.models.Review || mongoose.model("Review", reviewSchema);
+export default Review;

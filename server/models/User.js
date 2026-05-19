@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const crypto = require("crypto");
+import mongoose from "mongoose";
+import crypto from "crypto";
 
 const PBKDF2_ITERATIONS = 310000;
 const PBKDF2_KEYLEN = 32;
@@ -73,5 +73,5 @@ UserSchema.methods.verifyPassword = function verifyPassword(plaintext) {
   return crypto.timingSafeEqual(a, b);
 };
 
-module.exports = mongoose.models.User || mongoose.model("User", UserSchema);
+export default mongoose.models.User || mongoose.model("User", UserSchema);
 

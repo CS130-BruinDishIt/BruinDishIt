@@ -30,7 +30,7 @@ async function updateDailyMenus() {
             
             // find the item, or create it if it's new
             // 'upsert: true' tells MongoDB to create it if it doesn't exist
-            // 'new: true' tells it to return the newly created document
+            // returnDocument: "after" tells it to return the newly created document
             const item = await MenuItem.findOneAndUpdate(
               { name: foodName, hallName: hallSlug }, // Search criteria
               { name: foodName, hallName: hallSlug }, // Data to save

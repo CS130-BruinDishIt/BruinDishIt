@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 
 const dailyMenuSchema = new mongoose.Schema({
@@ -15,4 +15,4 @@ const dailyMenuSchema = new mongoose.Schema({
   
   const DailyMenu = mongoose.model('DailyMenu', dailyMenuSchema);
   
-  module.exports = DailyMenu;
+export default DailyMenu;

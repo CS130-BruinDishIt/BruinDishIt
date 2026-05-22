@@ -17,6 +17,7 @@ dining_locations = [
     "meal-swipe-exchange",  # food trucks
     "the-drey",
     "the-study-at-hedrick",
+    "rendezvous",
     ]
 MEAL_ANCHORS = {    # meal period name : id of corresponding div
     "breakfast":    "breakfastmenu",

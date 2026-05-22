@@ -1,23 +1,38 @@
 import { Link } from "react-router-dom";
 import forkKnifeIcon from "./assets/fork-and-knife.svg";
 import profileIcon from "./assets/user.png";
-import "./Navbar.css";
+import "./styles/Navbar.css";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Menu,
+  Toolbar,
+  Typography, 
+} from "@mui/material";
 
 const Navbar = () => {
   return (
-    <nav className="navbar">
-      <Link to="/" className="home-circle" aria-label="Home">
-        <img src={forkKnifeIcon} alt="" className="home-icon" />
-      </Link>
+    <AppBar position="static" elevation={0} className="navbar">
+      <Container maxWidth="xl" disableGutters>
+        <Toolbar disableGutters className="toolbar" >
+          <Box component={Link} to="/" className="home-button">
+            <Box component="img" src={forkKnifeIcon} alt="Home" className="home-icon"/>
+          </Box>
+          <Typography variant="h4" className="title"
+          >BruinDishIt</Typography>
 
-      <Link to="/signin" className="profile-button">
-        <span className="profile-text">SIGN IN</span>
-        <span className="profile-circle">
-          <img src={profileIcon} alt="" className="profile-icon" />
-        </span>
-      </Link>
-    </nav>
+          <Button component={Link} to="/signin" className="profile-button"
+          > SIGN IN
+            <Avatar src={profileIcon} alt="Profile" className="profile-icon"/>
+          </Button>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
+
 
 export default Navbar;

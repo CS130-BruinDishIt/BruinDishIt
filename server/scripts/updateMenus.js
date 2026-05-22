@@ -1,9 +1,15 @@
 import MenuItem from "../models/MenuItem.js";
 import DailyMenu from "../models/Menu.js";
-import scrapedJson from "../scraper/dining_data.json" with { type: "json" };
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 async function updateDailyMenus() {
   try {
+    const { stdout } = await execAsync("python3 scraper/scrape.py");
+    const scrapedJson = JSON.parse(stdout);
+
     const todayStr = new Date().toISOString().split('T')[0];
 
     await DailyMenu.deleteMany({});  // wipe yesterday's menus

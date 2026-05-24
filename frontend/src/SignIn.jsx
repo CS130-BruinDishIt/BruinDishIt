@@ -1,20 +1,38 @@
 import { Link } from "react-router-dom";
-import "./SignIn.css";
+import "./styles/SignIn.css";
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 function SignIn() {
   return (
-    <main className="sign-in-page">
-      <h1>Sign In to your BruinDishIt Account</h1>
-      <form className="sign-in-form">
-        {/*TODO backend auth */}
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
-        <button type="submit">Sign in</button>
-        <p className="new-user-text">
-          New User? <Link to="/signup">Create Account</Link>
-        </p>
-      </form>
-    </main>
+    <Container maxWidth="sm" className="signin-container">
+      <Paper elevation={3} className="signin-paper">
+        <Typography variant="h4" component="h1" className="form-title"
+        >Sign In to your BruinDishIt Account</Typography>
+
+        <Box component="form" className="signin-form">
+
+          {/* TODO backend auth */}
+
+          <TextField type="email" label="Email" variant="outlined" fullWidth />
+          <TextField type="password" label="Password" variant="outlined" fullWidth />
+          <Button type="submit" variant="contained" size="large" className="signin-button"
+          >Sign In</Button>
+
+          <Typography variant="body2" className="new-user"
+          >New User?{" "}
+            <Box component={Link} to="/signup" className="create-acc"
+            >Create Account</Box>
+          </Typography>
+        </Box>
+      </Paper>
+    </Container>
   );
 }
 

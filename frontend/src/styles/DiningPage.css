@@ -1,0 +1,12 @@
+.dining-container {
+    padding: 30px;
+}
+
+.location-box {
+    margin-bottom: 30px;
+}
+
+.MuiTypography-root.location-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+}

@@ -6,11 +6,11 @@ An app for UCLA students to view, review, and talk about the dining halls.
 Install [Node](https://nodejs.org/en/download) on your machine. If the installation was successful, you should be able to run the following commands.
 
 ``` bash
-    $ node --version
-    v24.14.1
+$ node --version
+v24.14.1
 
-    $ npm --version
-    11.11.0
+$ npm --version
+11.11.0
 ```
 
 ### MongoDB
@@ -20,9 +20,9 @@ Install [MongoDB Community Server](https://www.mongodb.com/try/download/communit
 Clone this repository and install the Node modules for the application.
 
 ``` bash
-    $ git clone https://github.com/CS130-BruinDishIt/BruinDishIt
-    $ cd BruinDishIt
-    $ npm install 
+$ git clone https://github.com/CS130-BruinDishIt/BruinDishIt
+$ cd BruinDishIt
+$ npm install 
 ```
 
 ### Server Setup
@@ -56,4 +56,4 @@ Return to the project root and start the app.
 $ cd ..
 $ npm run start:dev
 ```
-The application can be viewed at http://localhost:5173. The backend server will be running at http://localhost:3000.
+The application can be found at http://localhost:5173. The backend server will be running at http://localhost:3000.

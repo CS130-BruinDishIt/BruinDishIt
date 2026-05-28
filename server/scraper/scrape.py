@@ -2,7 +2,7 @@ from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
-import json
+import json, sys
  
 dining_locations = [
     "bruin-plate",
@@ -17,6 +17,7 @@ dining_locations = [
     "meal-swipe-exchange",  # food trucks
     "the-drey",
     "the-study-at-hedrick",
+    "rendezvous",
     ]
 MEAL_ANCHORS = {    # meal period name : id of corresponding div
     "breakfast":    "breakfastmenu",
@@ -62,18 +63,15 @@ def scrape_meal(soup, anchor_id):
     # Returns dict like {"station name": ["food1", "food2", ...], ...}
     anchor_div = soup.find("div", id=anchor_id)
     if not anchor_div:
-        print(f"not open during meal period div with id '{anchor_id}'")
         return None
  
     meal_div = anchor_div.find_next_sibling("div")
     if not meal_div:
-        print(f"Warning: could not find meal div after anchor '{anchor_id}'")
         return None
  
     stations = {}
     select = meal_div.find("select", class_="category-anchors--dropdown")
     if not select:
-        print(f"Warning: could not find select element for anchor '{anchor_id}'")
         return None
  
     for option in select.find_all("option"):
@@ -81,14 +79,12 @@ def scrape_meal(soup, anchor_id):
         station_name = option.get_text(strip=True)
  
         if not station_id:
-            print(f"not valid station id: '{station_id}', '{station_name}'")
             continue
         if station_id == "!":
             continue
  
         station_div = meal_div.find("div", id=station_id)
         if not station_div:
-            print(f"Warning: could not find station div with id '{station_id}'")
             continue
  
         stations[station_name] = [
@@ -101,7 +97,6 @@ def scrape_meal(soup, anchor_id):
 data = {} 
 for location in dining_locations:
     url = f"https://dining.ucla.edu/{location}/"
-    print(f"Scraping {location}...")
  
     response = requests.get(url, headers=headers)
     sleep(0.5)  # be polite to the server
@@ -127,5 +122,7 @@ for location in dining_locations:
                 **stations,   # unpacks station: [foods] pairs at the same level
             }
  
-with open("dining_data.json", "w") as f:
-    json.dump(data, f, indent=2)
+# with open("dining_data.json", "w") as f:
+#     json.dump(data, f, indent=2)
+
+print(json.dumps(data, indent=2))

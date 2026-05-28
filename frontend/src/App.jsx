@@ -1,11 +1,16 @@
 import Navbar from './Navbar.jsx'
 import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
-import './App.css'
-
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { diningLocations } from './data/diningLocations.js'
-import DiningPage from './pages/DiningPage'
+import DiningPage from './DiningPage'
+import './styles/App.css'
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+} from "@mui/material";
 
 function App() {
 
@@ -13,16 +18,14 @@ function App() {
     const navigate = useNavigate();
 
     return (
-      <div>
-      {diningLocations.map((place) => (
-        <button 
-          className={`${place.level} circle ${place.id}`}
-          onClick={() => navigate(`/dining/${place.id}`)}
-        >
-          {place.shortname}
-        </button>
-      ))}
-      </div>
+      <Container maxWidth={false} disableGutters className="app-container">
+        {diningLocations.map((place) => (
+          <Button key={place.id} variant="contained" disableElevation disableRipple
+            className={`circle-button ${place.level} ${place.id}`}
+            onClick={() => navigate(`/dining/${place.id}`)}
+          >{place.shortname}</Button>
+        ))}
+      </Container>
     );
   }
 

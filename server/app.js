@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import cron from 'node-cron';
 
 import { runUpdate } from './scripts/updateMenus.js';
 import diningRoutes from './routes/dining.js';
@@ -19,12 +20,12 @@ app.use("/api/dining", diningRoutes);
 await mongoose.connect(process.env.MONGODB_URI);
 console.log("Connected to MongoDB");
 
-await runUpdate();
-console.log("Menus updated!");
+await runUpdate();  // Keep it here in case server crashes and restarts
+console.log("Server startup menu update complete");
 
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ message: "Unexpected server error." });
+cron.schedule('0 7 * * *', async () => {
+  await runUpdate();
+  console.log("Cron job menu update complete");
 });
 
 app.listen(3000, () => {

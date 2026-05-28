@@ -1,0 +1,92 @@
+.app-container {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 72px);
+  overflow: hidden;
+}
+
+.MuiButton-root.circle-button {
+  position: absolute;
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.MuiButton-root.circle-button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+}
+
+.big
+{
+    width: 200px;
+    height: 200px;
+    font-size: 30px;
+}
+
+.med
+{
+    width: 150px;
+    height: 150px;
+    font-size: 25px;
+}
+
+.small
+{
+    width: 100px;
+    height: 100px;
+    font-size: 18px;
+}
+
+.bruin-plate {
+  left: 35%;
+  top: 25%;
+}
+
+.de-neve-dining {
+  left: 55%;
+  top: 40%;
+}
+
+.epicuria-at-covel {
+  left: 25%;
+  top: 60%;
+}
+
+.spice-kitchen {
+  left: 65%;
+  top: 20%;
+}
+
+.bruin-cafe {
+  left: 25%;
+  top: 10%;
+}
+
+.rendezvous {
+  left: 15%;
+  top: 35%;
+}
+
+.the-drey {
+  left: 50%;
+  top: 10%;
+}
+
+.cafe-1919 {
+  left: 75%;
+  top: 35%;
+}
+
+.the-study-at-hedrick {
+  left: 45%;
+  top: 60%;
+}
+
+.ft {
+  left: 70%;
+  top: 65%;
+}

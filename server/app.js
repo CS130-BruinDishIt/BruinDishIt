@@ -1,12 +1,21 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import cron from 'node-cron';
 
 import { runUpdate } from './scripts/updateMenus.js';
+import diningRoutes from './routes/dining.js';
 
 const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+  })
+);
+
+app.use("/api/dining", diningRoutes);
 
 await mongoose.connect(process.env.MONGODB_URI);
 console.log("Connected to MongoDB");

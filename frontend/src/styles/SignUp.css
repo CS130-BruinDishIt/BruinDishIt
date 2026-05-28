@@ -1,0 +1,31 @@
+.signup-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.signup-paper {
+  width: 100%;
+  border-radius: 8px;
+  padding: 50px;
+}
+
+.MuiTypography-root.form-title {
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.create-button {
+  padding: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+}

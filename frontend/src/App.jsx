@@ -4,6 +4,7 @@ import SignUp from './SignUp.jsx'
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { diningLocations } from './data/diningLocations.js'
 import DiningPage from './DiningPage'
+import DiningItemsPage from './DiningItemsPage'
 import './styles/App.css'
 import {
   Box,
@@ -37,6 +38,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dining/:name" element={<DiningPage />} />
+        <Route path="/dining/:name/items" element={<DiningItemsPage />} />
       </Routes>
     </>
   )

@@ -30,3 +30,19 @@ export async function fetchDailyMenu(hallSlug, { date, signal } = {}) {
 
   return response.json();
 }
+
+export async function fetchAllMenuItems(hallSlug, { signal } = {}) {
+  if (!hallSlug) {
+    throw new Error("Hall slug is required.");
+  }
+
+  const url = new URL(`/api/dining/items/${encodeURIComponent(hallSlug)}`, API_BASE_URL);
+
+  const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  if (!response.ok) {
+    throw new Error(await parseErrorMessage(response));
+  }
+
+  return response.json();
+}
+

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchAllMenuItems } from "./api/dining";
-import { diningLocations } from "./data/diningLocations";
+import { fetchDiningHall } from "./api/dining";
 import "./styles/DiningPage.css";
 import {
   Box,
@@ -21,8 +21,8 @@ import CommentDrawer from "./CommentDrawer";
 
 const DiningItemsPage = () => {
   const { name } = useParams();
-  const loc = diningLocations.find((place) => place.id === name);
 
+  const [hall, setHall] = useState(null);
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -30,8 +30,8 @@ const DiningItemsPage = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const openComments = ({ id, name }) => {
-    setSelectedItem({ id, name });
+  const openComments = ({ id, name, type = "items" }) => {
+    setSelectedItem({ id, name, type });
     setDrawerOpen(true);
 
     const key = encodeURIComponent(`${id}`);
@@ -43,6 +43,13 @@ const DiningItemsPage = () => {
     setSelectedItem(null);
     window.history.replaceState(null, "", window.location.pathname);
   };
+
+  useEffect(() => {
+    if (!name) return;
+    fetchDiningHall(name)
+      .then((data) => setHall(data))
+      .catch((error) => console.error("Error fetching dining hall:", error));
+  }, [name]);
 
   useEffect(() => {
     if (!name) return;
@@ -128,9 +135,14 @@ const DiningItemsPage = () => {
     <>
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
-          <Typography variant="h3" className="location-title">
-            {loc?.name || name}
-          </Typography>
+          <Stack direction="row" alignitems="center" spacing={2}>
+            <Typography variant="h3" className="location-title">
+              {hall?.name || name}
+            </Typography>
+            <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls' })} className="review-btn">
+              <ModeCommentOutlinedIcon fontSize='medium' />
+            </IconButton>
+          </Stack>
 
           <Typography variant="body1" color="text.secondary">
             Browse every menu item served at this dining hall.
@@ -162,22 +174,22 @@ const DiningItemsPage = () => {
 
                   <Divider sx={{ mb: 2 }} />
                   <Stack spacing={1}>
-                    {letterItems.map(({id, name, lastSeen, dateAdded}) => (
-                        <Stack key={id} direction="row" sx={{ py: 0.75 }}>
-                            {/* Item Name */}
-                            <Typography variant="body1" sx={{ px: 1, py: 0 }}>
-                              • {name}
-                            </Typography>
+                    {letterItems.map(({ id, name, lastSeen, dateAdded }) => (
+                      <Stack key={id} direction="row" sx={{ py: 0.75 }}>
+                        {/* Item Name */}
+                        <Typography variant="body1" sx={{ px: 1, py: 0 }}>
+                          • {name}
+                        </Typography>
 
-                            <Typography variant="caption" color="text.secondary" sx={{ ml: .5, whiteSpace: "nowrap", lineHeight: 1, position: "relative", top: "6px" }}>
-                                Last served: {new Date(lastSeen ?? dateAdded).toLocaleDateString()}
-                            </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ ml: .5, whiteSpace: "nowrap", lineHeight: 1, position: "relative", top: "6px" }}>
+                          Last served: {new Date(lastSeen ?? dateAdded).toLocaleDateString()}
+                        </Typography>
 
-                            {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name })} className="review-btn" sx={{ ml: 1 }}>
-                              <ModeCommentOutlinedIcon fontSize="small" />
-                            </IconButton>
-                          </Stack>
+                        {/* Button to view reviews */}
+                        <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" sx={{ ml: 1 }}>
+                          <ModeCommentOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Stack>
                     ))}
                   </Stack>
                 </CardContent>

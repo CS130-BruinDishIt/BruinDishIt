@@ -2,7 +2,8 @@ import Navbar from './Navbar.jsx'
 import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { diningLocations } from './data/diningLocations.js'
+import { useEffect, useState } from "react";
+import { fetchDiningHalls } from "./api/dining";
 import DiningPage from './DiningPage'
 import DiningItemsPage from './DiningItemsPage'
 import './styles/App.css'
@@ -13,22 +14,29 @@ import {
   Typography,
 } from "@mui/material";
 
+function Home() {
+  const navigate = useNavigate();
+  const [halls, setHalls] = useState([]);
+
+  useEffect(() => {
+    fetchDiningHalls()
+      .then((data) => setHalls(data.halls || []))
+      .catch((error) => console.error("Error fetching dining halls:", error));
+  }, []);
+
+  return (
+    <Container maxWidth={false} disableGutters className="app-container">
+      {halls.map((place) => (
+        <Button key={place.slug} variant="contained" disableElevation disableRipple
+          className={`circle-button ${place.level} ${place.slug}`}
+          onClick={() => navigate(`/dining/${place.slug}`)}
+        >{place.shortName}</Button>
+      ))}
+    </Container>
+  );
+}
+
 function App() {
-
-  function Home() {
-    const navigate = useNavigate();
-
-    return (
-      <Container maxWidth={false} disableGutters className="app-container">
-        {diningLocations.map((place) => (
-          <Button key={place.id} variant="contained" disableElevation disableRipple
-            className={`circle-button ${place.level} ${place.id}`}
-            onClick={() => navigate(`/dining/${place.id}`)}
-          >{place.shortname}</Button>
-        ))}
-      </Container>
-    );
-  }
 
   return (
     <>

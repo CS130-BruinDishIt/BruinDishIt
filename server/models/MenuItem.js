@@ -17,11 +17,6 @@ const menuItemSchema = new mongoose.Schema({
     default: 0
   },
 
-  dateAdded: {
-    type: Date,
-    default: Date.now
-  },
-
   lastSeen: {
     type: Date,
     default: Date.now

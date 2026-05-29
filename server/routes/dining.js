@@ -5,6 +5,19 @@ import Review from "../models/Review.js";
 
 const router = express.Router();
 
+// Shape review documents for the existing CommentDrawer UI.
+const mapReviewForDrawer = (review) => ({
+	id: review._id,
+	user: review.user,
+	date: review.date,
+	review: review.text,
+	rating: review.rating,
+	likes: review.likes,
+	dislikes: review.dislikes,
+	imageUrl: review.imageUrl || null,
+	photos: review.imageUrl ? [review.imageUrl] : [],
+});
+
 // Return the daily menus for a hall, optionally filtered by date.
 router.get("/menus/:hallSlug", async (req, res, next) => {
 	try {
@@ -66,15 +79,7 @@ router.get("/items/:itemId/reviews", async (req, res, next) => {
 		// Keep response fields aligned with the CommentDrawer expectations.
 		const response = {
 			itemId,
-			reviews: reviews.map((review) => ({
-				user: review.user,
-				date: review.date,
-				review: review.text,
-				rating: review.rating,
-				likes: review.likes,
-				dislikes: review.dislikes,
-				photos: review.imageUrl ? [review.imageUrl] : [],
-			})),
+			reviews: reviews.map(mapReviewForDrawer),
 			photos: reviews
 				.filter((review) => review.imageUrl)
 				.map((review) => ({
@@ -85,6 +90,94 @@ router.get("/items/:itemId/reviews", async (req, res, next) => {
 		};
 
 		return res.json(response);
+	} catch (error) {
+		return next(error);
+	}
+});
+
+// Create a new review for a menu item.
+router.post("/items/:itemId/reviews", async (req, res, next) => {
+	try {
+		const { itemId } = req.params;
+
+		if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+			return res.status(400).json({ message: "Valid item id is required." });
+		}
+
+		const text = String(req.body.text || "").trim();
+		const rating = Number(req.body.rating);
+		const user = String(req.body.user || "Guest").trim();
+		const imageUrl = req.body.imageUrl || null;
+
+		if (!text) {
+			return res.status(400).json({ message: "Review text is required." });
+		}
+
+		if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+			return res.status(400).json({ message: "Rating must be between 1 and 5." });
+		}
+
+		// Store the review in the database with a submission timestamp.
+		const review = await Review.create({
+			itemId,
+			user,
+			rating,
+			text,
+			imageUrl,
+			date: new Date(),
+		});
+
+		return res.status(201).json({ review: mapReviewForDrawer(review) });
+	} catch (error) {
+		return next(error);
+	}
+});
+
+// Update an existing review for a menu item.
+router.put("/items/:itemId/reviews/:reviewId", async (req, res, next) => {
+	try {
+		const { itemId, reviewId } = req.params;
+
+		if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+			return res.status(400).json({ message: "Valid item id is required." });
+		}
+
+		if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
+			return res.status(400).json({ message: "Valid review id is required." });
+		}
+
+		const text = String(req.body.text || "").trim();
+		const rating = Number(req.body.rating);
+
+		if (!text) {
+			return res.status(400).json({ message: "Review text is required." });
+		}
+
+		if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+			return res.status(400).json({ message: "Rating must be between 1 and 5." });
+		}
+
+		const update = {
+			text,
+			rating,
+			date: new Date(),
+		};
+
+		if (Object.prototype.hasOwnProperty.call(req.body, "imageUrl")) {
+			update.imageUrl = req.body.imageUrl || null;
+		}
+
+		const review = await Review.findOneAndUpdate(
+			{ _id: reviewId, itemId },
+			update,
+			{ new: true, runValidators: true }
+		);
+
+		if (!review) {
+			return res.status(404).json({ message: "Review not found." });
+		}
+
+		return res.json({ review: mapReviewForDrawer(review) });
 	} catch (error) {
 		return next(error);
 	}

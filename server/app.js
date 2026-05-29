@@ -8,7 +8,8 @@ import { runUpdate } from './scripts/updateMenus.js';
 import diningRoutes from './routes/dining.js';
 
 const app = express();
-app.use(express.json());
+// Allow larger payloads to support base64 image uploads in reviews.
+app.use(express.json({ limit: "5mb" }));
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",

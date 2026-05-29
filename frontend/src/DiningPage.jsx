@@ -1,7 +1,7 @@
 import { fetchDailyMenu } from "./api/dining";
 import { diningLocations } from "./data/diningLocations";
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./styles/DiningPage.css";
 import {
   Box,
@@ -33,6 +33,7 @@ const DiningPage = () => {
   // Identify dining location being fetched
   const { name } = useParams();
   const loc = diningLocations.find(u => u.id === name);
+  const navigate = useNavigate();
 
   // Track request lifecycle to handle async loading and error states cleanly.
   const [menuData, setMenuData] = useState(null);
@@ -128,15 +129,22 @@ const DiningPage = () => {
     <>
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
-          <Typography variant="h3" className="location-title">
-            {loc?.name}
-          </Typography>
-
-          {loc?.description && (
-            <Typography variant="body1" color="text.secondary">
-              {loc.description}
+          <Box className="location-header"> 
+            <Typography variant="h3" className="location-title">
+              {loc?.name}
             </Typography>
-          )}
+
+            <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}> 
+              View All Time Menu Items
+            </Button>
+          </Box>
+
+            {loc?.description && (
+              <Typography variant="body1" color="text.secondary">
+                {loc.description}
+              </Typography>
+            )}
+          
         </Box>
 
         <Stack spacing={4}>

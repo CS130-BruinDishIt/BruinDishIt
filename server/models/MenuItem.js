@@ -20,6 +20,11 @@ const menuItemSchema = new mongoose.Schema({
   dateAdded: {
     type: Date,
     default: Date.now
+  },
+
+  lastSeen: {
+    type: Date,
+    default: Date.now
   }
 });
 

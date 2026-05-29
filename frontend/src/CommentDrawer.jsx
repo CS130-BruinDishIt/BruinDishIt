@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import commentsData from "./data/comments.json";
+import { fetchItemReviews } from "./api/dining";
 
 import {
   Box,
@@ -16,23 +16,46 @@ const formatter = new Intl.DateTimeFormat('en-US', {
   timeStyle: 'short'
 });
 
+// Support absolute URLs and legacy local asset names.
+// Support both hosted URLs and legacy local asset filenames.
+const resolvePhotoSrc = (value) => {
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+  return `/src/assets/${value}`;
+};
+
 const CommentDrawer = ({ item }) => {
   const [reviews, setReviews] = useState([]);
-  const [photos, setPhotos] = useState([])
+  const [photos, setPhotos] = useState([]);
 
+  // Load reviews from the backend whenever the selected item changes.
+  // Load reviews and gallery data from the backend for the selected item.
   useEffect(() => {
     if (!item?.id) return;
-    const entry = commentsData[item.id];
-    const sortedReviews = [...(entry?.reviews || [])].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
+    const controller = new AbortController();
+    setReviews([]);
+    setPhotos([]);
 
-    const sortedPhotos = [...(entry?.photos || [])].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
+    fetchItemReviews(item.id, { signal: controller.signal })
+      .then((data) => {
+        // Sort newest-first to match the prior placeholder behavior.
+        const sortedReviews = [...(data?.reviews || [])].sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
+        const sortedPhotos = [...(data?.photos || [])].sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
 
-    setReviews(sortedReviews);
-    setPhotos(sortedPhotos);
+        setReviews(sortedReviews);
+        setPhotos(sortedPhotos);
+      })
+      .catch((error) => {
+        if (error?.name === "AbortError") return;
+        setReviews([]);
+        setPhotos([]);
+      });
+
+    return () => controller.abort();
   }, [item]);
 
   if (!item) return null;
@@ -75,7 +98,7 @@ const CommentDrawer = ({ item }) => {
               >
                 <Box
                   component="img"
-                  src={`/src/assets/${photo.path}`}
+                  src={resolvePhotoSrc(photo.path || photo.url || photo)}
                   alt={photo.path}
                   sx={{
                     width: 200,
@@ -93,78 +116,82 @@ const CommentDrawer = ({ item }) => {
       )}
 
       {reviews.length === 0 ? (
-        <Typography>No comments yet.</Typography>
+        <Typography>No reviews yet.</Typography>
       ) : (
-        reviews.map((r, i) => (
-          <Box key={i} sx={{ mb: 2 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              User {r.userID || r.user}
-            </Typography>
+        reviews.map((r, i) => {
+          // Support legacy arrays and new numeric counts for reactions.
+          const likeCount = Array.isArray(r.likes) ? r.likes.length : (r.likes || 0);
+          const dislikeCount = Array.isArray(r.dislikes) ? r.dislikes.length : (r.dislikes || 0);
+          return (
+            <Box key={i} sx={{ mb: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                User {r.userID || r.user}
+              </Typography>
 
-            <Typography variant="caption" color="text.secondary">
-              {formatter.format(new Date(r.date))}
-            </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {formatter.format(new Date(r.date))}
+              </Typography>
 
-            <Typography sx={{ mt: 0.5 }}>
-              {r.review}
-            </Typography>
+              <Typography sx={{ mt: 0.5 }}>
+                {r.review}
+              </Typography>
 
-            {r.photos?.length > 0 && (
+              {r.photos?.length > 0 && (
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{
+                    mt: 2,
+                    overflowX: "auto",
+                  }}
+                >
+                  {r.photos.map((photo, idx) => (
+                    <Box
+                      key={idx}
+                      component="img"
+                      src={resolvePhotoSrc(photo)}
+                      sx={{
+                        width: 100,
+                        height: 100,
+                        objectFit: "cover",
+                        borderRadius: 2,
+                        flexShrink: 0,
+                      }}
+                    />
+                  ))}
+                </Stack>
+              )}
+
               <Stack
                 direction="row"
-                spacing={1}
-                sx={{
-                  mt: 2,
-                  overflowX: "auto",
-                }}
+                spacing={2}
+                sx={{ mt: 2 }}
               >
-                {r.photos.map((photo, idx) => (
-                  <Box
-                    key={idx}
-                    component="img"
-                    src={`/src/assets/${photo}`}
-                    sx={{
-                      width: 100,
-                      height: 100,
-                      objectFit: "cover",
-                      borderRadius: 2,
-                      flexShrink: 0,
-                    }}
+                <Stack direction="row" spacing={0.5} >
+                  <ThumbUpAltOutlinedIcon
+                    fontSize="small"
+                    sx={{ color: "primary.main" }}
                   />
+                  <Typography variant="body2">
+                    {likeCount}
+                  </Typography>
+                </Stack>
 
-                ))}
-              </Stack>
-            )}
-
-            <Stack
-              direction="row"
-              spacing={2}
-              sx={{ mt: 2 }}
-            >
-              <Stack direction="row" spacing={0.5} >
-                <ThumbUpAltOutlinedIcon
-                  fontSize="small"
-                  sx={{ color: "primary.main" }}
-                />
-                <Typography variant="body2">
-                  {r.likes?.length || 0}
-                </Typography>
+                <Stack direction="row" spacing={0.5}>
+                  <ThumbDownAltOutlinedIcon
+                    fontSize="small"
+                    sx={{ color: "error.main" }}
+                  />
+                  <Typography variant="body2">
+                    {dislikeCount}
+                  </Typography>
+                </Stack>
               </Stack>
 
-              <Stack direction="row" spacing={0.5}>
-                <ThumbDownAltOutlinedIcon
-                  fontSize="small"
-                  sx={{ color: "error.main" }}
-                />
-                <Typography variant="body2">
-                  {r.dislikes?.length || 0}
-                </Typography>
-              </Stack>
-            </Stack>
-
-            <Divider sx={{ my: 2 }} />
-          </Box>
-        ))
+              <Divider sx={{ my: 2 }} />
+            </Box>
+          );
+        })
       )}
     </Box>
   );

@@ -1,5 +1,7 @@
 import express from "express";
+import mongoose from "mongoose";
 import DailyMenu from "../models/Menu.js";
+import Review from "../models/Review.js";
 
 const router = express.Router();
 
@@ -43,6 +45,46 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 		// Small cache window to reduce duplicate requests during browsing.
 		res.set("Cache-Control", "public, max-age=300");
 		return res.json({ date, hallSlug, meals });
+	} catch (error) {
+		return next(error);
+	}
+});
+
+// Fetch reviews for a menu item and normalize them to the frontend's existing shape.
+router.get("/items/:itemId/reviews", async (req, res, next) => {
+	try {
+		const { itemId } = req.params;
+
+		if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+			return res.status(400).json({ message: "Valid item id is required." });
+		}
+
+		const reviews = await Review.find({ itemId })
+			.sort({ date: -1 })
+			.lean();
+
+		// Keep response fields aligned with the CommentDrawer expectations.
+		const response = {
+			itemId,
+			reviews: reviews.map((review) => ({
+				user: review.user,
+				date: review.date,
+				review: review.text,
+				rating: review.rating,
+				likes: review.likes,
+				dislikes: review.dislikes,
+				photos: review.imageUrl ? [review.imageUrl] : [],
+			})),
+			photos: reviews
+				.filter((review) => review.imageUrl)
+				.map((review) => ({
+					path: review.imageUrl,
+					userID: review.user,
+					date: review.date,
+				})),
+		};
+
+		return res.json(response);
 	} catch (error) {
 		return next(error);
 	}

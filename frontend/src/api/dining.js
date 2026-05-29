@@ -13,6 +13,7 @@ async function parseErrorMessage(response) {
   return `Request failed (${response.status})`;
 }
 
+// Fetch the daily menu for a specific dining hall and date from the database .
 export async function fetchDailyMenu(hallSlug, { date, signal } = {}) {
   if (!hallSlug) {
     throw new Error("Hall slug is required.");
@@ -22,6 +23,26 @@ export async function fetchDailyMenu(hallSlug, { date, signal } = {}) {
   if (date) {
     url.searchParams.set("date", date);
   }
+
+  const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  if (!response.ok) {
+    throw new Error(await parseErrorMessage(response));
+  }
+
+  return response.json();
+}
+
+// Fetch reviews for a specific menu item from the backend.
+// Fetch reviews for a single menu item from the backend.
+export async function fetchItemReviews(itemId, { signal } = {}) {
+  if (!itemId) {
+    throw new Error("Item id is required.");
+  }
+
+  const url = new URL(
+    `/api/dining/items/${encodeURIComponent(itemId)}/reviews`,
+    API_BASE_URL
+  );
 
   const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
   if (!response.ok) {

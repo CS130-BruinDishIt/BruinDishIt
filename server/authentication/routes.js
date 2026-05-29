@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { loginController } from "./login.js"; // Import the controller directly
-
+import { createAccountController } from "./createAccount.js";
 
 const router = Router();
 
 
-// Just pass the controller function straight in!
+
+router.post("/signup", createAccountController);
 router.post("/login", loginController);
 
 

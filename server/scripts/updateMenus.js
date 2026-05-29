@@ -12,8 +12,6 @@ async function updateDailyMenus() {
 
     const todayStr = new Date().toISOString().split('T')[0];
 
-    await MenuItem.updateMany({lastSeen: { $exists: false}}, [{ $set: { lastSeen: "$dateAdded" } }]); // backfill menu items that don't have lastSeen
-
     await DailyMenu.deleteMany({});  // wipe yesterday's menus
     console.log("Cleared old daily menus.");
 

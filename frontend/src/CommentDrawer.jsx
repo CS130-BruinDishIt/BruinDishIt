@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createItemReview, fetchItemReviews, updateItemReview } from "./api/dining";
+import { createReview, fetchReviews, updateReview } from "./api/dining";
 
 import {
   Box,
@@ -118,11 +118,11 @@ const CommentDrawer = ({ item }) => {
     if (!isEditing) {
       payload.user = "Guest";
     }
-
+    console.log(item)
     try {
       const response = isEditing
-        ? await updateItemReview(item.id, editingReviewId, payload)
-        : await createItemReview(item.id, payload);
+        ? await updateReview(item.id, item.type, editingReviewId, payload)
+        : await createReview(item.id, item.type, payload);
 
       const updatedReview = response?.review;
       if (updatedReview) {
@@ -153,7 +153,11 @@ const CommentDrawer = ({ item }) => {
     setPhotos([]);
     resetForm();
 
-    fetchItemReviews(item.id, { signal: controller.signal })
+    const fetchFn = item.type === 'halls'
+      ? fetchReviews(item.id, 'halls', { signal: controller.signal })
+      : fetchReviews(item.id, 'items', { signal: controller.signal });
+
+    fetchFn
       .then((data) => {
         // Sort newest-first to match the prior placeholder behavior.
         const sortedReviews = [...(data?.reviews || [])].sort(
@@ -215,7 +219,7 @@ const CommentDrawer = ({ item }) => {
             onChange={(event) => setFormText(event.target.value)}
           />
 
-          <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+          <Stack direction="row" spacing={2} alignitems="center" flexwrap="wrap">
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel id="rating-label">Rating</InputLabel>
               <Select
@@ -287,7 +291,7 @@ const CommentDrawer = ({ item }) => {
             spacing={1}
             sx={{
               overflowX: "hidden",
-              flexWrap: "nowrap",
+              flexwrap: "nowrap",
               gap: 1,
               minWidth: 0,
               pb: 1,
@@ -329,7 +333,7 @@ const CommentDrawer = ({ item }) => {
           const dislikeCount = Array.isArray(r.dislikes) ? r.dislikes.length : (r.dislikes || 0);
           return (
             <Box key={r.id || i} sx={{ mb: 2 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Stack direction="row" alignitems="center" justifycontent="space-between">
                 <Typography variant="body2" sx={{ fontWeight: 600 }}>
                   User {r.userID || r.user}
                 </Typography>
@@ -359,7 +363,7 @@ const CommentDrawer = ({ item }) => {
                   sx={{
                     mt: 2,
                     overflowX: "hidden",
-                    flexWrap: "nowrap",
+                    flexwrap: "nowrap",
                     gap: 1,
                     minWidth: 0,
                   }}

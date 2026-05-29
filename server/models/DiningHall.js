@@ -2,29 +2,29 @@ import mongoose from "mongoose";
 
 const diningHallSchema = new mongoose.Schema(
   {
+    slug: {
+      type: String,
+      required: true,
+      unique: true
+    },
     name: {
       type: String,
       required: true,
       unique: true,
     },
-
-    location: {
+    shortName: {
       type: String,
+      required: true,
+      unique: true,
     },
-
-    // Reviews that belong to this dining hall
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
-    ],
-
-    // Current or active daily menu
-    currentMenu: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "DailyMenu",
+    averageRating: {
+      type: Number,
+      default: 0
     },
+    level: {
+      type: String,
+      default: "small"
+    }
   },
   {
     timestamps: true,

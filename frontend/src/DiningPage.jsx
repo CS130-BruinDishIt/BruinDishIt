@@ -1,5 +1,5 @@
 import { fetchDailyMenu } from "./api/dining";
-import { diningLocations } from "./data/diningLocations";
+import { fetchDiningHall } from "./api/dining";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./styles/DiningPage.css";
@@ -32,10 +32,10 @@ const MEAL_LABELS = {
 const DiningPage = () => {
   // Identify dining location being fetched
   const { name } = useParams();
-  const loc = diningLocations.find(u => u.id === name);
   const navigate = useNavigate();
 
   // Track request lifecycle to handle async loading and error states cleanly.
+  const [hall, setHall] = useState(null);
   const [menuData, setMenuData] = useState(null);
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -44,9 +44,11 @@ const DiningPage = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const openComments = ({ id, name }) => {
-    setSelectedItem({ id, name });
+  const openComments = ({ id, name, type = "items" }) => {
+    setSelectedItem({ id, name, type});
     setDrawerOpen(true);
+        console.log(type)
+
     const key = encodeURIComponent(`${id}`);
     window.history.replaceState(null, "", `${window.location.pathname}#${key}`);
   };
@@ -56,6 +58,13 @@ const DiningPage = () => {
     setSelectedItem(null);
     window.history.replaceState(null, "", window.location.pathname);
   };
+
+  useEffect(() => {
+    if (!name) return;
+    fetchDiningHall(name)
+      .then((data) => setHall(data))
+      .catch((error) => console.error("Error fetching dining hall:", error));
+  }, [name]);
 
   // Fetch latest data from database
   useEffect(() => {
@@ -129,22 +138,27 @@ const DiningPage = () => {
     <>
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
-          <Box className="location-header"> 
-            <Typography variant="h3" className="location-title">
-              {loc?.name}
-            </Typography>
+          <Box className="location-header">
+            <Stack direction="row" alignitems="center" spacing={2}>
+              <Typography variant="h3" className="location-title">
+                {hall?.name || name}
+              </Typography>
+              <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls' })} className="review-btn">
+                <ModeCommentOutlinedIcon fontSize='medium' />
+              </IconButton>
+            </Stack>
 
-            <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}> 
+            <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
               View All Time Menu Items
             </Button>
           </Box>
 
-            {loc?.description && (
-              <Typography variant="body1" color="text.secondary">
-                {loc.description}
-              </Typography>
-            )}
-          
+          {hall?.description && (
+            <Typography variant="body1" color="text.secondary">
+              {hall.description}
+            </Typography>
+          )}
+
         </Box>
 
         <Stack spacing={4}>
@@ -170,14 +184,14 @@ const DiningPage = () => {
                       <Stack spacing={1}>
                         {items.map(({ id, name }) => (
                           <Stack key={id} direction="row" sx={{ py: 0.5 }}>
-                            
+
                             {/* Item Name */}
                             <Typography variant="body1" sx={{ px: 1, py: 0 }}>
                               • {name}
                             </Typography>
 
                             {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name })} className="review-btn" >
+                            <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" >
                               <ModeCommentOutlinedIcon fontSize="small" />
                             </IconButton>
                           </Stack>

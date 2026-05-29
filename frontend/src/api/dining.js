@@ -43,6 +43,12 @@ export async function fetchItemReviews(itemId, { signal } = {}) {
     `/api/dining/items/${encodeURIComponent(itemId)}/reviews`,
     API_BASE_URL
   );
+export async function fetchAllMenuItems(hallSlug, { signal } = {}) {
+  if (!hallSlug) {
+    throw new Error("Hall slug is required.");
+  }
+
+  const url = new URL(`/api/dining/items/${encodeURIComponent(hallSlug)}`, API_BASE_URL);
 
   const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
   if (!response.ok) {

@@ -12,6 +12,8 @@ async function updateDailyMenus() {
 
     const todayStr = new Date().toISOString().split('T')[0];
 
+    await MenuItem.updateMany({lastSeen: { $exists: false}}, [{ $set: { lastSeen: "$dateAdded" } }]); // backfill menu items that don't have lastSeen
+
     await DailyMenu.deleteMany({});  // wipe yesterday's menus
     console.log("Cleared old daily menus.");
 
@@ -39,7 +41,7 @@ async function updateDailyMenus() {
             // returnDocument: "after" tells it to return the newly created document
             const item = await MenuItem.findOneAndUpdate(
               { name: foodName, hallName: hallSlug }, // Search criteria
-              { name: foodName, hallName: hallSlug }, // Data to save
+              { name: foodName, hallName: hallSlug, lastSeen: new Date() }, // Data to save
               { upsert: true, returnDocument: "after" }             // Options
             );
 

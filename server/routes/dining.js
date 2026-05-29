@@ -60,7 +60,7 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 
 		// get all unique menu items
 		const items = await MenuItem.find({hallName: hallSlug})
-			.select("name averageRating dateAdded")
+			.select("name averageRating dateAdded lastSeen")
 			.sort({name: 1})
 			.lean();
 
@@ -75,6 +75,7 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 				name: item.name,
 				averageRating: item.averageRating,
 				dateAdded: item.dateAdded,
+				lastSeen: item.lastSeen,
 			})),
 		});
 	} catch (error) {

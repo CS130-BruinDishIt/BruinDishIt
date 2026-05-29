@@ -11,10 +11,12 @@ import {
   Container,
   Divider,
   Drawer,
+  IconButton,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
+import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 import CommentDrawer from "./CommentDrawer";
 
 const DiningItemsPage = () => {
@@ -159,16 +161,23 @@ const DiningItemsPage = () => {
                   </Typography>
 
                   <Divider sx={{ mb: 2 }} />
-
                   <Stack spacing={1}>
-                    {letterItems.map(({ id, name }) => (
-                      <Stack key={id} direction="row" sx={{ py: 0.5 }}>
-                        <Typography variant="body1" sx={{ px: 1, py: 0 }}>
-                          • {name}
-                        </Typography>
+                    {letterItems.map(({id, name, lastSeen, dateAdded}) => (
+                        <Stack key={id} direction="row" sx={{ py: 0.75 }}>
+                            {/* Item Name */}
+                            <Typography variant="body1" sx={{ px: 1, py: 0 }}>
+                              • {name}
+                            </Typography>
 
-                       
-                      </Stack>
+                            <Typography variant="caption" color="text.secondary" sx={{ ml: .5, whiteSpace: "nowrap", lineHeight: 1, position: "relative", top: "6px" }}>
+                                Last served: {new Date(lastSeen ?? dateAdded).toLocaleDateString()}
+                            </Typography>
+
+                            {/* Button to view reviews */}
+                            <IconButton onClick={() => openComments({ id, name })} className="review-btn" sx={{ ml: 1 }}>
+                              <ModeCommentOutlinedIcon fontSize="small" />
+                            </IconButton>
+                          </Stack>
                     ))}
                   </Stack>
                 </CardContent>

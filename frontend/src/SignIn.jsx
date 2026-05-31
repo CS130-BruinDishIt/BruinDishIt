@@ -20,7 +20,7 @@ function SignIn() {
 
           {/* TODO backend auth */}
 
-          <TextField type="email" label="Email" variant="outlined" fullWidth />
+          <TextField type="username" label="Username" variant="outlined" fullWidth />
           <TextField type="password" label="Password" variant="outlined" fullWidth />
           <Button type="submit" variant="contained" size="large" className="signin-button"
           >Sign In</Button>

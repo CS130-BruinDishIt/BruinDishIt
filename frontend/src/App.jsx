@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { fetchDiningHalls } from "./api/dining";
 import DiningPage from './DiningPage'
 import DiningItemsPage from './DiningItemsPage'
+import UserProfile from './UserProfile.jsx'
 import './styles/App.css'
 import {
   Box,
@@ -47,6 +48,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dining/:name" element={<DiningPage />} />
         <Route path="/dining/:name/items" element={<DiningItemsPage />} />
+        <Route path="/user/:id" element={<UserProfile />} />
       </Routes>
     </>
   )

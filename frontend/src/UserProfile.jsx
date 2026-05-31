@@ -1,5 +1,3 @@
-import { fetchDailyMenu } from "./api/dining";
-import { fetchDiningHall } from "./api/dining";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./styles/UserProfile.css";
@@ -30,7 +28,7 @@ function UserProfile() {
 
     return (
       <Container maxWidth="sm" className="profile-container">
-        <Paper elevation={4} className="profile-box">
+        <Paper elevation={3} className="profile-box">
 
           <Box className="profile-header">
             <Avatar className= "profile-pic">
@@ -42,7 +40,7 @@ function UserProfile() {
                 {user.username}
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                Joined {user.joined}
+                Joined Recently
               </Typography>
             </Box>
            </Box>

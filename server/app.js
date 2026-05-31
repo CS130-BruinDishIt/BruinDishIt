@@ -6,6 +6,7 @@ import cron from 'node-cron';
 
 import { runUpdate } from './scripts/updateMenus.js';
 import diningRoutes from './routes/dining.js';
+import authRoutes from "./authentication/routes.js";
 
 const app = express();
 // Allow larger payloads to support base64 image uploads in reviews.
@@ -17,6 +18,7 @@ app.use(
 );
 
 app.use("/api/dining", diningRoutes);
+app.use("/api/auth", authRoutes);
 
 await mongoose.connect(process.env.MONGODB_URI);
 console.log("Connected to MongoDB");

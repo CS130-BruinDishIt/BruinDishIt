@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "./models/User.js"; // Adjust path to your schema file
+import User from "../models/User.js"; // Adjust path to your schema file
 
 
 const JWT_SECRET = process.env.JWT_SECRET;

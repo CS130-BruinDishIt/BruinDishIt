@@ -55,11 +55,16 @@
 }
 
 /* both tabs */
-.profile-tabs .MuiTab-root,
-.profile-tabs .Mui-selected{
+.profile-tabs .MuiTab-root{
     color: white;
     background-color: #1976d2;
     border-right: 1px solid white;
+}
+
+/* selected tab */
+.profile-tabs .MuiTab-root.Mui-selected {
+  color: white;
+  background-color: #0758a8;
 }
 
 /* bar under selected tab */

@@ -40,6 +40,7 @@ export async function loginController(req, res) {
        id: user._id,
        username: user.username,
        profileImageURL: user.profileImageURL,
+       createdAt: user.createdAt,
      }
    });
 

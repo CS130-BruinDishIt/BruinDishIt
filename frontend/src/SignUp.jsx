@@ -12,9 +12,13 @@ import {
     Typography,
 } from "@mui/material";
 
-function SignUp() {
-    const navigate = useNavigate();
+// https://medium.com/@arpit.gupta_75189/seamless-user-redirection-in-react-after-authentication-326f663a9cc2
+// https://www.joshwcomeau.com/react/data-binding/
 
+function SignUp() {
+
+    // react helpers for redirecting after account creation success, and form state vars/funcs 
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,29 +26,29 @@ function SignUp() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     async function handleSubmit(event) {
-        event.preventDefault();
+        event.preventDefault(); // no refresh on submit
+        setErrorMessage(""); // clear error message on new submit
 
-        setErrorMessage("");
-
+        // pswd mismatch error handling before sending to backend
         if (password !== confirmPassword) {
-        setErrorMessage("Passwords do not match.");
+        setErrorMessage("Passwords do not match.");  
         return;
         }
 
-        setIsSubmitting(true);
+        setIsSubmitting(true); // form is actively submitting -> button changes state
 
         try {
-        await signupUser({ username, password });
-
+        await signupUser({ username, password }); // creds to backend
         navigate("/signin", {
             state: {
-            successMessage: "Account created successfully. Please sign in.",
+            successMessage: "Account created successfully. Please sign in.", // pass success message to SignIn.jsx to show alert
             },
         });
+
         } catch (error) {
         setErrorMessage(error.message || "Could not create account.");
         } finally {
-        setIsSubmitting(false);
+        setIsSubmitting(false); // normal state for button
         }
     }
     

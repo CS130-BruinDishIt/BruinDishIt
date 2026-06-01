@@ -36,7 +36,7 @@ export async function signupUser({ username, password }) {
 
 // Sending usr and pswd to backend to verify and log in user, return user data if success
 export async function loginUser({ username, password }) {
-    const response = await fetch(`$(API_BASE_URL)/api/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
         Accept: "application/json",
@@ -50,4 +50,14 @@ export async function loginUser({ username, password }) {
   }
 
   return response.json();
+}
+
+export function saveAuthSession({ token, user }) {
+  localStorage.setItem("token", token);
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
+export function getAuthUser() {
+  const savedUser = localStorage.getItem("user");
+  return savedUser ? JSON.parse(savedUser) : null;
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getAuthUser } from "./api/auth";
 import "./styles/UserProfile.css";
 import {
   Box,
@@ -20,11 +21,13 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 function UserProfile() {
     const [tab, setTab] = useState(0);
 
-    // temp user until authenticaion + backend connected
-    const user = {
-        username: "User1",
-        joined: "05/29/2026",
-    };
+    // // temp user until authenticaion + backend connected
+    // const user = {
+    //     username: "User1",
+    //     joined: "05/29/2026",
+    // };
+    const user = getAuthUser();
+    const joinDate = user?.createdAt ? new Date(user.createdAt).toLocaleDateString(): null;; // actual join date from backend, or null case (which happens sometimes?)
 
     return (
       <Container maxWidth="sm" className="profile-container">
@@ -37,10 +40,10 @@ function UserProfile() {
 
             <Box className ="profile-info">
               <Typography variant="h4" component="h1" className="profile-username">
-                {user.username}
+                {user?.username || "User"}
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                Joined Recently
+                Joined {joinDate}
               </Typography>
             </Box>
            </Box>

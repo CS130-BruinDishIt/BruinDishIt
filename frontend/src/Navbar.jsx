@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import forkKnifeIcon from "./assets/fork-and-knife.svg";
-import profileIcon from "./assets/user.png";
+import profileIcon from "./assets/user.png";  // maybe import these from MUI icons too?
 import "./styles/Navbar.css";
 import {
   AppBar,
@@ -12,8 +12,11 @@ import {
   Toolbar,
   Typography, 
 } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { getAuthUser } from "./api/auth";
 
 const Navbar = () => {
+  const user = getAuthUser();
   return (
     <AppBar position="static" elevation={0} className="navbar">
       <Container maxWidth="xl" disableGutters>
@@ -24,10 +27,16 @@ const Navbar = () => {
           <Typography variant="h4" className="title"
           >BruinDishIt</Typography>
 
-          <Button component={Link} to="/signin" className="profile-button"
-          > SIGN IN
+          {user ? (
+            <Box component={Link} to={`/user/${user.id}`} className="profile-button">
+              <Avatar className="profile-icon"> <AccountCircleIcon /> </Avatar>
+            </Box>
+          ) : (
+            <Button component={Link} to="/signin" className="profile-button"> 
+              SIGN IN
             <Avatar src={profileIcon} alt="Profile" className="profile-icon"/>
           </Button>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { loginUser } from "./api/auth";
+import { loginUser, saveAuthSession } from "./api/auth";
 import "./styles/SignIn.css";
 import {
   Alert,
@@ -17,19 +17,28 @@ function SignIn() {
   // react helpers for reading messages passed to this page and redirecting after login
   const location = useLocation(); // current page/route
   const navigate = useNavigate(); // redirect user
-  const successMessage = location.state?.successMessage; // success message passed from previous page ( successful account creation from SignUp.jsx)
+  const initSuccessMessage = location.state?.successMessage; // success message passed from previous page ( successful account creation from SignUp.jsx)
   // SignIn form state vars/funcs for inputs and submit status
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState(initSuccessMessage || ""); // show success message if it exists
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();  // stops page refresh on app
     setIsSubmitting(true); // form is actively submitting -> button changes state
+    // clear error/success messages on new submit
+    setErrorMessage("");
+    setSuccessMessage("");
 
     try {
       const data = await loginUser({ username, password }); // send creds to backend and wait till response
+
+      console.log("LOGIN DATA:", data);
+      console.log("LOGIN USER:", data.user);
+
+      saveAuthSession({token: data.token, user: data.user}); // save token and user to local storage for later use
       navigate(`/user/${data.user.id}`); //redirect to user profile page after login
 
     } catch (error) {
@@ -51,6 +60,7 @@ function SignIn() {
         <Typography variant="h4" component="h1" className="form-title">Sign In to your BruinDishIt Account</Typography>
         <Box component="form" className="signin-form" onSubmit={handleSubmit}>
                                                                                     {/*save into username and password state vars */}
+          {errorMessage && <Alert severity="error">{errorMessage}</Alert>}   {/*display backend error message */}
           <TextField type="username" label="Username" variant="outlined" fullWidth value={username} onChange={(event) => setUsername(event.target.value)}/>
           <TextField type="password" label="Password" variant="outlined" fullWidth value={password} onChange={(event) => setPassword(event.target.value)}/>
           <Button type="submit" variant="contained" size="large" className="signin-button" disabled={isSubmitting}>

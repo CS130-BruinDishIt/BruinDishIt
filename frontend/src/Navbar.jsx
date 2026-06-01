@@ -36,6 +36,17 @@ const Navbar = () => {
     setAnchorEl(null);
   }
 
+  function handleSettingsClick() {
+    handleMenuClose();
+    navigate(`/user/${user.id}`);
+  }
+
+  function handleSignOutClick() {
+    clearAuthSession();
+    handleMenuClose();
+    navigate("/signin");
+  }
+
   return (
     <AppBar position="static" elevation={0} className="navbar">
       <Container maxWidth="xl" disableGutters>
@@ -64,14 +75,14 @@ const Navbar = () => {
 
                 <Divider className="profile-menu-divider" />  
 
-                <MenuItem className="profile-menu-item" onClick={handleMenuClose}>
+                <MenuItem className="profile-menu-item" onClick={handleSettingsClick}>
                   <ListItemIcon> <SettingsIcon fontSize="small"/></ListItemIcon>
                   Settings
                 </MenuItem>
 
                 <Divider className="profile-menu-divider" />
 
-                <MenuItem className="profile-menu-item" onClick={handleMenuClose}>
+                <MenuItem className="profile-menu-item" onClick={handleSignOutClick}>
                   <ListItemIcon> <LogoutIcon fontSize="small"/></ListItemIcon>
                   Sign Out
                 </MenuItem>
@@ -88,9 +99,5 @@ const Navbar = () => {
     </AppBar>
   );
 };
-
-  // <Box component={Link} to={`/user/${user.id}`} className="profile-button">
-              
-            // </Box>
 
 export default Navbar;

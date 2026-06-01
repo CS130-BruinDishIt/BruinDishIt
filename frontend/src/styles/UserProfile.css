@@ -1,0 +1,97 @@
+.profile-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.profile-box {
+  width: 100%;
+  max-width: 700px;
+  padding: 30px 40px;
+  border-radius: 6px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.profile-pic.MuiAvatar-root {
+    width: 170px;
+    height: 170px;
+    background-color: #a5a1a1;
+    color: white;
+}
+
+.profile-pic svg{
+    font-size: 150px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.profile-username.MuiTypography-root {
+    font-weight: 700;
+}
+
+.profile-tabs-box{
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.profile-tabs{
+    background-color: #1976d2; 
+}
+
+/* both tabs */
+.profile-tabs .MuiTab-root{
+    color: white;
+    background-color: #1976d2;
+    border-right: 1px solid white;
+}
+
+/* selected tab */
+.profile-tabs .MuiTab-root.Mui-selected {
+  color: white;
+  background-color: #0758a8;
+}
+
+/* bar under selected tab */
+.profile-tabs .MuiTabs-indicator{
+    background-color: white;
+    height: 3px;
+}
+
+.profile-tab-content{
+    padding: 20px;
+}
+
+.settings-form{
+    display: grid;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settings-form .MuiButton-root{
+    padding: 10px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.posts{
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

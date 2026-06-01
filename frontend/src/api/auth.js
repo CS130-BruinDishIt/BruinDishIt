@@ -85,6 +85,16 @@ export function getAuthToken() {
   return localStorage.getItem("token");
 }
 
+export function authJsonHeaders() {
+  const token = getAuthToken();
+
+  return {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 //sign out by clearing local storage
 export function clearAuthSession() {
   localStorage.removeItem("token");

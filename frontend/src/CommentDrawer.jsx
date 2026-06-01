@@ -56,6 +56,9 @@ const CommentDrawer = ({ item }) => {
   const authUser = getAuthUser();
   const isLoggedIn = Boolean(authUser);
 
+  const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUser.id);
+
+
   const [reviews, setReviews] = useState([]);
   const [photos, setPhotos] = useState([]);
   // Form state for creating or editing a review.
@@ -356,11 +359,11 @@ const CommentDrawer = ({ item }) => {
           const dislikeCount = Array.isArray(r.dislikes) ? r.dislikes.length : (r.dislikes || 0);
           return (
             <Box key={r.id || i} sx={{ mb: 2 }}>
-              <Stack direction="row" alignitems="center" justifycontent="space-between">
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  User {r.userID || r.user}
+                  {r.userID || r.user}
                 </Typography>
-                {isLoggedIn && (
+                {isOwnReview(r) && (
                   <IconButton
                   size="small"
                   aria-label="Edit review"

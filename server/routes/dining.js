@@ -11,6 +11,7 @@ const router = express.Router();
 // Shape review documents for the existing CommentDrawer UI.
 const mapReviewForDrawer = (review) => ({
 	id: review._id,
+	userId: review.userId,
 	user: review.user,
 	date: review.date,
 	review: review.text,
@@ -175,6 +176,7 @@ async function createReview(id, idField, req, res, next) {
     const text = String(req.body.text || "").trim();
     const rating = Number(req.body.rating);
     const user = req.user.username;
+	const userId = req.user._id;
     const imageUrl = req.body.imageUrl || null;
 
     if (!text) return res.status(400).json({ message: "Review text is required." });
@@ -184,7 +186,7 @@ async function createReview(id, idField, req, res, next) {
 
     const review = await Review.create({
       [idField]: id,  // either "itemId" or "hallId"
-      user, rating, text, imageUrl,
+      user, userId, rating, text, imageUrl,
       date: new Date(),
     });
 
@@ -273,13 +275,13 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 	}
 
 	const review = await Review.findOneAndUpdate(
-	  { _id: reviewId, [idField]: id },
+	  { _id: reviewId, [idField]: id, userId: req.user._id }, // users can only edit their own reviews
 	  update,
 	  { new: true, runValidators: true }
 	);
 
 	if (!review) {
-	  return res.status(404).json({ message: "Review not found." });
+	  return res.status(404).json({ message: "Review not found or You are not the owner of this review." });
 	}
 
 	return res.json({ review: mapReviewForDrawer(review) });

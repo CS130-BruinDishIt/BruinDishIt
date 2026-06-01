@@ -1,77 +1,59 @@
 import "./styles/SignUp.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useForm } from "./hooks/useForm";
 import { signupUser } from "./api/auth";
 import {
-    Alert,
-    Box,
-    Button,
-    Container,
-    Paper,
-    TextField,
-    Typography,
+	Alert,
+	Box,
+	Button,
+	Container,
+	Paper,
+	TextField,
+	Typography,
 } from "@mui/material";
 
 // https://medium.com/@arpit.gupta_75189/seamless-user-redirection-in-react-after-authentication-326f663a9cc2
 // https://www.joshwcomeau.com/react/data-binding/
 
 function SignUp() {
+// react helpers from hooks
+  const navigate = useNavigate();
+  const { 
+    values, setVals, successMessage, errorMessage, setErrorMessage, isSubmitting, handleSubmit 
+	} = useForm({ username: "", password: "", confirmPassword: "" });
 
-    // react helpers for redirecting after account creation success, and form state vars/funcs 
-    const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
+  const onSubmit = handleSubmit(async ({ username, password, confirmPassword }) => {
+    // pswd mismatch error handling before sending to backend
+		if (password !== confirmPassword) {
+		setErrorMessage("Passwords do not match.");  
+		return;
+		}
+		await signupUser({ username, password });
+    navigate(`/signin`, { // redirect to sign-in page if signup success
+      state: {successMessage: "Account created successfully. Please sign in."},  // pass success message to SignIn.jsx to show alert
+		});
+	});
 
-    async function handleSubmit(event) {
-        event.preventDefault(); // no refresh on submit
-        setErrorMessage(""); // clear error message on new submit
+	return (
+		<Container maxWidth="sm" className="signup-container" >
+			<Paper elevation={3} className="signup-paper" >
+				<Typography variant="h4" component="h1" className="form-title"> Create An Account </Typography>
 
-        // pswd mismatch error handling before sending to backend
-        if (password !== confirmPassword) {
-        setErrorMessage("Passwords do not match.");  
-        return;
-        }
+				<Box component="form" className="signup-form" onSubmit={onSubmit} >
 
-        setIsSubmitting(true); // form is actively submitting -> button changes state
+					{errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+					<TextField type="text" label="Username" variant="outlined" fullWidth value={values.username} onChange={(event) => setVals({...values, username: event.target.value})} />
+					<TextField type="password" label="Password" variant="outlined" fullWidth value={values.password} onChange={(event) => setVals({...values, password: event.target.value})} />
+					<TextField type="password" label="Confirm Password" variant="outlined" fullWidth value={values.confirmPassword} onChange={(event) => setVals({...values, confirmPassword: event.target.value})} />
 
-        try {
-        await signupUser({ username, password }); // creds to backend
-        navigate("/signin", {
-            state: {
-            successMessage: "Account created successfully. Please sign in.", // pass success message to SignIn.jsx to show alert
-            },
-        });
+					<Button type="submit" variant="contained" size="large" className="create-button" disabled={isSubmitting}>
+						{isSubmitting ? "Creating Account..." : "Create Account"}
+					</Button>
 
-        } catch (error) {
-        setErrorMessage(error.message || "Could not create account.");
-        } finally {
-        setIsSubmitting(false); // normal state for button
-        }
-    }
-    
-    return (
-        <Container maxWidth="sm" className="signup-container" >
-            <Paper elevation={3} className="signup-paper" >
-                <Typography variant="h4" component="h1" className="form-title"> Create An Account </Typography>
-
-                <Box component="form" className="signup-form" onSubmit={handleSubmit} >
-
-                    {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-                    <TextField type="text" label="Username" variant="outlined" fullWidth value={username} onChange={(event) => setUsername(event.target.value)}/>
-                    <TextField type="password" label="Password" variant="outlined" fullWidth value={password} onChange={(event) => setPassword(event.target.value)}/>
-                    <TextField type="password" label="Confirm Password" variant="outlined" fullWidth value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)}/>
-
-                    <Button type="submit" variant="contained" size="large" className="create-button" disabled={isSubmitting}>
-                        {isSubmitting ? "Creating Account..." : "Create Account"}
-                    </Button>
-                    
-                </Box>
-            </Paper>
-        </Container>
-    );
+				</Box>
+			</Paper>
+		</Container>
+	);
 }
 
 export default SignUp;

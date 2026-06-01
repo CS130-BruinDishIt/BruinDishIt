@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { loginUser, saveAuthSession } from "./api/auth";
+import { useForm } from "./hooks/useForm";
 import "./styles/SignIn.css";
 import {
   Alert,
@@ -13,44 +13,26 @@ import {
 } from "@mui/material";
 
 function SignIn() {
+// react helpers from hooks
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { 
+    values, setVals, successMessage, errorMessage, setSuccessMessage, setErrorMessage, isSubmitting, handleSubmit 
+  } = useForm({ username: "", password: ""},
+    location.state?.successMessage || "" // success message from SignUp if redirected
+    );
 
-  // react helpers for reading messages passed to this page and redirecting after login
-  const location = useLocation(); // current page/route
-  const navigate = useNavigate(); // redirect user
-  const initSuccessMessage = location.state?.successMessage; // success message passed from previous page ( successful account creation from SignUp.jsx)
-  // SignIn form state vars/funcs for inputs and submit status
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [successMessage, setSuccessMessage] = useState(initSuccessMessage || ""); // show success message if it exists
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  async function handleSubmit(event) {
-    event.preventDefault();  // stops page refresh on app
-    setIsSubmitting(true); // form is actively submitting -> button changes state
-    // clear error/success messages on new submit
-    setErrorMessage("");
-    setSuccessMessage("");
-
-    try {
-      const data = await loginUser({ username, password }); // send creds to backend and wait till response
-
-      console.log("LOGIN DATA:", data);
-      console.log("LOGIN USER:", data.user);
-
-      saveAuthSession({token: data.token, user: data.user}); // save token and user to local storage for later use
-      navigate(`/user/${data.user.id}`); //redirect to user profile page after login
-
-    } catch (error) {
-      setErrorMessage(error.message || "Could not sign in.");
-    } finally {
-      setIsSubmitting(false);  // goes back to normal button state
-    }
-  }
-
+  const onSubmit = handleSubmit(async ({ username, password }) => {
+    const data = await loginUser({ username, password});
+    saveAuthSession({ token: data.token, user: data.user });
+    navigate(`/user/${data.user.id}`); // redirect to profile page if login success
+  },
+  "Could not sign in. Please check your username and password and try again."
+);
+ 
   return (
     <Container maxWidth="sm" className="signin-container">
-      {/* severity --> success --> green check mark */}
+      {/* severity --> success --> green check mark */} 
       {successMessage && (
         <Alert severity="success" className="signin-alert">
           {successMessage}
@@ -58,11 +40,11 @@ function SignIn() {
       )}
       <Paper elevation={3} className="signin-paper">
         <Typography variant="h4" component="h1" className="form-title">Sign In to your BruinDishIt Account</Typography>
-        <Box component="form" className="signin-form" onSubmit={handleSubmit}>
+        <Box component="form" className="signin-form" onSubmit={onSubmit}>
                                                                                     {/*save into username and password state vars */}
           {errorMessage && <Alert severity="error">{errorMessage}</Alert>}   {/*display backend error message */}
-          <TextField type="username" label="Username" variant="outlined" fullWidth value={username} onChange={(event) => setUsername(event.target.value)}/>
-          <TextField type="password" label="Password" variant="outlined" fullWidth value={password} onChange={(event) => setPassword(event.target.value)}/>
+          <TextField type="username" label="Username" variant="outlined" fullWidth value={values.username} onChange={(event) => setVals({...values, username: event.target.value})}/>
+          <TextField type="password" label="Password" variant="outlined" fullWidth value={values.password} onChange={(event) => setVals({...values, password: event.target.value})}/>
           <Button type="submit" variant="contained" size="large" className="signin-button" disabled={isSubmitting}>
             {isSubmitting ? "Signing In..." : "Sign In"}  {/*change button when actively submitting*/}
           </Button>

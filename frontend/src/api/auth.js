@@ -52,6 +52,25 @@ export async function loginUser({ username, password }) {
   return response.json();
 }
 
+// // ...
+// export async function updateUser({ currPassword, newPassword, confirmNewPassword }) {
+
+//     const response = await fetch(`${API_BASE_URL}/api/auth/update`, {
+//         method: "PATCH", //modification to existing, not creating new 
+//         headers: {
+//             Accept: "application/json",
+//             "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify({ currPassword, newPassword, confirmNewPassword }),
+//     });
+
+//   if (!response.ok) {
+//     throw new Error(await parseErrorMessage(response));
+//   }
+
+//   return response.json();
+// }
+
 export function saveAuthSession({ token, user }) {
   localStorage.setItem("token", token);
   localStorage.setItem("user", JSON.stringify(user));
@@ -60,4 +79,14 @@ export function saveAuthSession({ token, user }) {
 export function getAuthUser() {
   const savedUser = localStorage.getItem("user");
   return savedUser ? JSON.parse(savedUser) : null;
+}
+
+export function getAuthToken() {
+  return localStorage.getItem("token");
+}
+
+//sign out by clearing local storage
+export function clearAuthSession() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 }

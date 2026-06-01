@@ -12,10 +12,10 @@ const reviewSchema = new mongoose.Schema({
     ref: "DiningHall",
   },
   userId: { // keep track of who wrote review
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "User",
-  required: true,
-},
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   user: { type: String, required: true },
   rating: { type: Number, required: true, min: 1, max: 5 },
   text: { type: String, required: true },
@@ -25,12 +25,12 @@ const reviewSchema = new mongoose.Schema({
   imageUrl: { type: String },
 });
 
-reviewSchema.pre('validate', function() {
+reviewSchema.pre('validate', function () {
   // both itemId and hallId are missing
   if (!this.itemId && !this.hallId) {
     return new Error('A review must be attached to either a MenuItem or a DiningHall.');
   }
-  
+
   // both provided
   if (this.itemId && this.hallId) {
     return new Error('A review cannot be attached to BOTH a MenuItem and a DiningHall.');

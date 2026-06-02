@@ -20,6 +20,7 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import StarIcon from "@mui/icons-material/Star";
 
 const formatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short', // options: 'full', 'long', 'medium', 'short'
@@ -51,6 +52,19 @@ const buildPhotosFromReviews = (reviewList) => (
     .filter(Boolean)
     .sort((a, b) => new Date(b.date) - new Date(a.date))
 );
+
+// Stars displayed for reviews 
+const buildStars = (rating) => {
+  const numericRating = Number(rating) || 0;
+
+  return Array.from({ length: 5 }, (_, index) => (
+    <StarIcon
+      key={index}
+      fontSize="small"
+      sx={{ color: index < numericRating ? "#f5b301" : "#d6d6d6" }}
+    />
+  ));
+};
 
 const CommentDrawer = ({ item }) => {
   const authUser = getAuthUser();
@@ -192,7 +206,9 @@ const CommentDrawer = ({ item }) => {
   if (!item) return null;
 
   return (
-    <Box sx={{ width: "100%", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden" }}>
+    <Box sx={{width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
+      }}
+    >
 
       <Typography variant="h6">{item.name}</Typography>
 
@@ -379,6 +395,14 @@ const CommentDrawer = ({ item }) => {
               <Typography variant="caption" color="text.secondary">
                 {formatter.format(new Date(r.date))}
               </Typography>
+
+              {/* Display star icons for the rating. */}
+              <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
+                {buildStars(r.rating)}
+                <Typography variant="body2" sx={{ fontWeight: 600, ml: 2.5 }}>
+                  {Number(r.rating) || 0}/5
+                </Typography>
+              </Stack>
 
               <Typography sx={{ mt: 0.5, whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere" }}>
                 {r.review}

@@ -206,7 +206,9 @@ const CommentDrawer = ({ item }) => {
   if (!item) return null;
 
   return (
-    <Box sx={{ width: "100%", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden" }}>
+    <Box sx={{width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
+      }}
+    >
 
       <Typography variant="h6">{item.name}</Typography>
 

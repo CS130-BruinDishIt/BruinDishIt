@@ -223,6 +223,7 @@ const DiningItemsPage = () => {
               height: "90vh",
               borderTopLeftRadius: 16,
               borderTopRightRadius: 16,
+              overflowX: "hidden",
             },
           },
         }}

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -52,6 +54,7 @@
 
 body {
   margin: 0;
+  padding-top: 72px;
 }
 
 #root {

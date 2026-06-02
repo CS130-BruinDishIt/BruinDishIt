@@ -1,56 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
 .navbar {
-  top: 0;
-  left: 0;
-  right: 0;
   background-color: white !important;
-  color: black !important;
+  color: #525a7a !important;
   border-bottom: 1px solid #e0e0e0;
 }
 
 .toolbar {
   margin: 10px;
-  min-height: 72px;
+  width: 100%;
+  min-height: 100px !important;
+  transition: min-height 0.3s ease;
   display: flex;
+  justify-content: center;
+}
+
+.navbar-scrolled .toolbar {
+  min-height: 75px !important;
+}
+
+.toolbar-content {
+  width: 80%;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .home-button {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background-color: #f5f5f5;
+  background-color: #a6a8cb;
   display: flex;
   align-self: center;
   justify-content: center;
   text-decoration: none;
+
+  transition: transform 0.2s ease;
 }
 
 .home-button:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .home-icon {
   align-self: center;
-  width: 28px;
-  height: 28px;
+  width: 35px;
+  height: 35px;
 }
 
-/* Hyperlinked title */
 .title.MuiTypography-root  {
   position: absolute;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  font-weight: 700;
-  color: black !important;
-  text-decoration: none !important;
-  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: left 0.3s ease, transform 0.3s ease;
+  font-weight: 900;
+  font-family: "Nunito", sans-serif;
+
+  text-decoration: none;
+  color: inherit;
 }
 
-.title.MuiTypography-root:hover,
-.title.MuiTypography-root:focus,
-.title.MuiTypography-root:visited {
-  color: black !important;
-  text-decoration: none !important;
+.navbar-scrolled .title {
+  left: 100px;
+  transform: translate(0, -50%);
 }
 
 .profile-button {
@@ -60,16 +75,22 @@
   background-color: #f5f5f5 !important;
   color: black !important;
   text-transform: none;
-  font-weight: 600;
+  font-weight: 700 !important;
+  padding: 10px 15px !important;
+  border-radius: 15px !important;
+
+  transition: transform 0.2s ease !important;
 }
 
 .profile-button:hover {
+  background-color: #e5e5e5 !important;
   transform: scale(1.05);
 }
 
 .profile-icon {
-  width: 40px;
-  height: 40px;
+  margin-left: 2.5px;
+  width: 25px;
+  height: 55px;
 }
 
 .profile-menu .MuiPaper-root {

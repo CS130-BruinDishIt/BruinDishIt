@@ -119,6 +119,35 @@ export async function updateReview(id, type, reviewId, payload, { signal } = {})
   return response.json();
 }
 
+// Like/dislike reaction to an existing review.
+export async function reactToReview(id, type, reviewId, reaction, { signal } = {}) {
+  if (!id || !reviewId) {
+    throw new Error("Both the parent ID and review ID are required.");
+  }
+  if (type !== "items" && type !== "halls") throw new Error("Invalid review type.");
+  if (reaction !== "like" && reaction !== "dislike") {
+    throw new Error("Reaction must be 'like' or 'dislike'.");
+  }
+
+  const url = new URL(
+    `/api/dining/${type}/${encodeURIComponent(id)}/reviews/${encodeURIComponent(reviewId)}/reactions`,
+    API_BASE_URL
+  );
+
+  const response = await fetch(url, {
+    method: "POST",
+    signal,
+    headers: authJsonHeaders(),
+    body: JSON.stringify({ reaction }),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseErrorMessage(response));
+  }
+
+  return response.json();
+}
+
 // Fetch all dining halls
 export async function fetchDiningHalls({ signal } = {}) {
   const url = new URL(`/api/dining/halls`, API_BASE_URL);

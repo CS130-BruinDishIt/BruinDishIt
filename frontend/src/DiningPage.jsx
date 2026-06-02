@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 import CommentDrawer from "./CommentDrawer";
+import PageToc from "./PageToc";
 
 // Map backend meal keys to friendly labels for display
 const MEAL_LABELS = {
@@ -28,6 +29,12 @@ const MEAL_LABELS = {
   "dinner": "Dinner",
   "extended dinner": "Extended Dinner",
 };
+
+const slugify = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
 const DiningPage = () => {
   // Identify dining location being fetched
@@ -120,6 +127,23 @@ const DiningPage = () => {
   const meals = useMemo(() => menuData?.meals || [], [menuData]);
   const isLoading = status === "loading" || status === "idle";
 
+  const tocItems = useMemo(
+    () =>
+      meals.flatMap((meal, mealIndex) => {
+        const mealLabel = MEAL_LABELS[meal.mealType] || meal.mealType;
+        const mealId = `meal-${mealIndex}-${slugify(meal.mealType)}`;
+
+        const stationItems = (meal.stations || []).map((station, stationIndex) => ({
+          id: `station-${mealIndex}-${stationIndex}-${slugify(meal.mealType)}-${slugify(station.stationName)}`,
+          label: station.stationName,
+          level: 2,
+        }));
+
+        return [{ id: mealId, label: mealLabel, level: 1 }, ...stationItems];
+      }),
+    [meals]
+  );
+
   // Generate custom URL for each menu item's review section
   useEffect(() => {
     const id = window.location.hash.replace("#", "");
@@ -163,6 +187,8 @@ const DiningPage = () => {
 
   return (
     <>
+      <PageToc items={tocItems} label="STATIONS" />
+
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
           <Box className="location-header">
@@ -195,60 +221,73 @@ const DiningPage = () => {
 
         <Stack spacing={4}>
           {/* Meals */}
-          {meals.map(({ mealType, stations }) => (
-            <Paper key={mealType} elevation={3} sx={{ p: 4, borderRadius: 4 }}>
-              <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
-                {MEAL_LABELS[mealType] || mealType}
-              </Typography>
+          {meals.map(({ mealType, stations }, mealIndex) => {
+            const mealId = `meal-${mealIndex}-${slugify(mealType)}`;
 
-              {/* Stations */}
-              <Stack spacing={3}>
-                {stations.map(({ stationName, items }) => (
-                  <Card key={stationName} variant="outlined" sx={{ borderRadius: 3 }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                        {stationName}
-                      </Typography>
+            return (
+              <Paper key={mealType} elevation={3} sx={{ p: 4, borderRadius: 4 }}>
+                <Typography
+                  id={mealId}
+                  variant="h4"
+                  sx={{ fontWeight: 700, mb: 3, scrollMarginTop: 96 }}
+                >
+                  {MEAL_LABELS[mealType] || mealType}
+                </Typography>
 
-                      <Divider sx={{ mb: 2 }} />
+                {/* Stations */}
+                <Stack spacing={3}>
+                  {stations.map(({ stationName, items }, stationIndex) => {
+                    const stationId = `station-${mealIndex}-${stationIndex}-${slugify(mealType)}-${slugify(stationName)}`;
 
-                      {/* Items */}
-                      <Stack spacing={1}>
-                        {items.map(({ id, name }) => (
-                          <Stack key={id} direction="row" sx={{ py: 0.5 }}>
+                    return (
+                      <Card key={stationName} variant="outlined" sx={{ borderRadius: 3 }}>
+                        <CardContent>
+                          <Typography
+                            id={stationId}
+                            variant="h6"
+                            sx={{ fontWeight: 600, mb: 2, scrollMarginTop: 96 }}
+                          >
+                            {stationName}
+                          </Typography>
 
-                            {/* Item Name */}
-                            <Typography
-                              component="button"
-                              type="button"
-                              variant="body1"
-                              onClick={() => openComments({ id, name, type: "items" })}
-                              sx={{
-                                px: 1,
-                                py: 0,
-                                border: 0,
-                                background: "transparent",
-                                textAlign: "left",
-                                cursor: "pointer",
-                                color: "#1976d2",
-                              }}
-                            >
-                              • {name}
-                            </Typography>
+                          <Divider sx={{ mb: 2 }} />
 
-                            {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" >
-                              <ModeCommentOutlinedIcon fontSize="small" />
-                            </IconButton>
+                          {/* Items */}
+                          <Stack spacing={1}>
+                            {items.map(({ id, name }) => (
+                              <Stack key={id} direction="row" sx={{ py: 0.5 }}>
+                                <Typography
+                                  component="button"
+                                  type="button"
+                                  variant="body1"
+                                  onClick={() => openComments({ id, name, type: "items" })}
+                                  sx={{
+                                    px: 1,
+                                    py: 0,
+                                    border: 0,
+                                    background: "transparent",
+                                    textAlign: "left",
+                                    cursor: "pointer",
+                                    color: "#1976d2",
+                                  }}
+                                >
+                                  • {name}
+                                </Typography>
+
+                                <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn">
+                                  <ModeCommentOutlinedIcon fontSize="small" />
+                                </IconButton>
+                              </Stack>
+                            ))}
                           </Stack>
-                        ))}
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Stack>
-            </Paper>
-          ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </Stack>
+              </Paper>
+            );
+          })}
         </Stack>
       </Container>
 

@@ -18,6 +18,13 @@ import {
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 import CommentDrawer from "./CommentDrawer";
+import PageToc from "./PageToc";
+
+const slugify = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
 const DiningItemsPage = () => {
   const { name } = useParams();
@@ -88,6 +95,16 @@ const DiningItemsPage = () => {
     }, {});
   }, [items]);
 
+  const tocItems = useMemo(
+    () =>
+      Object.keys(groupedItems).map((letter) => ({
+        id: `letter-${slugify(letter)}`,
+        label: letter,
+        level: 1,
+      })),
+    [groupedItems]
+  );
+
   useEffect(() => {
     const id = window.location.hash.replace("#", "");
     if (!id || !items.length) return;
@@ -133,6 +150,8 @@ const DiningItemsPage = () => {
 
   return (
     <>
+      <PageToc items={tocItems} label="Letters" />
+
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
           <Stack direction="row" alignitems="center" spacing={2}>
@@ -168,7 +187,11 @@ const DiningItemsPage = () => {
             {Object.entries(groupedItems).map(([letter, letterItems]) => (
               <Card key={letter} variant="outlined" sx={{ borderRadius: 3 }}>
                 <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                  <Typography
+                    id={`letter-${slugify(letter)}`}
+                    variant="h6"
+                    sx={{ fontWeight: 600, mb: 2, scrollMarginTop: 96 }}
+                  >
                     {letter}
                   </Typography>
 

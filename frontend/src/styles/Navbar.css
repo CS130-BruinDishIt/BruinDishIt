@@ -35,11 +35,22 @@
   height: 28px;
 }
 
+/* Hyperlinked title */
 .title.MuiTypography-root  {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   font-weight: 700;
+  color: black !important;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.title.MuiTypography-root:hover,
+.title.MuiTypography-root:focus,
+.title.MuiTypography-root:visited {
+  color: black !important;
+  text-decoration: none !important;
 }
 
 .profile-button {

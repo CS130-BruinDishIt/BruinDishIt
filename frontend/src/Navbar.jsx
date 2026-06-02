@@ -54,7 +54,9 @@ const Navbar = () => {
           <Box component={Link} to="/" className="home-button">
             <Box component="img" src={forkKnifeIcon} alt="Home" className="home-icon" />
           </Box>
-          <Typography variant="h4" className="title">BruinDishIt</Typography>
+          <Typography component={Link} to="/" variant="h4" className="title">
+            BruinDishIt
+          </Typography>
 
           {user ? (
             <>

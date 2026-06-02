@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
-import { createReview, fetchReviews, updateReview } from "./api/dining";
+import { createReview, fetchReviews, reactToReview, updateReview } from "./api/dining";
 
 import {
   Box,
@@ -166,6 +166,22 @@ const CommentDrawer = ({ item }) => {
       console.error("Failed to save review", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleReaction = async (reviewId, reaction) => {
+    if (!item?.id || !reviewId) return;
+
+    try {
+      const response = await reactToReview(item.id, item.type, reviewId, reaction);
+      const updatedReview = response?.review;
+      if (!updatedReview) return;
+
+      setReviews((prev) =>
+        prev.map((review) => (review.id === updatedReview.id ? updatedReview : review))
+      );
+    } catch (error) {
+      console.error("Failed to react to review", error);
     }
   };
 
@@ -444,20 +460,34 @@ const CommentDrawer = ({ item }) => {
                 sx={{ mt: 2 }}
               >
                 <Stack direction="row" spacing={0.5} >
-                  <ThumbUpAltOutlinedIcon
-                    fontSize="small"
-                    sx={{ color: "primary.main" }}
-                  />
+                  <IconButton
+                    size="small"
+                    aria-label="Like review"
+                    disabled={!r.id}
+                    onClick={() => handleReaction(r.id, "like")}
+                  >
+                    <ThumbUpAltOutlinedIcon
+                      fontSize="small"
+                      sx={{ color: "primary.main" }}
+                    />
+                  </IconButton>
                   <Typography variant="body2">
                     {likeCount}
                   </Typography>
                 </Stack>
 
                 <Stack direction="row" spacing={0.5}>
-                  <ThumbDownAltOutlinedIcon
-                    fontSize="small"
-                    sx={{ color: "error.main" }}
-                  />
+                  <IconButton
+                    size="small"
+                    aria-label="Dislike review"
+                    disabled={!r.id}
+                    onClick={() => handleReaction(r.id, "dislike")}
+                  >
+                    <ThumbDownAltOutlinedIcon
+                      fontSize="small"
+                      sx={{ color: "error.main" }}
+                    />
+                  </IconButton>
                   <Typography variant="body2">
                     {dislikeCount}
                   </Typography>

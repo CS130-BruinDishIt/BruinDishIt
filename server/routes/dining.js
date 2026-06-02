@@ -297,6 +297,46 @@ router.put("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) =>
   updateReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
 );
 
+// Increment like/dislike counts for a review and return the updated review.
+async function reactToReview(id, idField, reviewId, req, res, next) {
+	try {
+		if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Valid id is required." });
+		}
+		if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
+			return res.status(400).json({ message: "Valid review id is required." });
+		}
+
+		const reaction = String(req.body?.reaction || "").toLowerCase();
+		if (reaction !== "like" && reaction !== "dislike") {
+			return res.status(400).json({ message: "Reaction must be either 'like' or 'dislike'." });
+		}
+
+		const update = reaction === "like" ? { $inc: { likes: 1 } } : { $inc: { dislikes: 1 } };
+
+		const review = await Review.findOneAndUpdate(
+			{ _id: reviewId, [idField]: id },
+			update,
+			{ new: true, runValidators: true }
+		);
+
+		if (!review) {
+			return res.status(404).json({ message: "Review not found." });
+		}
+
+		return res.json({ review: mapReviewForDrawer(review) });
+	} catch (error) {
+		return next(error);
+	}
+}
+
+router.post("/items/:itemId/reviews/:reviewId/reactions", (req, res, next) =>
+	reactToReview(req.params.itemId, "itemId", req.params.reviewId, req, res, next)
+);
+router.post("/halls/:hallId/reviews/:reviewId/reactions", (req, res, next) =>
+	reactToReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
+);
+
 // Return unique menu items of all time for each dining hall
 router.get("/items/:hallSlug", async (req, res, next) => {
 	try {

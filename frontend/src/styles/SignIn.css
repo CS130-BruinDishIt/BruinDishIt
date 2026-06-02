@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 10px;
+  flex-direction: column;
 }
 
 .signin-paper {
@@ -41,4 +42,8 @@
 }
 .create-acc:hover {
   color: #0758a8;
+}
+
+.signin-alert{
+  margin-bottom: 20px;
 }

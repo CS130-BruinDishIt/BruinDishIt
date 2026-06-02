@@ -43,6 +43,14 @@ const DiningPage = () => {
   // Track if reviews are being viewed for any menu item currently
   const [selectedItem, setSelectedItem] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [currentPacificTime, setCurrentPacificTime] = useState(() =>
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      dateStyle: "full",
+      timeStyle: "medium",
+      hour12: true,
+    }).format(new Date())
+  );
 
   const openComments = ({ id, name, type = "items" }) => {
     setSelectedItem({ id, name, type});
@@ -65,6 +73,25 @@ const DiningPage = () => {
       .then((data) => setHall(data))
       .catch((error) => console.error("Error fetching dining hall:", error));
   }, [name]);
+
+  // Show current date and time in Pacific timezone, updating every second
+  useEffect(() => {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      dateStyle: "full",
+      timeStyle: "medium",
+      hour12: true,
+    });
+
+    const updateTime = () => {
+      setCurrentPacificTime(formatter.format(new Date()));
+    };
+
+    updateTime();
+    const intervalId = window.setInterval(updateTime, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   // Fetch latest data from database
   useEffect(() => {
@@ -139,14 +166,19 @@ const DiningPage = () => {
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
           <Box className="location-header">
-            <Stack direction="row" alignitems="center" spacing={2}>
-              <Typography variant="h3" className="location-title">
-                {hall?.name || name}
+            <Box>
+              <Stack direction="row" alignItems="center" spacing={1.5} className="location-title-row">
+                <Typography variant="h3" className="location-title">
+                  {hall?.name || name}
+                </Typography>
+                <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls' })} className="review-btn">
+                  <ModeCommentOutlinedIcon fontSize='medium' />
+                </IconButton>
+              </Stack>
+              <Typography variant="body2" className="location-datetime">
+                {currentPacificTime}
               </Typography>
-              <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls' })} className="review-btn">
-                <ModeCommentOutlinedIcon fontSize='medium' />
-              </IconButton>
-            </Stack>
+            </Box>
 
             <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
               View All Time Menu Items
@@ -186,7 +218,21 @@ const DiningPage = () => {
                           <Stack key={id} direction="row" sx={{ py: 0.5 }}>
 
                             {/* Item Name */}
-                            <Typography variant="body1" sx={{ px: 1, py: 0 }}>
+                            <Typography
+                              component="button"
+                              type="button"
+                              variant="body1"
+                              onClick={() => openComments({ id, name, type: "items" })}
+                              sx={{
+                                px: 1,
+                                py: 0,
+                                border: 0,
+                                background: "transparent",
+                                textAlign: "left",
+                                cursor: "pointer",
+                                color: "#1976d2",
+                              }}
+                            >
                               • {name}
                             </Typography>
 
@@ -214,6 +260,7 @@ const DiningPage = () => {
               height: "90vh",
               borderTopLeftRadius: 16,
               borderTopRightRadius: 16,
+              overflowX: "hidden",
             },
           },
         }}

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { getAuthUser } from "./api/auth";
 import { createReview, fetchReviews, updateReview } from "./api/dining";
 
 import {
@@ -18,6 +20,7 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import StarIcon from "@mui/icons-material/Star";
 
 const formatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short', // options: 'full', 'long', 'medium', 'short'
@@ -50,7 +53,26 @@ const buildPhotosFromReviews = (reviewList) => (
     .sort((a, b) => new Date(b.date) - new Date(a.date))
 );
 
+// Stars displayed for reviews 
+const buildStars = (rating) => {
+  const numericRating = Number(rating) || 0;
+
+  return Array.from({ length: 5 }, (_, index) => (
+    <StarIcon
+      key={index}
+      fontSize="small"
+      sx={{ color: index < numericRating ? "#f5b301" : "#d6d6d6" }}
+    />
+  ));
+};
+
 const CommentDrawer = ({ item }) => {
+  const authUser = getAuthUser();
+  const isLoggedIn = Boolean(authUser);
+
+  const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUser.id);
+
+
   const [reviews, setReviews] = useState([]);
   const [photos, setPhotos] = useState([]);
   // Form state for creating or editing a review.
@@ -106,6 +128,7 @@ const CommentDrawer = ({ item }) => {
 
   // Submit a new review or update an existing one.
   const handleSubmit = async () => {
+    if (!isLoggedIn) return; // blocks guest from submitting, but reviews still visible
     if (!item?.id || !isFormValid || isSubmitting) return;
     setIsSubmitting(true);
 
@@ -115,9 +138,10 @@ const CommentDrawer = ({ item }) => {
       imageUrl: formImageData || null,
     };
 
-    if (!isEditing) {
-      payload.user = "Guest";
-    }
+    // if (!isEditing) {
+    //   payload.user = "Guest";
+    // }
+
     console.log(item)
     try {
       const response = isEditing
@@ -182,7 +206,9 @@ const CommentDrawer = ({ item }) => {
   if (!item) return null;
 
   return (
-    <Box sx={{ width: "100%", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden" }}>
+    <Box sx={{width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
+      }}
+    >
 
       <Typography variant="h6">{item.name}</Typography>
 
@@ -193,89 +219,105 @@ const CommentDrawer = ({ item }) => {
       <Divider sx={{ my: 2 }} />
 
       {/* Review input form (used for both create and edit flows). */}
-      <Box
-        ref={formRef}
-        sx={{
-          p: 2,
-          borderRadius: 2,
-          border: "1px solid",
-          borderColor: "divider",
-          bgcolor: "background.paper",
-          mb: 3,
-        }}
-      >
-        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          {isEditing ? "Edit your review" : "Write a review"}
-        </Typography>
+      {isLoggedIn ? (
+        <Box
+          ref={formRef}
+          sx={{
+            p: 2,
+            borderRadius: 2,
+            border: "1px solid",
+            borderColor: "divider",
+            bgcolor: "background.paper",
+            mb: 3,
+          }}
+        >
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            {isEditing ? "Edit your review" : "Write a review"}
+          </Typography>
 
-        <Stack spacing={2} sx={{ mt: 1 }}>
-          <TextField
-            label="Review"
-            placeholder="Share your thoughts"
-            multiline
-            minRows={3}
-            fullWidth
-            value={formText}
-            onChange={(event) => setFormText(event.target.value)}
-          />
-
-          <Stack direction="row" spacing={2} alignitems="center" flexwrap="wrap">
-            <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel id="rating-label">Rating</InputLabel>
-              <Select
-                labelId="rating-label"
-                value={formRating}
-                label="Rating"
-                onChange={(event) => setFormRating(event.target.value)}
-              >
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleImageSelect}
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField
+              label="Review"
+              placeholder="Share your thoughts"
+              multiline
+              minRows={3}
+              fullWidth
+              value={formText}
+              onChange={(event) => setFormText(event.target.value)}
             />
-            <IconButton
-              aria-label="Upload image"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <UploadFileOutlinedIcon fontSize="small" />
-            </IconButton>
-            <Typography variant="caption" color="text.secondary">
-              {formImageName || (formImageData ? "Image attached" : "No image")}
-            </Typography>
-          </Stack>
 
-          <Button
-            variant="contained"
-            disableElevation
-            disabled={!isFormValid || isSubmitting}
-            onClick={handleSubmit}
-            sx={{
-              bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",
-              color: "white",
-              alignSelf: "flex-start",
-              "&:hover": {
-                bgcolor: isFormValid ? "#2c974b" : "grey.400",
-              },
-              "&.Mui-disabled": {
-                bgcolor: "grey.300",
-                color: "grey.600",
-              },
-            }}
-          >
-            {submitLabel}
+            <Stack direction="row" spacing={2} alignitems="center" flexwrap="wrap">
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel id="rating-label">Rating</InputLabel>
+                <Select
+                  labelId="rating-label"
+                  value={formRating}
+                  label="Rating"
+                  onChange={(event) => setFormRating(event.target.value)}
+                >
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleImageSelect}
+              />
+              <IconButton
+                aria-label="Upload image"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <UploadFileOutlinedIcon fontSize="small" />
+              </IconButton>
+              <Typography variant="caption" color="text.secondary">
+                {formImageName || (formImageData ? "Image attached" : "No image")}
+              </Typography>
+            </Stack>
+
+            <Button
+              variant="contained"
+              disableElevation
+              disabled={!isFormValid || isSubmitting}
+              onClick={handleSubmit}
+              sx={{
+                bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",
+                color: "white",
+                alignSelf: "flex-start",
+                "&:hover": {
+                  bgcolor: isFormValid ? "#2c974b" : "grey.400",
+                },
+                "&.Mui-disabled": {
+                  bgcolor: "grey.300",
+                  color: "grey.600",
+                },
+              }}
+            >
+              {submitLabel}
+            </Button>
+          </Stack>
+        </Box>
+      ) : (
+        <Box sx={{ p: 2, borderRadius: 2, border: "1px solid", borderColor: "divider", bgcolor: "background.paper", mb: 3, textAlign: "center", }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+            Want to leave a review?
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Sign in to rate posts, leave comments, or upload photos.
+          </Typography>
+          {/* window.Location.pathname -> /dining/bruin-plate    window.location.hash -> #....menuitemID  */}
+          <Button component={Link} to="/signin" state={{from: `${window.location.pathname}${window.location.hash}`}}variant="contained">
+            Sign In
           </Button>
-        </Stack>
-      </Box>
+        </Box>
+      )}
 
       {photos.length > 0 && (
         <>
@@ -333,11 +375,12 @@ const CommentDrawer = ({ item }) => {
           const dislikeCount = Array.isArray(r.dislikes) ? r.dislikes.length : (r.dislikes || 0);
           return (
             <Box key={r.id || i} sx={{ mb: 2 }}>
-              <Stack direction="row" alignitems="center" justifycontent="space-between">
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  User {r.userID || r.user}
+                  {r.userID || r.user}
                 </Typography>
-                <IconButton
+                {isOwnReview(r) && (
+                  <IconButton
                   size="small"
                   aria-label="Edit review"
                   disabled={!r.id}
@@ -346,11 +389,20 @@ const CommentDrawer = ({ item }) => {
                   {/* Edit icon toggles the form above into update mode. */}
                   <EditOutlinedIcon fontSize="small" />
                 </IconButton>
+                )}
               </Stack>
 
               <Typography variant="caption" color="text.secondary">
                 {formatter.format(new Date(r.date))}
               </Typography>
+
+              {/* Display star icons for the rating. */}
+              <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
+                {buildStars(r.rating)}
+                <Typography variant="body2" sx={{ fontWeight: 600, ml: 2.5 }}>
+                  {Number(r.rating) || 0}/5
+                </Typography>
+              </Stack>
 
               <Typography sx={{ mt: 0.5, whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere" }}>
                 {r.review}

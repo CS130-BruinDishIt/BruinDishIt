@@ -18,6 +18,8 @@ const mapReviewForDrawer = (review) => ({
 	rating: review.rating,
 	likes: review.likes,
 	dislikes: review.dislikes,
+	likedBy: (review.likedBy || []).map((id) => String(id)),
+	dislikedBy: (review.dislikedBy || []).map((id) => String(id)),
 	imageUrl: review.imageUrl || null,
 	photos: review.imageUrl ? [review.imageUrl] : [],
 });
@@ -176,7 +178,7 @@ async function createReview(id, idField, req, res, next) {
     const text = String(req.body.text || "").trim();
     const rating = Number(req.body.rating);
     const user = req.user.username;
-	const userId = req.user._id;
+	const userId = req.user.id || req.user.userId || req.user._id;
     const imageUrl = req.body.imageUrl || null;
 
     if (!text) return res.status(400).json({ message: "Review text is required." });
@@ -203,55 +205,7 @@ router.post("/halls/:hallId/reviews", requireAuth, (req, res, next) =>
   createReview(req.params.hallId, "hallId", req, res, next)
 );
 
-// // Update an existing review for a menu item.
-// router.put("/items/:itemId/reviews/:reviewId", async (req, res, next) => {
-// 	try {
-// 		const { itemId, reviewId } = req.params;
 
-// 		if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
-// 			return res.status(400).json({ message: "Valid item id is required." });
-// 		}
-
-// 		if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
-// 			return res.status(400).json({ message: "Valid review id is required." });
-// 		}
-
-// 		const text = String(req.body.text || "").trim();
-// 		const rating = Number(req.body.rating);
-
-// 		if (!text) {
-// 			return res.status(400).json({ message: "Review text is required." });
-// 		}
-
-// 		if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
-// 			return res.status(400).json({ message: "Rating must be between 1 and 5." });
-// 		}
-
-// 		const update = {
-// 			text,
-// 			rating,
-// 			date: new Date(),
-// 		};
-
-// 		if (Object.prototype.hasOwnProperty.call(req.body, "imageUrl")) {
-// 			update.imageUrl = req.body.imageUrl || null;
-// 		}
-
-// 		const review = await Review.findOneAndUpdate(
-// 			{ _id: reviewId, itemId },
-// 			update,
-// 			{ new: true, runValidators: true }
-// 		);
-
-// 		if (!review) {
-// 			return res.status(404).json({ message: "Review not found." });
-// 		}
-
-// 		return res.json({ review: mapReviewForDrawer(review) });
-// 	} catch (error) {
-// 		return next(error);
-// 	}
-// });
 async function updateReview(id, idField, reviewId, req, res, next) {
   try {
 	if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -275,7 +229,7 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 	}
 
 	const review = await Review.findOneAndUpdate(
-	  { _id: reviewId, [idField]: id, userId: req.user._id }, // users can only edit their own reviews
+	  { _id: reviewId, [idField]: id, userId: req.user.id || req.user.userId || req.user._id }, // users can only edit their own reviews
 	  update,
 	  { new: true, runValidators: true }
 	);
@@ -312,17 +266,46 @@ async function reactToReview(id, idField, reviewId, req, res, next) {
 			return res.status(400).json({ message: "Reaction must be either 'like' or 'dislike'." });
 		}
 
-		const update = reaction === "like" ? { $inc: { likes: 1 } } : { $inc: { dislikes: 1 } };
-
-		const review = await Review.findOneAndUpdate(
-			{ _id: reviewId, [idField]: id },
-			update,
-			{ new: true, runValidators: true }
-		);
+		const review = await Review.findOne({ _id: reviewId, [idField]: id });
 
 		if (!review) {
 			return res.status(404).json({ message: "Review not found." });
 		}
+
+		// User review interaction (like/dislike)
+		// Ensure the user can only like/dislike once and can toggle their reaction.
+		const userId = String(req.user.id || req.user.userId || req.user._id);
+		review.likedBy = Array.isArray(review.likedBy) ? review.likedBy : [];
+		review.dislikedBy = Array.isArray(review.dislikedBy) ? review.dislikedBy : [];
+
+		const hasLiked = review.likedBy.some((idValue) => String(idValue) === userId);
+		const hasDisliked = review.dislikedBy.some((idValue) => String(idValue) === userId);
+
+		if (reaction === "like") {
+			if (hasLiked) {
+				review.likedBy = review.likedBy.filter((idValue) => String(idValue) !== userId);
+			} else {
+				review.likedBy.push(userId);
+				if (hasDisliked) {
+					review.dislikedBy = review.dislikedBy.filter((idValue) => String(idValue) !== userId);
+				}
+			}
+		} else if (reaction === "dislike") {
+			if (hasDisliked) {
+				review.dislikedBy = review.dislikedBy.filter((idValue) => String(idValue) !== userId);
+			} else {
+				review.dislikedBy.push(userId);
+				if (hasLiked) {
+					review.likedBy = review.likedBy.filter((idValue) => String(idValue) !== userId);
+				}
+			}
+		}
+
+		// Keep numeric counters in sync for quick UI display and backwards compatibility.
+		review.likes = review.likedBy.length;
+		review.dislikes = review.dislikedBy.length;
+
+		await review.save();
 
 		return res.json({ review: mapReviewForDrawer(review) });
 	} catch (error) {
@@ -330,10 +313,10 @@ async function reactToReview(id, idField, reviewId, req, res, next) {
 	}
 }
 
-router.post("/items/:itemId/reviews/:reviewId/reactions", (req, res, next) =>
+router.post("/items/:itemId/reviews/:reviewId/reactions", requireAuth, (req, res, next) =>
 	reactToReview(req.params.itemId, "itemId", req.params.reviewId, req, res, next)
 );
-router.post("/halls/:hallId/reviews/:reviewId/reactions", (req, res, next) =>
+router.post("/halls/:hallId/reviews/:reviewId/reactions", requireAuth, (req, res, next) =>
 	reactToReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
 );
 

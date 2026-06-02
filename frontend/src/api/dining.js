@@ -137,10 +137,7 @@ export async function reactToReview(id, type, reviewId, reaction, { signal } = {
   const response = await fetch(url, {
     method: "POST",
     signal,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
+    headers: authJsonHeaders(),
     body: JSON.stringify({ reaction }),
   });
 

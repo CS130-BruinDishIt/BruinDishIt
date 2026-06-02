@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
 import { createReview, fetchReviews, reactToReview, updateReview } from "./api/dining";
 
@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import StarIcon from "@mui/icons-material/Star";
@@ -67,8 +69,10 @@ const buildStars = (rating) => {
 };
 
 const CommentDrawer = ({ item }) => {
+  const navigate = useNavigate();
   const authUser = getAuthUser();
   const isLoggedIn = Boolean(authUser);
+  const authUserId = authUser?.id || authUser?._id;
 
   const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUser.id);
 
@@ -143,10 +147,11 @@ const CommentDrawer = ({ item }) => {
     // }
 
     console.log(item)
+    const itemType = item.type || "items";
     try {
       const response = isEditing
-        ? await updateReview(item.id, item.type, editingReviewId, payload)
-        : await createReview(item.id, item.type, payload);
+        ? await updateReview(item.id, itemType, editingReviewId, payload)
+        : await createReview(item.id, itemType, payload);
 
       const updatedReview = response?.review;
       if (updatedReview) {
@@ -171,9 +176,16 @@ const CommentDrawer = ({ item }) => {
 
   const handleReaction = async (reviewId, reaction) => {
     if (!item?.id || !reviewId) return;
+    if (!isLoggedIn) {
+      navigate("/signin", {
+        state: { from: `${window.location.pathname}${window.location.hash}` },
+      });
+      return;
+    }
 
     try {
-      const response = await reactToReview(item.id, item.type, reviewId, reaction);
+      const itemType = item.type || "items";
+      const response = await reactToReview(item.id, itemType, reviewId, reaction);
       const updatedReview = response?.review;
       if (!updatedReview) return;
 
@@ -193,7 +205,8 @@ const CommentDrawer = ({ item }) => {
     setPhotos([]);
     resetForm();
 
-    const fetchFn = item.type === 'halls'
+    const itemType = item.type || "items";
+    const fetchFn = itemType === 'halls'
       ? fetchReviews(item.id, 'halls', { signal: controller.signal })
       : fetchReviews(item.id, 'items', { signal: controller.signal });
 
@@ -386,9 +399,16 @@ const CommentDrawer = ({ item }) => {
         <Typography>No reviews yet.</Typography>
       ) : (
         reviews.map((r, i) => {
-          // Support legacy arrays and new numeric counts for reactions.
-          const likeCount = Array.isArray(r.likes) ? r.likes.length : (r.likes || 0);
-          const dislikeCount = Array.isArray(r.dislikes) ? r.dislikes.length : (r.dislikes || 0);
+          const likedBy = Array.isArray(r.likedBy) ? r.likedBy : [];
+          const dislikedBy = Array.isArray(r.dislikedBy) ? r.dislikedBy : [];
+          const userLiked = Boolean(authUserId) && likedBy.some((id) => String(id) === String(authUserId));
+          const userDisliked = Boolean(authUserId) && dislikedBy.some((id) => String(id) === String(authUserId));
+          const likeCount = Number.isFinite(Number(r.likes)) ? Number(r.likes) : likedBy.length;
+          const dislikeCount = Number.isFinite(Number(r.dislikes)) ? Number(r.dislikes) : dislikedBy.length;
+
+          const LikeIcon = userLiked ? ThumbUpAltIcon : ThumbUpAltOutlinedIcon;
+          const DislikeIcon = userDisliked ? ThumbDownAltIcon : ThumbDownAltOutlinedIcon;
+
           return (
             <Box key={r.id || i} sx={{ mb: 2 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -459,36 +479,54 @@ const CommentDrawer = ({ item }) => {
                 spacing={2}
                 sx={{ mt: 2 }}
               >
-                <Stack direction="row" spacing={0.5} >
+                <Stack direction="row" spacing={0.5} alignItems="center">
                   <IconButton
                     size="small"
                     aria-label="Like review"
                     disabled={!r.id}
                     onClick={() => handleReaction(r.id, "like")}
                   >
-                    <ThumbUpAltOutlinedIcon
+                    <LikeIcon
                       fontSize="small"
-                      sx={{ color: "primary.main" }}
+                      sx={{ color: userLiked ? "primary.main" : "inherit" }}
                     />
                   </IconButton>
-                  <Typography variant="body2">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: 32,
+                      fontWeight: userLiked ? 700 : 400,
+                      color: userLiked ? "primary.main" : "text.primary",
+                    }}
+                  >
                     {likeCount}
                   </Typography>
                 </Stack>
 
-                <Stack direction="row" spacing={0.5}>
+                <Stack direction="row" spacing={0.5} alignItems="center">
                   <IconButton
                     size="small"
                     aria-label="Dislike review"
                     disabled={!r.id}
                     onClick={() => handleReaction(r.id, "dislike")}
                   >
-                    <ThumbDownAltOutlinedIcon
+                    <DislikeIcon
                       fontSize="small"
-                      sx={{ color: "error.main" }}
+                      sx={{ color: userDisliked ? "error.main" : "inherit" }}
                     />
                   </IconButton>
-                  <Typography variant="body2">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: 32,
+                      fontWeight: userDisliked ? 700 : 400,
+                      color: userDisliked ? "error.main" : "text.primary",
+                    }}
+                  >
                     {dislikeCount}
                   </Typography>
                 </Stack>

@@ -21,6 +21,18 @@ const reviewSchema = new mongoose.Schema({
   text: { type: String, required: true },
   likes: { type: Number, default: 0 },
   dislikes: { type: Number, default: 0 },
+  likedBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  dislikedBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   date: { type: Date, default: Date.now },
   imageUrl: { type: String },
 });

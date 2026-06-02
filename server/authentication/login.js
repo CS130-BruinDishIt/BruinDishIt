@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "./models/User.js"; // Adjust path to your schema file
+import User from "../models/User.js"; // Adjust path to your schema file
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -40,6 +40,7 @@ export async function loginController(req, res) {
        id: user._id,
        username: user.username,
        profileImageURL: user.profileImageURL,
+       createdAt: user.createdAt,
      }
    });
 

@@ -1,3 +1,4 @@
+import { authJsonHeaders } from "./auth";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 async function parseErrorMessage(response) {
@@ -5,6 +6,9 @@ async function parseErrorMessage(response) {
     const payload = await response.json();
     if (payload && typeof payload.message === "string") {
       return payload.message;
+    }
+    if (payload && typeof payload.error === "string") { // backend errors too
+      return payload.error;
     }
   } catch {
     // Ignore JSON parse errors.
@@ -77,10 +81,7 @@ export async function createReview(id, type, payload, { signal } = {}) {
   const response = await fetch(url, {
     method: "POST",
     signal,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
+    headers: authJsonHeaders(),
     body: JSON.stringify(payload),
   });
 
@@ -107,10 +108,7 @@ export async function updateReview(id, type, reviewId, payload, { signal } = {})
   const response = await fetch(url, {
     method: "PUT",
     signal,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
+    headers: authJsonHeaders(),
     body: JSON.stringify(payload),
   });
 

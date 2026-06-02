@@ -1,92 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+body {
+  margin: 0;
+  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
 .app-container {
   position: relative;
-  width: 100%;
-  min-height: calc(100vh - 72px);
-  overflow: hidden;
+  width: 1600px;
+  height: 800px;
+  transform-origin: top left;
+  transform: scale(min(1, calc(100vw / 1600px), calc((100vh - 50px) / 800px)));
 }
+
 
 .MuiButton-root.circle-button {
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  min-width: 0 !important;
+  aspect-ratio: 1 / 1;
+
+  background: var(--btn-color) !important;
   border-radius: 50%;
-  font-size: 1rem;
+  box-shadow:
+    0 0 0 6px white,
+    0 0 0 9px var(--btn-color) !important;
+
+  font-family: "Nunito", sans-serif;
+  font-size: 1.5rem;
   font-weight: 700;
   text-transform: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  opacity: 0;
+  animation: fallIn 0.9s ease forwards;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .MuiButton-root.circle-button:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 0 0 6px white,
+    0 0 0 9px white !important;
 }
 
-.big
-{
-    width: 200px;
-    height: 200px;
-    font-size: 30px;
+@keyframes fallIn {
+  0% {
+    margin-top: -140px;
+    opacity: 0;
+  }
+
+  100% {
+    margin-top: 0;
+    opacity: 1;
+  }
 }
 
-.med
-{
-    width: 150px;
-    height: 150px;
-    font-size: 25px;
+.bubble-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-.small
-{
-    width: 100px;
-    height: 100px;
-    font-size: 18px;
+.big {
+  width: 15% !important;
+  aspect-ratio: 1 / 1;
+  font-size: clamp(1.4rem, 2vw, 2rem) !important;
+}
+
+.med {
+  width: 10% !important;
+  aspect-ratio: 1 / 1;
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem) !important;
+}
+
+.small {
+  width: 7% !important;
+  aspect-ratio: 1 / 1;
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem) !important;
 }
 
 .bruin-plate {
-  left: 35%;
-  top: 25%;
+  top: 16%;
+  left: 42%;
+  z-index: 1;
+  --btn-color: #99c0e3 !important;
 }
 
 .de-neve-dining {
-  left: 55%;
-  top: 40%;
+  top: 61%;
+  left: 57%;
+  z-index: 2;
+  --btn-color: #87b3e0 !important;
 }
 
 .epicuria-at-covel {
-  left: 25%;
-  top: 60%;
+  top: 50%;
+  left: 28%;
+  z-index: 3;
+  --btn-color: #a5b5de !important;
 }
 
 .spice-kitchen {
-  left: 65%;
-  top: 20%;
+  top: 34%;
+  left: 59%;
+  z-index: 4;
+  --btn-color: #a1b4eb !important;
 }
 
 .bruin-cafe {
-  left: 25%;
-  top: 10%;
+  top: 22%;
+  left: 28%;
+  z-index: 5;
+  --btn-color: #6d798d !important;
 }
 
 .rendezvous {
-  left: 15%;
-  top: 35%;
-}
-
-.the-drey {
-  left: 50%;
-  top: 10%;
-}
-
-.cafe-1919 {
-  left: 75%;
-  top: 35%;
+  top: 76%;
+  left: 42%;
+  z-index: 6;
+  --btn-color: #5c709b !important;
 }
 
 .the-study-at-hedrick {
-  left: 45%;
-  top: 60%;
+  top: 44%;
+  left: 72%;
+  z-index: 7;
+  --btn-color: #8b98b9 !important;
 }
 
-.ft {
-  left: 70%;
-  top: 65%;
+.the-drey {
+  top: 44%;
+  left: 18%;
+  z-index: 8;
+  --btn-color: #93ade4 !important;
+}
+
+.cafe-1919 {
+  top: 54%;
+  left: 48%;
+  z-index: 9;
+  --btn-color: #a3b6de !important;
+}
+
+.epicuria-at-ackerman {
+  top: 14%;
+  left: 60%;
+  z-index: 10;
+  --btn-color: #596291 !important;
 }

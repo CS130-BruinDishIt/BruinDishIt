@@ -1,13 +1,16 @@
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+
 import Navbar from './Navbar.jsx'
 import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { fetchDiningHalls } from "./api/dining";
 import DiningPage from './DiningPage'
 import DiningItemsPage from './DiningItemsPage'
 import UserProfile from './UserProfile.jsx'
+
+import { diningLocations } from './data/diningLocations.js'
 import './styles/App.css'
+
 import {
   Box,
   Button,
@@ -17,23 +20,23 @@ import {
 
 function Home() {
   const navigate = useNavigate();
-  const [halls, setHalls] = useState([]);
-
-  useEffect(() => {
-    fetchDiningHalls()
-      .then((data) => setHalls(data.halls || []))
-      .catch((error) => console.error("Error fetching dining halls:", error));
-  }, []);
 
   return (
-    <Container maxWidth={false} disableGutters className="app-container">
-      {halls.map((place) => (
-        <Button key={place.slug} variant="contained" disableElevation disableRipple
-          className={`circle-button ${place.level} ${place.slug}`}
-          onClick={() => navigate(`/dining/${place.slug}`)}
-        >{place.shortName}</Button>
-      ))}
-    </Container>
+    <div maxWidth={false} className="app-container" disableGutters >
+      <div className="bubble-wrapper">
+        {diningLocations.map((place, index) => (
+          <Button
+            key={place.id}
+            variant="contained"
+            className={`circle-button ${place.id} ${place.level}`}
+            onClick={() => navigate(`/dining/${place.id}`)}
+            style={{ animationDelay: `${index * 0.12}s` }}
+          >
+            {place.shortname}
+          </Button>
+        ))}
+      </div>
+    </div >
   );
 }
 

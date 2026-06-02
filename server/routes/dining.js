@@ -69,37 +69,7 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 	}
 });
 
-// // Fetch reviews for a menu item and normalize them to the frontend's existing shape.
-// router.get("/items/:itemId/reviews", async (req, res, next) => {
-// 	try {
-// 		const { itemId } = req.params;
-
-// 		if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
-// 			return res.status(400).json({ message: "Valid item id is required." });
-// 		}
-
-// 		const reviews = await Review.find({ itemId })
-// 			.sort({ date: -1 })
-// 			.lean();
-
-// 		// Keep response fields aligned with the CommentDrawer expectations.
-// 		const response = {
-// 			itemId,
-// 			reviews: reviews.map(mapReviewForDrawer),
-// 			photos: reviews
-// 				.filter((review) => review.imageUrl)
-// 				.map((review) => ({
-// 					path: review.imageUrl,
-// 					userID: review.user,
-// 					date: review.date,
-// 				})),
-// 		};
-
-// 		return res.json(response);
-// 	} catch (error) {
-// 		return next(error);
-// 	}
-// });
+// Fetch reviews for a menu item and normalize them to the frontend's existing shape.
 async function getReviews(id, idField, req, res, next) {
   try {
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -132,43 +102,8 @@ router.get("/items/:itemId/reviews", (req, res, next) =>
 router.get("/halls/:hallId/reviews", (req, res, next) =>
   getReviews(req.params.hallId, "hallId", req, res, next)
 );
+
 // // Create a new review for a menu item.
-// router.post("/items/:itemId/reviews", async (req, res, next) => {
-// 	try {
-// 		const { itemId } = req.params;
-
-// 		if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
-// 			return res.status(400).json({ message: "Valid item id is required." });
-// 		}
-
-// 		const text = String(req.body.text || "").trim();
-// 		const rating = Number(req.body.rating);
-// 		const user = String(req.body.user || "Guest").trim();
-// 		const imageUrl = req.body.imageUrl || null;
-
-// 		if (!text) {
-// 			return res.status(400).json({ message: "Review text is required." });
-// 		}
-
-// 		if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
-// 			return res.status(400).json({ message: "Rating must be between 1 and 5." });
-// 		}
-
-// 		// Store the review in the database with a submission timestamp.
-// 		const review = await Review.create({
-// 			itemId,
-// 			user,
-// 			rating,
-// 			text,
-// 			imageUrl,
-// 			date: new Date(),
-// 		});
-
-// 		return res.status(201).json({ review: mapReviewForDrawer(review) });
-// 	} catch (error) {
-// 		return next(error);
-// 	}
-// });
 async function createReview(id, idField, req, res, next) {
   try {
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {

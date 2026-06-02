@@ -13,6 +13,12 @@
     justify-content: space-between;
 }
 
+.location-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 @media (max-width: 600px) {
     .location-header {
         flex-direction: column;
@@ -22,7 +28,14 @@
 
 .MuiTypography-root.location-title {
     font-weight: 700;
+    margin-bottom: 0;
+}
+
+.location-datetime.MuiTypography-root {
+    margin-top: 4px;
     margin-bottom: 10px;
+    color: #555;
+    font-weight: 500;
 }
 
 .review-btn {

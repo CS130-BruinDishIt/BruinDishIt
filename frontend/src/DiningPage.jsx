@@ -218,7 +218,21 @@ const DiningPage = () => {
                           <Stack key={id} direction="row" sx={{ py: 0.5 }}>
 
                             {/* Item Name */}
-                            <Typography variant="body1" sx={{ px: 1, py: 0 }}>
+                            <Typography
+                              component="button"
+                              type="button"
+                              variant="body1"
+                              onClick={() => openComments({ id, name, type: "items" })}
+                              sx={{
+                                px: 1,
+                                py: 0,
+                                border: 0,
+                                background: "transparent",
+                                textAlign: "left",
+                                cursor: "pointer",
+                                color: "#1976d2",
+                              }}
+                            >
                               • {name}
                             </Typography>
 

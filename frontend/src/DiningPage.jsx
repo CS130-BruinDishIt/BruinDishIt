@@ -21,8 +21,10 @@ import {
   Typography,
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
+import StarIcon from "@mui/icons-material/Star";
+import CommentDrawer from "./CommentDrawer";
 
-import BackToTop from "./components/BackToTop"
+import BackToTop from "./components/BackToTop";
 import CommentDrawer from "./CommentDrawer";
 
 const DiningPage = () => {
@@ -49,8 +51,8 @@ const DiningPage = () => {
     }).format(new Date())
   );
 
-  const openComments = ({ id, name, type = "items" }) => {
-    setSelectedItem({ id, name, type });
+  const openComments = ({ id, name, type = "items", averageRating }) => {
+    setSelectedItem({ id, name, type, averageRating });
     setDrawerOpen(true);
 
     const key = encodeURIComponent(`${id}`);
@@ -179,9 +181,33 @@ const DiningPage = () => {
         {/* Title */}
         <Box className="location-box">
           <Box className="location-header">
-            <Typography variant="h3" className="location-title">
-              {hall?.name || name}
-            </Typography>
+            <Box>
+              <Stack direction="row" alignItems="center" spacing={1.5} className="location-title-row">
+                <Typography variant="h3" className="location-title">
+                  {hall?.name || name}
+                </Typography>
+                <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls', averageRating: hall?.averageRating })} className="review-btn">
+                  <ModeCommentOutlinedIcon fontSize='medium' />
+                </IconButton>
+              </Stack>
+              <Typography variant="body2" className="location-datetime">
+                {currentPacificTime}
+              </Typography>
+            </Box>
+
+            <Stack direction="row" alignItems="right" spacing={10} sx={{ px: 10 }}>
+              
+              <Stack direction="row" alignItems="center" spacing={.5} sx={{ color: '#f5b301' }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
+                {/* <StarIcon fontSize="large" /> */}
+                <StarIcon sx={{ fontSize: '30px' }} />
+              </Stack>
+              
+              <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
+                View All Time Menu Items
+              </Button>
+            </Stack>
+          </Box>
 
             <Typography variant="body2" className="pill pill--time">
               {currentPacificTime}
@@ -325,15 +351,15 @@ const DiningPage = () => {
 
                       {/* Items */}
                       <Stack spacing={1}>
-                        {items.map(({ id, name }) => (
-                          <Stack key={id} direction="row" sx={{ py: 0.5 }}>
+                        {items.map(({ id, name, averageRating }) => (
+                          <Stack key={id} direction="row" alignItems="center" sx={{ py: 0.5 }}>
 
                             {/* Item Name */}
                             <Typography
                               component="button"
                               type="button"
                               variant="body1"
-                              onClick={() => openComments({ id, name, type: "items" })}
+                              onClick={() => openComments({ id, name, type: "items", averageRating })}
                               sx={{
                                 px: 1,
                                 py: 0,
@@ -346,11 +372,20 @@ const DiningPage = () => {
                             >
                               • {name}
                             </Typography>
+                            
 
                             {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" >
+                            <IconButton onClick={() => openComments({ id, name, type: "items", averageRating })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
                               <ModeCommentOutlinedIcon fontSize="small" />
                             </IconButton>
+
+                            {/* Average Rating Box */}
+                            <Box sx={{ ml: 1, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: 'grey.100', border: '1px solid', borderColor: 'grey.300', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+                              <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'black' }}>
+                                <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
+                                <StarIcon sx={{ fontSize: '14px' }} />
+                              </Stack>
+                            </Box>
                           </Stack>
                         ))}
                       </Stack>

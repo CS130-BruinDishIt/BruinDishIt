@@ -12,6 +12,41 @@ import 'dotenv/config';
 
 const router = express.Router();
 
+const toObjectId = (value) => {
+	if (!value || !mongoose.Types.ObjectId.isValid(value)) {
+		return null;
+	}
+
+	return new mongoose.Types.ObjectId(String(value));
+};
+
+const roundAverageRating = (rating) => Math.round(Number(rating) * 10) / 10;
+
+async function getAverageRatingMap(itemIds) {
+	const uniqueObjectIds = [...new Set(itemIds.map(toObjectId).filter(Boolean).map((id) => String(id)))].map(
+		(id) => new mongoose.Types.ObjectId(id)
+	);
+
+	if (!uniqueObjectIds.length) {
+		return {};
+	}
+
+	const aggregates = await Review.aggregate([
+		{ $match: { itemId: { $in: uniqueObjectIds } } },
+		{
+			$group: {
+				_id: "$itemId",
+				averageRating: { $avg: "$rating" },
+			},
+		},
+	]);
+
+	return aggregates.reduce((ratingMap, entry) => {
+		ratingMap[String(entry._id)] = roundAverageRating(entry.averageRating);
+		return ratingMap;
+	}, {});
+}
+
 // Shape review documents for the existing CommentDrawer UI.
 const mapReviewForDrawer = (review) => ({
 	id: review._id,
@@ -52,21 +87,35 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 			return res.status(404).json({ message: "Menu not found." });
 		}
 
+		// Get all unique item IDs to compute their ratings on-the-fly
+		// This ensures accurate averages even if the database cache is out of sync.
+		const itemIds = [];
+		menus.forEach((menu) => {
+			menu.stations.forEach((station) => {
+				station.items.forEach((item) => {
+					if (item && item._id) {
+						itemIds.push(item._id);
+					}
+				});
+			});
+		});
+
+		const ratingMap = await getAverageRatingMap(itemIds);
+
 		// Normalize the response shape for the frontend render loop.
 		const meals = menus.map((menu) => ({
 			mealType: menu.mealType,
 			stations: menu.stations.map((station) => ({
 				stationName: station.stationName,
-				items: station.items.map((item) => ({
+				items: station.items.filter(item => item != null).map((item) => ({
 					id: item._id,
 					name: item.name,
-					averageRating: item.averageRating,
+					averageRating: ratingMap[item._id.toString()] ?? item.averageRating ?? 0,
 				})),
 			})),
 		}));
 
-		// Small cache window to reduce duplicate requests during browsing.
-		res.set("Cache-Control", "public, max-age=300");
+		res.set("Cache-Control", "no-store");
 		return res.json({ date, hallSlug, meals });
 	} catch (error) {
 		return next(error);
@@ -107,6 +156,36 @@ router.get("/halls/:hallId/reviews", (req, res, next) =>
   getReviews(req.params.hallId, "hallId", req, res, next)
 );
 
+// Helper function to calculate and update average rating
+async function updateAverageRating(id, idField) {
+  try {
+		const objectId = toObjectId(id);
+		if (!objectId) {
+			return;
+		}
+
+		const [result] = await Review.aggregate([
+			{ $match: { [idField]: objectId } },
+			{
+				$group: {
+					_id: null,
+					averageRating: { $avg: "$rating" },
+				},
+			},
+		]);
+
+		const averageRating = result ? roundAverageRating(result.averageRating) : 0;
+
+    if (idField === "itemId") {
+      await MenuItem.findByIdAndUpdate(id, { averageRating });
+    } else if (idField === "hallId") {
+      await DiningHall.findByIdAndUpdate(id, { averageRating });
+    }
+  } catch (error) {
+    console.error(`Failed to update average rating for ${idField} ${id}:`, error);
+  }
+}
+
 // // Create a new review for a menu item.
 async function createReview(id, idField, req, res, next) {
   try {
@@ -130,6 +209,8 @@ async function createReview(id, idField, req, res, next) {
       user, userId, rating, text, imageUrl,
       date: new Date(),
     });
+
+    await updateAverageRating(id, idField);
 
     return res.status(201).json({ review: mapReviewForDrawer(review) });
   } catch (error) {
@@ -176,6 +257,8 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 	if (!review) {
 	  return res.status(404).json({ message: "Review not found or You are not the owner of this review." });
 	}
+
+	await updateAverageRating(id, idField);
 
 	return res.json({ review: mapReviewForDrawer(review) });
   } catch (error) {
@@ -278,12 +361,16 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 			return res.status(404).json({ message: "Menu items not found." });
 		}
 
+		const itemIds = items.map((item) => item._id);
+		const ratingMap = await getAverageRatingMap(itemIds);
+
+		res.set("Cache-Control", "no-store");
 		return res.json({
 			hallSlug,
 			items: items.map((item) => ({
 				id: item._id,
 				name: item.name,
-				averageRating: item.averageRating,
+				averageRating: ratingMap[item._id.toString()] ?? item.averageRating ?? 0,
 				dateAdded: item.dateAdded,
 				lastSeen: item.lastSeen,
 			})),
@@ -344,7 +431,7 @@ router.get("/halls", async (req, res, next) => {
 				slug: hall.slug,
 				name: hall.name,
 				shortName: hall.shortName,
-				averageRating: hall.averageRating,
+				averageRating: hall.averageRating || 0,
 				level: hall.level,
 			})),
 		});
@@ -373,7 +460,7 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 			slug: hall.slug,
 			name: hall.name,
 			shortName: hall.shortName,
-			averageRating: hall.averageRating,
+			averageRating: hall.averageRating || 0,
 			level: hall.level,
 		});
 	} catch (error) {

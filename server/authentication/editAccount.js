@@ -1,6 +1,5 @@
 import User from "../models/User.js";
 
-
 export const updateUsername = async (req, res) => {
   try {
     const { username } = req.body;
@@ -39,7 +38,7 @@ export const updateUsername = async (req, res) => {
   }
 };
 
-export const updateProfileDetails = async (req, res) => {
+export const updateDescriptionOrImage = async (req, res) => {
     try {
       const { profileImageURL, profileDescription } = req.body;
       const userId = req.user.id; //Same as above, the req should store the user document that is doing this action

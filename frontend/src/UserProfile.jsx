@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAuthUser, clearAuthSession } from "./api/auth";
+import { updatePW } from "./api/auth";
 import "./styles/UserProfile.css";
 import {
   Box,
@@ -21,6 +22,9 @@ function UserProfile() {
   const [tab, setTab] = useState(0);
   const user = getAuthUser();
   const navigate = useNavigate();
+  const [currentPassword, setCurrPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const joinDate = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : null;; // actual join date from backend, or null case (which happens sometimes?)
 
@@ -28,6 +32,21 @@ function UserProfile() {
     clearAuthSession();
     navigate("/signin");
   }
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    
+    try { const result = await updatePW({currentPassword, newPassword});
+  
+      console.log("Password updated:", result);
+      // optional reset
+      setCurrPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   return (
     <Container maxWidth="sm" className="profile-container">
@@ -58,10 +77,10 @@ function UserProfile() {
 
           <Box className="profile-tab-content">
             {tab === 0 && (
-              <Box component="form" className="settings-form">
-                <TextField label="Current Password" type="password" variant="outlined" fullWidth />
-                <TextField label="New Password" type="password" variant="outlined" fullWidth />
-                <TextField label="Confirm New Password" type="password" variant="outlined" fullWidth />
+              <Box component="form" className="settings-form" onSubmit={handleUpdatePassword}>
+                <TextField label="Current Password" type="password" fullWidth value={currentPassword} onChange={(e) => setCurrPassword(e.target.value)} />
+                <TextField label="New Password" type="password" fullWidth value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                <TextField label="Confirm New Password" type="password" fullWidth value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />
                 <Button type="submit" variant="contained" fullWidth>
                   Update
                 </Button>

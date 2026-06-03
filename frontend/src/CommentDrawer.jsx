@@ -239,11 +239,23 @@ const CommentDrawer = ({ item }) => {
       }}
     >
 
-      <Typography variant="h6">{item.name}</Typography>
-
-      <Typography variant="caption" color="text.secondary">
-        ID: {item.id}
-      </Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Box>
+          <Typography variant="h6">{item.name}</Typography>
+          <Typography variant="caption" color="text.secondary">
+            ID: {item.id}
+          </Typography>
+        </Box>
+        
+        <Box sx={{ ml: 2, px: 1, py: 0.5, borderRadius: 1, bgcolor: 'grey.100', border: '1px solid', borderColor: 'grey.300', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+          <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: 'black' }}>
+            <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>
+              {item.averageRating > 0 ? Number(item.averageRating).toFixed(1) : "--"}
+            </Typography>
+            <StarIcon sx={{ fontSize: '18px', color: '#f5b301' }} />
+          </Stack>
+        </Box>
+      </Stack>
 
       <Divider sx={{ my: 2 }} />
 

@@ -53,8 +53,8 @@ const DiningPage = () => {
     }).format(new Date())
   );
 
-  const openComments = ({ id, name, type = "items" }) => {
-    setSelectedItem({ id, name, type});
+  const openComments = ({ id, name, type = "items", averageRating }) => {
+    setSelectedItem({ id, name, type, averageRating });
     setDrawerOpen(true);
         console.log(type)
 
@@ -172,7 +172,7 @@ const DiningPage = () => {
                 <Typography variant="h3" className="location-title">
                   {hall?.name || name}
                 </Typography>
-                <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls' })} className="review-btn">
+                <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls', averageRating: hall?.averageRating })} className="review-btn">
                   <ModeCommentOutlinedIcon fontSize='medium' />
                 </IconButton>
               </Stack>
@@ -232,7 +232,7 @@ const DiningPage = () => {
                               component="button"
                               type="button"
                               variant="body1"
-                              onClick={() => openComments({ id, name, type: "items" })}
+                              onClick={() => openComments({ id, name, type: "items", averageRating })}
                               sx={{
                                 px: 1,
                                 py: 0,
@@ -248,7 +248,7 @@ const DiningPage = () => {
                             
 
                             {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
+                            <IconButton onClick={() => openComments({ id, name, type: "items", averageRating })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
                               <ModeCommentOutlinedIcon fontSize="small" />
                             </IconButton>
 

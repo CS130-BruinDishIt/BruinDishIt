@@ -1,8 +1,11 @@
 import { fetchDailyMenu } from "./api/dining";
 import { fetchDiningHall } from "./api/dining";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import "./styles/DiningPage.css";
+import { MEALS } from "./data/mealLabels"
+
 import {
   Box,
   Button,
@@ -18,18 +21,12 @@ import {
   Typography,
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
+
+import BackToTop from "./components/BackToTop"
 import CommentDrawer from "./CommentDrawer";
 
-// Map backend meal keys to friendly labels for display
-const MEAL_LABELS = {
-  "allday": "All Day",
-  "breakfast": "Breakfast",
-  "lunch": "Lunch",
-  "dinner": "Dinner",
-  "extended dinner": "Extended Dinner",
-};
-
 const DiningPage = () => {
+
   // Identify dining location being fetched
   const { name } = useParams();
   const navigate = useNavigate();
@@ -53,9 +50,8 @@ const DiningPage = () => {
   );
 
   const openComments = ({ id, name, type = "items" }) => {
-    setSelectedItem({ id, name, type});
+    setSelectedItem({ id, name, type });
     setDrawerOpen(true);
-        console.log(type)
 
     const key = encodeURIComponent(`${id}`);
     window.history.replaceState(null, "", `${window.location.pathname}#${key}`);
@@ -120,6 +116,15 @@ const DiningPage = () => {
   const meals = useMemo(() => menuData?.meals || [], [menuData]);
   const isLoading = status === "loading" || status === "idle";
 
+  // Generate custom URL + jump to for each menu section
+  const mealRefs = useRef({});
+  const scrollToMeal = (mealType) => {
+    mealRefs.current[mealType]?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   // Generate custom URL for each menu item's review section
   useEffect(() => {
     const id = window.location.hash.replace("#", "");
@@ -139,66 +144,172 @@ const DiningPage = () => {
   // Handle different display responses
   if (isLoading) {
     return (
-      <Container maxWidth="md" sx={{ py: 6 }}>
-        <Typography variant="h4">Loading menu...</Typography>
+      <Container maxWidth="lg" className="dining-container">
+        <Container maxWidth="md" sx={{ py: 6 }}>
+          <Typography variant="h4">Loading menu...</Typography>
+        </Container>
       </Container>
     );
   }
 
   if (status === "error") {
     return (
-      <Container maxWidth="md" sx={{ py: 6 }}>
-        <Typography variant="h4">Dining hall "{name}" was not found.</Typography>
+      <Container maxWidth="lg" className="dining-container">
+        <Container maxWidth="md" sx={{ py: 6 }}>
+          <Typography variant="h4">Dining hall "{name}" was not found.</Typography>
+        </Container>
       </Container>
     );
   }
 
   if (!meals.length) {
     return (
-      <Container maxWidth="md" sx={{ py: 6 }}>
-        <Typography variant="h4">Menus unavailable for "{name}."</Typography>
+      <Container maxWidth="lg" className="dining-container">
+        <Container maxWidth="md" sx={{ py: 6 }}>
+          <Typography variant="h4">Menus unavailable for "{name}."</Typography>
+        </Container>
       </Container>
     );
   }
 
   return (
     <>
-      <Container maxWidth="lg" className="dining-container">
+      <Container className="dining-container">
+
+        {/* Title */}
         <Box className="location-box">
           <Box className="location-header">
-            <Box>
-              <Stack direction="row" alignItems="center" spacing={1.5} className="location-title-row">
-                <Typography variant="h3" className="location-title">
-                  {hall?.name || name}
-                </Typography>
-                <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls' })} className="review-btn">
-                  <ModeCommentOutlinedIcon fontSize='medium' />
-                </IconButton>
-              </Stack>
-              <Typography variant="body2" className="location-datetime">
-                {currentPacificTime}
-              </Typography>
-            </Box>
-
-            <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
-              View All Time Menu Items
-            </Button>
-          </Box>
-
-          {hall?.description && (
-            <Typography variant="body1" color="text.secondary">
-              {hall.description}
+            <Typography variant="h3" className="location-title">
+              {hall?.name || name}
             </Typography>
-          )}
 
+            <Typography variant="body2" className="pill pill--time">
+              {currentPacificTime}
+            </Typography>
+
+            <Box>
+              <Button
+                variant="contained"
+                disableElevation
+                onClick={() => navigate(`/dining/${name}/items`)}
+                className="pill pill--history"
+              >
+                View All-Time Menu Items
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<ModeCommentOutlinedIcon />}
+                onClick={() =>
+                  openComments({ id: hall?.id, name: hall?.name || name, type: "halls" })
+                }
+                className="pill pill--reviews"
+              >
+                View Hall Reviews
+              </Button>
+            </Box>
+          </Box>
         </Box>
 
+        {/* Jump To Section */}
+        <Card
+          elevation={0}
+          sx={{
+            mb: 4,
+            width: "fit-content",
+            display: "inline-block",
+            ml: 4,
+            mr: "auto",
+            borderRadius: 0,
+            boxShadow: "none",
+            border: "1px solid rgba(0,0,0,0.12)",
+            backdropFilter: "blur(8px)",
+            backgroundColor: "rgba(255,255,255,0.85)",
+            overflow: "hidden",
+          }}
+        >
+          <CardContent
+            sx={{
+              display: "flex",
+              flexDirection: "row",   
+              alignItems: "center",   
+              gap: 2,
+              p: 2,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {/* TITLE */}
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                lineHeight: 1,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Go To
+            </Typography>
+            <Box
+              sx={{
+                width: "1px",
+                backgroundColor: "divider",
+                mx: 1,
+              }}
+            />
+            {meals.map(({ mealType }) => (
+              <Button
+                key={mealType}
+                onClick={() => scrollToMeal(mealType)}
+                sx={{
+                  width: 200,
+                  borderRadius: "999px",
+
+                  textTransform: "none",
+                  fontWeight: 600,
+
+                  py: 1,
+                  px: 2,
+
+                  color: "#fff",
+                  backgroundColor: MEALS[mealType].color || "#1976d2",
+
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+
+                  transition: "all 0.2s ease",
+
+                  "&:hover": {
+                    backgroundColor: MEALS[mealType].color || "#1565c0",
+                    transform: "scale(1.03)",
+                  },
+                }}
+              >
+                <span style={{ marginRight: 8 }}>
+                  {MEALS[mealType].icon}
+                </span>
+                {MEALS[mealType].label || mealType}
+              </Button>
+            ))}
+
+          </CardContent>
+        </Card>
+
+        {/* Meals */}
         <Stack spacing={4}>
-          {/* Meals */}
+
           {meals.map(({ mealType, stations }) => (
-            <Paper key={mealType} elevation={3} sx={{ p: 4, borderRadius: 4 }}>
+            <Paper
+              key={mealType}
+              ref={(el) => (mealRefs.current[mealType] = el)}
+              elevation={3}
+              sx={{
+                p: 4,
+                borderRadius: 4,
+                scrollMarginTop: "100px",
+              }}
+            >
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
-                {MEAL_LABELS[mealType] || mealType}
+                {MEALS[mealType].label || mealType}
               </Typography>
 
               {/* Stations */}
@@ -267,6 +378,8 @@ const DiningPage = () => {
       >
         <CommentDrawer item={selectedItem} />
       </Drawer>
+
+      <BackToTop />
     </>
   )
 }

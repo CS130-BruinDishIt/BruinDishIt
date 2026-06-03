@@ -63,6 +63,18 @@
   color: inherit;
 }
 
+@media (max-width: 768px) {
+  .title.MuiTypography-root {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title.MuiTypography-root {
+    font-size: 1.5rem;
+  }
+}
+
 .navbar-scrolled .title {
   left: 100px;
   transform: translate(0, -50%);

@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
 import { createReview, fetchReviews, reactToReview, updateReview, deleteReview } from "./api/dining";
 
+import "./styles/CommentDrawer.css";
+
 import {
   Box,
   Button,
@@ -25,6 +27,14 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+
+import ImageLightbox from "./components/ImageLightbox";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const formatter = new Intl.DateTimeFormat('en-US', {
@@ -97,6 +107,12 @@ const buildStars = (rating) => {
 };
 
 const CommentDrawer = ({ item }) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(null);
+  const openImage = (img) => {
+    setActiveImage(img);
+    setLightboxOpen(true);
+  };
   const navigate = useNavigate();
   const authUser = getAuthUser();
   const isLoggedIn = Boolean(authUser);
@@ -291,7 +307,7 @@ const CommentDrawer = ({ item }) => {
 
   if (!item) return null;
 
-  return (
+  return (<>
     <Box sx={{
       width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
     }}
@@ -415,39 +431,46 @@ const CommentDrawer = ({ item }) => {
             Gallery
           </Typography>
 
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{
-              overflowX: "hidden",
-              flexwrap: "nowrap",
-              gap: 1,
-              minWidth: 0,
-              pb: 1,
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={12}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+            breakpoints={{
+              600: { slidesPerView: 2 },
+              900: { slidesPerView: 3 },
+            }}
+            style={{
+              paddingBottom: "32px",
             }}
           >
             {photos.map((photo, idx) => (
-              <Box
-                key={idx}
-                sx={{
-                  flex: "1 1 0",
-                  minWidth: 0,
-                }}
-              >
+              <SwiperSlide key={idx}>
                 <Box
-                  component="img"
-                  src={resolvePhotoSrc(photo.path || photo.url || photo)}
-                  alt={photo.path}
                   sx={{
-                    width: "100%",
-                    height: 160,
-                    objectFit: "cover",
-                    display: "block",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    height: 220,
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
                   }}
-                />
-              </Box>
+                >
+                  <Box
+                    component="img"
+                    src={resolvePhotoSrc(photo.path || photo.url || photo)}
+                    alt={photo.path || "gallery image"}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                    onClick={() => openImage(photo)}
+                  />
+                </Box>
+              </SwiperSlide>
             ))}
-          </Stack>
+          </Swiper>
 
           <Divider sx={{ my: 2 }} />
         </>
@@ -533,13 +556,13 @@ const CommentDrawer = ({ item }) => {
                       component="img"
                       src={resolvePhotoSrc(photo)}
                       sx={{
-                        flex: "1 1 0",
                         minWidth: 0,
-                        width: "100%",
-                        height: 96,
+                        maxWidth: "15%",
+                        maxHeight: "25vh",
                         objectFit: "cover",
                         borderRadius: 2,
                       }}
+                      onClick={() => openImage(photo)}
                     />
                   ))}
                 </Stack>
@@ -609,6 +632,12 @@ const CommentDrawer = ({ item }) => {
         })
       )}
     </Box>
+    <ImageLightbox
+      open={lightboxOpen}
+      image={activeImage}
+      onClose={() => setLightboxOpen(false)}
+    />
+  </>
   );
 };
 

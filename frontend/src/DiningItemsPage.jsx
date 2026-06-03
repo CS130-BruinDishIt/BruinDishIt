@@ -210,7 +210,7 @@ const DiningItemsPage = () => {
                         {/* Average Rating Box */}
                         <Box sx={{ ml: 1, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: 'grey.100', border: '1px solid', borderColor: 'grey.300', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
                           <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'black' }}>
-                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>{averageRating != null ? Number(averageRating).toFixed(1) : "0.0"}</Typography>
+                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
                             <StarIcon sx={{ fontSize: '14px' }} />
                           </Stack>
                         </Box>

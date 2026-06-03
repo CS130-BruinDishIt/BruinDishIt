@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
-import { createReview, fetchReviews, reactToReview, updateReview, deleteReview } from "./api/dining";
+import { createReview, fetchReviews, reactToReview, updateReview, deleteReview, uploadImage } from "./api/dining";
 
 import "./styles/CommentDrawer.css";
 
@@ -149,16 +149,19 @@ const CommentDrawer = ({ item }) => {
   };
 
   // Cache uploaded images as data URLs so they can be stored in the DB.
-  const handleImageSelect = (event) => {
+  const handleImageSelect = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFormImageData(String(reader.result || ""));
-      setFormImageName(file.name);
-    };
-    reader.readAsDataURL(file);
+    setFormImageName(file.name); // show filename right away
+
+    try {
+      const url = await uploadImage(file); // upload to R2 and get back a URL
+      setFormImageData(url);
+    } catch (err) {
+      console.error("Image upload failed", err);
+    }
+
     event.target.value = "";
   };
 
@@ -188,7 +191,6 @@ const CommentDrawer = ({ item }) => {
 
 
 
-    console.log(item)
     const itemType = item.type || "items";
     try {
       const response = isEditing

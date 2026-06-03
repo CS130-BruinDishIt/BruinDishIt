@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
+import StarIcon from "@mui/icons-material/Star";
 import CommentDrawer from "./CommentDrawer";
 
 const DiningItemsPage = () => {
@@ -174,35 +175,45 @@ const DiningItemsPage = () => {
 
                   <Divider sx={{ mb: 2 }} />
                   <Stack spacing={1}>
-                    {letterItems.map(({ id, name, lastSeen, dateAdded }) => (
-                      <Stack key={id} direction="row" sx={{ py: 0.75 }}>
-                        {/* Item Name */}
-                        <Typography
-                          component="button"
-                          type="button"
-                          variant="body1"
-                          onClick={() => openComments({ id, name, type: "items" })}
-                          sx={{
-                            px: 1,
-                            py: 0,
-                            border: 0,
-                            background: "transparent",
-                            textAlign: "left",
-                            cursor: "pointer",
-                            color: "#1976d2",
-                          }}
-                        >
-                          • {name}
-                        </Typography>
+                    {letterItems.map(({ id, name, lastSeen, dateAdded, averageRating }) => (
+                      <Stack key={id} direction="row" alignItems="center" sx={{ py: 0.75 }}>
+                        <Stack direction="row" alignItems="baseline">
+                          {/* Item Name */}
+                          <Typography
+                            component="button"
+                            type="button"
+                            variant="body1"
+                            onClick={() => openComments({ id, name, type: "items" })}
+                            sx={{
+                              px: 1,
+                              py: 0,
+                              border: 0,
+                              background: "transparent",
+                              textAlign: "left",
+                              cursor: "pointer",
+                              color: "#1976d2",
+                            }}
+                          >
+                            • {name}
+                          </Typography>
 
-                        <Typography variant="caption" color="text.secondary" sx={{ ml: .5, whiteSpace: "nowrap", lineHeight: 1, position: "relative", top: "6px" }}>
-                          Last served: {new Date(lastSeen ?? dateAdded).toLocaleDateString()}
-                        </Typography>
+                          <Typography variant="caption" color="text.secondary" sx={{ ml: .5, whiteSpace: "nowrap", lineHeight: 1 , alignSelf: "center"}}>
+                            Last served: {new Date(lastSeen ?? dateAdded).toLocaleDateString()}
+                          </Typography>
+                        </Stack>
 
                         {/* Button to view reviews */}
-                        <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" sx={{ ml: 1 }}>
+                        <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
                           <ModeCommentOutlinedIcon fontSize="small" />
                         </IconButton>
+
+                        {/* Average Rating Box */}
+                        <Box sx={{ ml: 1, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: 'grey.100', border: '1px solid', borderColor: 'grey.300', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+                          <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'black' }}>
+                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>{averageRating != null ? Number(averageRating).toFixed(1) : "0.0"}</Typography>
+                            <StarIcon sx={{ fontSize: '14px' }} />
+                          </Stack>
+                        </Box>
                       </Stack>
                     ))}
                   </Stack>

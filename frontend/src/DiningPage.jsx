@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
+import StarIcon from "@mui/icons-material/Star";
 import CommentDrawer from "./CommentDrawer";
 
 // Map backend meal keys to friendly labels for display
@@ -180,9 +181,18 @@ const DiningPage = () => {
               </Typography>
             </Box>
 
-            <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
-              View All Time Menu Items
-            </Button>
+            <Stack direction="row" alignItems="right" spacing={10} sx={{ px: 10 }}>
+              
+              <Stack direction="row" alignItems="center" spacing={.5} sx={{ color: '#f5b301' }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>{hall?.averageRating != null ? Number(hall.averageRating).toFixed(1) : "0.0"}</Typography>
+                {/* <StarIcon fontSize="large" /> */}
+                <StarIcon sx={{ fontSize: '30px' }} />
+              </Stack>
+              
+              <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
+                View All Time Menu Items
+              </Button>
+            </Stack>
           </Box>
 
           {hall?.description && (
@@ -214,8 +224,8 @@ const DiningPage = () => {
 
                       {/* Items */}
                       <Stack spacing={1}>
-                        {items.map(({ id, name }) => (
-                          <Stack key={id} direction="row" sx={{ py: 0.5 }}>
+                        {items.map(({ id, name, averageRating }) => (
+                          <Stack key={id} direction="row" alignItems="center" sx={{ py: 0.5 }}>
 
                             {/* Item Name */}
                             <Typography
@@ -235,11 +245,20 @@ const DiningPage = () => {
                             >
                               • {name}
                             </Typography>
+                            
 
                             {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" >
+                            <IconButton onClick={() => openComments({ id, name, type: "items" })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
                               <ModeCommentOutlinedIcon fontSize="small" />
                             </IconButton>
+
+                            {/* Average Rating Box */}
+                            <Box sx={{ ml: 1, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: 'grey.100', border: '1px solid', borderColor: 'grey.300', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+                              <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'black' }}>
+                                <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>{averageRating != null ? Number(averageRating).toFixed(1) : "0.0"}</Typography>
+                                <StarIcon sx={{ fontSize: '14px' }} />
+                              </Stack>
+                            </Box>
                           </Stack>
                         ))}
                       </Stack>

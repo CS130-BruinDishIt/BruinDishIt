@@ -175,3 +175,21 @@ export async function fetchDiningHall(slug, { signal } = {}) {
 
   return response.json();
 }
+
+// Upload an image to R2 and get back a URL
+export async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append("image", file); // "image" matches upload.single("image") on the backend
+
+  const url = new URL(`/api/dining/uploadImage`, API_BASE_URL);
+
+  const response = await fetch(url, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) throw new Error("Image upload failed.");
+
+  const data = await response.json();
+  return data.url;
+}

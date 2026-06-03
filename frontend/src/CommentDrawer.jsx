@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
-import { createReview, fetchReviews, reactToReview, updateReview } from "./api/dining";
+import { createReview, fetchReviews, reactToReview, updateReview, uploadImage } from "./api/dining";
 
 import {
   Box,
@@ -105,16 +105,19 @@ const CommentDrawer = ({ item }) => {
   };
 
   // Cache uploaded images as data URLs so they can be stored in the DB.
-  const handleImageSelect = (event) => {
+  const handleImageSelect = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFormImageData(String(reader.result || ""));
-      setFormImageName(file.name);
-    };
-    reader.readAsDataURL(file);
+    setFormImageName(file.name); // show filename right away
+
+    try {
+      const url = await uploadImage(file); // upload to R2 and get back a URL
+      setFormImageData(url);
+    } catch (err) {
+      console.error("Image upload failed", err);
+    }
+
     event.target.value = "";
   };
 
@@ -146,7 +149,6 @@ const CommentDrawer = ({ item }) => {
     //   payload.user = "Guest";
     // }
 
-    console.log(item)
     const itemType = item.type || "items";
     try {
       const response = isEditing
@@ -235,8 +237,9 @@ const CommentDrawer = ({ item }) => {
   if (!item) return null;
 
   return (
-    <Box sx={{width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
-      }}
+    <Box sx={{
+      width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
+    }}
     >
 
       <Typography variant="h6">{item.name}</Typography>
@@ -342,7 +345,7 @@ const CommentDrawer = ({ item }) => {
             Sign in to rate posts, leave comments, or upload photos.
           </Typography>
           {/* window.Location.pathname -> /dining/bruin-plate    window.location.hash -> #....menuitemID  */}
-          <Button component={Link} to="/signin" state={{from: `${window.location.pathname}${window.location.hash}`}}variant="contained">
+          <Button component={Link} to="/signin" state={{ from: `${window.location.pathname}${window.location.hash}` }} variant="contained">
             Sign In
           </Button>
         </Box>
@@ -417,14 +420,14 @@ const CommentDrawer = ({ item }) => {
                 </Typography>
                 {isOwnReview(r) && (
                   <IconButton
-                  size="small"
-                  aria-label="Edit review"
-                  disabled={!r.id}
-                  onClick={() => handleEditReview(r)}
-                >
-                  {/* Edit icon toggles the form above into update mode. */}
-                  <EditOutlinedIcon fontSize="small" />
-                </IconButton>
+                    size="small"
+                    aria-label="Edit review"
+                    disabled={!r.id}
+                    onClick={() => handleEditReview(r)}
+                  >
+                    {/* Edit icon toggles the form above into update mode. */}
+                    <EditOutlinedIcon fontSize="small" />
+                  </IconButton>
                 )}
               </Stack>
 

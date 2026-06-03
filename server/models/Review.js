@@ -17,8 +17,8 @@ const reviewSchema = new mongoose.Schema({
     required: true,
   },
   user: { type: String, required: true },
-  rating: { type: Number, required: true, min: 1, max: 5 },
-  text: { type: String, required: true },
+  rating: { type: Number, required: true, min: 0.5, max: 5 },
+  text: { type: String, default: "" },
   likes: { type: Number, default: 0 },
   dislikes: { type: Number, default: 0 },
   likedBy: [

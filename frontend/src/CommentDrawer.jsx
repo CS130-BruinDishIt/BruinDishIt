@@ -22,6 +22,8 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 
 const formatter = new Intl.DateTimeFormat('en-US', {
@@ -59,13 +61,38 @@ const buildPhotosFromReviews = (reviewList) => (
 const buildStars = (rating) => {
   const numericRating = Number(rating) || 0;
 
-  return Array.from({ length: 5 }, (_, index) => (
-    <StarIcon
-      key={index}
-      fontSize="small"
-      sx={{ color: index < numericRating ? "#f5b301" : "#d6d6d6" }}
-    />
-  ));
+  return Array.from({ length: 5 }, (_, index) => {
+    const starValue = index + 1;
+    // display full star
+    if (numericRating >= starValue) {
+      return (
+        <StarIcon
+          key={index}
+          fontSize="small"
+          sx={{ color: "#f5b301" }}
+        />
+      );
+    }
+
+    // display half star
+    if (numericRating >= starValue - 0.5) {
+      return (
+        <StarHalfIcon
+          key={index}
+          fontSize="small"
+          sx={{ color: "#f5b301" }}
+        />
+      );
+    }
+
+    return (
+        <StarBorderIcon
+          key={index}
+          fontSize="small"
+          sx={{ color: "#d6d6d6" }}
+        />
+      );
+  });
 };
 
 const CommentDrawer = ({ item }) => {
@@ -92,7 +119,7 @@ const CommentDrawer = ({ item }) => {
   // Derived form state used for button enablement and labels.
   const isEditing = Boolean(editingReviewId);
   const numericRating = Number(formRating);
-  const isFormValid = formText.trim().length > 0 && numericRating >= 1 && numericRating <= 5;
+  const isFormValid = formRating !== "" && numericRating >= 0.5 && numericRating <= 5; // no need to have formText.trim().length > 0 since only rating is required to submit
   const submitLabel = isEditing ? "Update review" : "Post review";
 
   // Reset the form when switching items or after successful submission.
@@ -235,8 +262,9 @@ const CommentDrawer = ({ item }) => {
   if (!item) return null;
 
   return (
-    <Box sx={{width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
-      }}
+    <Box sx={{
+      width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
+    }}
     >
 
       <Typography variant="h6">{item.name}</Typography>
@@ -284,7 +312,7 @@ const CommentDrawer = ({ item }) => {
                   label="Rating"
                   onChange={(event) => setFormRating(event.target.value)}
                 >
-                  {[1, 2, 3, 4, 5].map((value) => (
+                  {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((value) => (  // half-star ratings supported
                     <MenuItem key={value} value={value}>
                       {value}
                     </MenuItem>
@@ -342,7 +370,7 @@ const CommentDrawer = ({ item }) => {
             Sign in to rate posts, leave comments, or upload photos.
           </Typography>
           {/* window.Location.pathname -> /dining/bruin-plate    window.location.hash -> #....menuitemID  */}
-          <Button component={Link} to="/signin" state={{from: `${window.location.pathname}${window.location.hash}`}}variant="contained">
+          <Button component={Link} to="/signin" state={{ from: `${window.location.pathname}${window.location.hash}` }} variant="contained">
             Sign In
           </Button>
         </Box>
@@ -417,14 +445,14 @@ const CommentDrawer = ({ item }) => {
                 </Typography>
                 {isOwnReview(r) && (
                   <IconButton
-                  size="small"
-                  aria-label="Edit review"
-                  disabled={!r.id}
-                  onClick={() => handleEditReview(r)}
-                >
-                  {/* Edit icon toggles the form above into update mode. */}
-                  <EditOutlinedIcon fontSize="small" />
-                </IconButton>
+                    size="small"
+                    aria-label="Edit review"
+                    disabled={!r.id}
+                    onClick={() => handleEditReview(r)}
+                  >
+                    {/* Edit icon toggles the form above into update mode. */}
+                    <EditOutlinedIcon fontSize="small" />
+                  </IconButton>
                 )}
               </Stack>
 

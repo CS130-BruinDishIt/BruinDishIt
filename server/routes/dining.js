@@ -116,9 +116,9 @@ async function createReview(id, idField, req, res, next) {
 	const userId = req.user.id || req.user.userId || req.user._id;
     const imageUrl = req.body.imageUrl || null;
 
-    if (!text) return res.status(400).json({ message: "Review text is required." });
-    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
-      return res.status(400).json({ message: "Rating must be between 1 and 5." });
+    //if (!text) return res.status(400).json({ message: "Review text is required." });
+    if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
     }
 
     const review = await Review.create({
@@ -153,9 +153,9 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 	const text = String(req.body.text || "").trim();
 	const rating = Number(req.body.rating);
 
-	if (!text) return res.status(400).json({ message: "Review text is required." });
-	if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
-	  return res.status(400).json({ message: "Rating must be between 1 and 5." });
+	//if (!text) return res.status(400).json({ message: "Review text is required." });
+	if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) {
+	  return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
 	}
 
 	const update = { text, rating, date: new Date() };

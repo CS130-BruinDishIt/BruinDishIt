@@ -14,7 +14,7 @@ export const diningLocations = [
     { // lunch dinner 
         id: "epicuria-at-covel",
         name: "Epicuria",
-        shortname: "Epic (Covel)",
+        shortname: "Epic @ Covel",
         level: "big",
     },
     { // dinner
@@ -56,7 +56,7 @@ export const diningLocations = [
     {
         id: "epicuria-at-ackerman",
         name: "Epic At Ackerman",
-        shortname: "Epic Ack",
+        shortname: "Epic @ Ackerman",
         level: "small",
         
     },

@@ -137,28 +137,31 @@ const DiningItemsPage = () => {
     <>
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
-          <Stack direction="row" alignitems="center" spacing={2}>
-            <Typography variant="h3" className="location-title">
-              {hall?.name || name}
+          <Stack direction="column" alignItems="flex-start" spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Typography variant="h3" className="location-title">
+                {hall?.name || name}
+              </Typography>
+              <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls', averageRating: hall?.averageRating })} className="review-btn">
+                <ModeCommentOutlinedIcon fontSize='medium' />
+              </IconButton>
+            </Stack>
+
+            <Typography variant="body1" color="text.secondary" sx={{pl: 1.5}}>
+              Browse every menu item served at this dining hall.
             </Typography>
-            <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls', averageRating: hall?.averageRating })} className="review-btn">
-              <ModeCommentOutlinedIcon fontSize='medium' />
-            </IconButton>
+
+            <Button
+              component={Link}
+              to={`/dining/${name}`}
+              variant="contained"
+              disableElevation
+              className="pill pill--history"
+              sx={{ width: 'fit-content'}}
+            >
+              Back to Today
+            </Button>
           </Stack>
-
-          <Typography variant="body1" color="text.secondary">
-            Browse every menu item served at this dining hall.
-          </Typography>
-
-          <Button
-            component={Link}
-            to={`/dining/${name}`}
-            variant="contained"
-            disableElevation
-            sx={{ mt: 2 }}
-          >
-            Back to Today
-          </Button>
         </Box>
 
         <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>

@@ -25,7 +25,6 @@ import StarIcon from "@mui/icons-material/Star";
 import CommentDrawer from "./CommentDrawer";
 
 import BackToTop from "./components/BackToTop";
-import CommentDrawer from "./CommentDrawer";
 
 const DiningPage = () => {
 
@@ -193,7 +192,6 @@ const DiningPage = () => {
               <Typography variant="body2" className="location-datetime">
                 {currentPacificTime}
               </Typography>
-            </Box>
 
             <Stack direction="row" alignItems="right" spacing={10} sx={{ px: 10 }}>
               

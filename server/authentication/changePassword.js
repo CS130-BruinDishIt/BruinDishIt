@@ -15,7 +15,7 @@ export const changePassword = async (req, res) => {
     }
 
     // Fetch the user from the database
-    console.log(userId); //delete later
+
     const user = await User.findById(userId).select("+passwordHash +passwordSalt");
 
     if (!user) {

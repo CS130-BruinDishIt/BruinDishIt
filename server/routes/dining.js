@@ -113,7 +113,7 @@ async function createReview(id, idField, req, res, next) {
     const text = String(req.body.text || "").trim();
     const rating = Number(req.body.rating);
     const user = req.user.username;
-	const userId = req.user.id || req.user.userId || req.user._id;
+	const userId = req.user.id || req.user._id;
     const imageUrl = req.body.imageUrl || null;
 
     //if (!text) return res.status(400).json({ message: "Review text is required." });
@@ -288,6 +288,43 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 		return next(error);
 	}
 });
+
+async function deleteReview(id, idField, reviewId, req, res, next) {
+  try {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Valid id is required." });
+    }
+
+    if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
+      return res.status(400).json({ message: "Valid review id is required." });
+    }
+
+	const userId = req.user.id || req.user._id;
+    const review = await Review.findOneAndDelete({
+      _id: reviewId,
+      [idField]: id,
+      userId,
+    });
+
+    if (!review) {
+      return res.status(404).json({
+        message: "Review not found or you do not have permission to delete it.",
+      });
+    }
+
+    return res.json({ message: "Review deleted successfully.", reviewId });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+// Separate endpoints for deleting reviews for menu items vs dining halls
+router.delete("/items/:itemId/reviews/:reviewId", requireAuth, (req, res, next) =>
+  deleteReview(req.params.itemId, "itemId", req.params.reviewId, req, res, next)
+);
+router.delete("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) => 
+  deleteReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
+);
 
 // Return a list of all dining halls with basic info for the homepage and navigation.
 router.get("/halls", async (req, res, next) => {

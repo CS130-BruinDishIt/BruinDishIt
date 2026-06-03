@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
-import { createReview, fetchReviews, reactToReview, updateReview } from "./api/dining";
+import { createReview, fetchReviews, reactToReview, updateReview, deleteReview } from "./api/dining";
 
 import {
   Box,
@@ -25,6 +25,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const formatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short', // options: 'full', 'long', 'medium', 'short'
@@ -86,12 +87,12 @@ const buildStars = (rating) => {
     }
 
     return (
-        <StarBorderIcon
-          key={index}
-          fontSize="small"
-          sx={{ color: "#d6d6d6" }}
-        />
-      );
+      <StarBorderIcon
+        key={index}
+        fontSize="small"
+        sx={{ color: "#d6d6d6" }}
+      />
+    );
   });
 };
 
@@ -101,7 +102,7 @@ const CommentDrawer = ({ item }) => {
   const isLoggedIn = Boolean(authUser);
   const authUserId = authUser?.id || authUser?._id;
 
-  const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUser.id);
+  const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUserId);
 
 
   const [reviews, setReviews] = useState([]);
@@ -169,9 +170,7 @@ const CommentDrawer = ({ item }) => {
       imageUrl: formImageData || null,
     };
 
-    // if (!isEditing) {
-    //   payload.user = "Guest";
-    // }
+
 
     console.log(item)
     const itemType = item.type || "items";
@@ -223,6 +222,37 @@ const CommentDrawer = ({ item }) => {
       console.error("Failed to react to review", error);
     }
   };
+
+  const handleDelete = async (reviewId) => {
+    if (!item?.id || !reviewId) return;
+    if (!isLoggedIn) {
+      navigate("/signin", {
+        state: { from: `${window.location.pathname}${window.location.hash}` },
+      });
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+
+    try {
+      const itemType = item.type || "items";
+      await deleteReview(item.id, itemType, reviewId);
+
+      setReviews((prev) => {
+        const next = prev.filter((review) => review.id !== reviewId);
+        setPhotos(buildPhotosFromReviews(next));
+        return next;
+      });
+      if (editingReviewId === reviewId) {   // removes immediately if user deletes
+        resetForm();
+      }
+
+    } catch (error) {
+      console.error("Failed to delete review", error);
+    }
+
+
+  }
 
   // Load reviews and gallery data from the backend for the selected item.
   useEffect(() => {
@@ -303,7 +333,7 @@ const CommentDrawer = ({ item }) => {
               onChange={(event) => setFormText(event.target.value)}
             />
 
-            <Stack direction="row" spacing={2} alignitems="center" flexwrap="wrap">
+            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel id="rating-label">Rating</InputLabel>
                 <Select
@@ -444,15 +474,28 @@ const CommentDrawer = ({ item }) => {
                   {r.userID || r.user}
                 </Typography>
                 {isOwnReview(r) && (
-                  <IconButton
-                    size="small"
-                    aria-label="Edit review"
-                    disabled={!r.id}
-                    onClick={() => handleEditReview(r)}
-                  >
-                    {/* Edit icon toggles the form above into update mode. */}
-                    <EditOutlinedIcon fontSize="small" />
-                  </IconButton>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <IconButton
+                      size="small"
+                      aria-label="Edit review"
+                      disabled={!r.id}
+                      onClick={() => handleEditReview(r)}
+                      sx={{ color: "text.secondary", "&:hover": { color: "success.main"} }}
+                    >
+                      {/* Edit icon toggles the form above into update mode. */}
+                      <EditOutlinedIcon fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                      aria-label="Delete review"
+                      disabled={!r.id}
+                      onClick={() => handleDelete(r.id)}
+                      sx={{ color: "text.secondary", "&:hover": { color: "error.main"} }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 )}
               </Stack>
 

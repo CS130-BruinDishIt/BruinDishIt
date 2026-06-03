@@ -1,46 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
 .dining-container {
     padding: 100px 0px;
+    width: 60vw !important;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.location-box {
-    margin-bottom: 30px;
-}
-
-.location-header {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    justify-content: space-between;
-}
-
-.location-title-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-@media (max-width: 600px) {
-    .location-header {
-        flex-direction: column;
-        align-items: flex-start;
+@media (max-width: 900px) {
+    .dining-container {
+        width: 90vw;
     }
 }
 
-.MuiTypography-root.location-title {
-    font-weight: 700;
-    margin-bottom: 0;
+@media (max-width: 600px) {
+    .dining-container {
+        width: 95vw;
+    }
 }
 
-.location-datetime.MuiTypography-root {
-    margin-top: 4px;
-    margin-bottom: 10px;
-    color: #555;
-    font-weight: 500;
+.location-box {
+  position: relative;
+
+  width: 100%;
+  margin-bottom: 24px;
+
+  padding: 18px 28px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+}
+
+
+.location-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.MuiTypography-root.location-title {
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-left: 10px !important;
+    padding: 6px 12px;
+    border-radius: 999px !important;
+
+    font-size: 1rem !important;
+    font-weight: 600;
+
+    min-height: 40px;
+    box-sizing: border-box;
+
+    border: 1.15px solid transparent;
+}
+
+.pill--time {
+    color: #606060;
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.pill--history {
+    background-color: #6e79a3 !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    transition: 0.2s ease;
+}
+
+.pill--history:hover {
+    transform: scale(1.03);
+}
+
+.pill--reviews {
+    color: #1976d2;
+    background: rgba(25, 118, 210, 0.10);
+    border-color: rgba(25, 118, 210, 0.25);
+    transition: 0.2s ease;
+    text-transform: none !important;
+}
+
+.pill--reviews:hover {
+    background: rgba(25, 118, 210, 0.16);
+    transform: scale(1.03);
 }
 
 .review-btn {
-    padding: 0 !important;
-    min-width: 0 !important;
-    color: #1976d2 !important;
+    background: rgba(25, 118, 210, 0.08) !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+}
+
+.review-btn:hover {
+    background: rgba(25, 118, 210, 0.15) !important;
 }

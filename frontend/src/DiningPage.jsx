@@ -180,7 +180,8 @@ const DiningPage = () => {
         {/* Title */}
         <Box className="location-box">
           <Box className="location-header">
-            <Box>
+            <Box sx={{ width: "100%"}}>
+            
               <Stack direction="row" alignItems="center" spacing={1.5} className="location-title-row">
                 <Typography variant="h3" className="location-title">
                   {hall?.name || name}
@@ -188,17 +189,18 @@ const DiningPage = () => {
                 <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls', averageRating: hall?.averageRating })} className="review-btn">
                   <ModeCommentOutlinedIcon fontSize='medium' />
                 </IconButton>
-              </Stack>
 
-            <Stack direction="row" alignItems="right" spacing={10} sx={{ px: 10 }}>
-              
-              <Stack direction="row" alignItems="center" spacing={.5} sx={{ color: '#f5b301' }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
-                {/* <StarIcon fontSize="large" /> */}
-                <StarIcon sx={{ fontSize: '30px' }} />
+                {/* Spacing */}
+                <Box sx={{ flexGrow: 1 }} />
+
+                {/* Average Rating Box */}
+                <Stack direction="row" alignItems="right" spacing={1} sx={{ color: '#f5b301', ml: "auto", pr: 5, pt: 0.45}}>
+                  <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '40px'}}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
+                  <StarIcon sx={{ fontSize: '50px' }} />
+                </Stack>
               </Stack>
-            </Stack>
-          </Box>
+              
+            </Box>
 
             <Typography variant="body2" className="pill pill--time">
               {currentPacificTime}
@@ -221,7 +223,7 @@ const DiningPage = () => {
                 }
                 className="pill pill--reviews"
               >
-                View Hall Reviews
+                View Location Reviews
               </Button>
             </Box>
           </Box>

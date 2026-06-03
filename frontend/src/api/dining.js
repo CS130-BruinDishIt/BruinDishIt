@@ -148,6 +148,33 @@ export async function reactToReview(id, type, reviewId, reaction, { signal } = {
   return response.json();
 }
 
+export async function deleteReview(id, type, reviewId, { signal } = {}) {
+  if (!id || !reviewId) {
+    throw new Error("Both the parent ID and review ID are required.");
+  }
+
+  if (type !== "items" && type !== "halls") {
+    throw new Error("Invalid review type.");
+  }
+
+  const url = new URL(
+    `/api/dining/${type}/${encodeURIComponent(id)}/reviews/${encodeURIComponent(reviewId)}`,
+    API_BASE_URL
+  );
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    signal,
+    headers: authJsonHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseErrorMessage(response));
+  }
+
+  return response.json();
+}
+
 // Fetch all dining halls
 export async function fetchDiningHalls({ signal } = {}) {
   const url = new URL(`/api/dining/halls`, API_BASE_URL);

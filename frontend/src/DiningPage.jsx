@@ -189,9 +189,6 @@ const DiningPage = () => {
                   <ModeCommentOutlinedIcon fontSize='medium' />
                 </IconButton>
               </Stack>
-              <Typography variant="body2" className="location-datetime">
-                {currentPacificTime}
-              </Typography>
 
             <Stack direction="row" alignItems="right" spacing={10} sx={{ px: 10 }}>
               
@@ -200,10 +197,6 @@ const DiningPage = () => {
                 {/* <StarIcon fontSize="large" /> */}
                 <StarIcon sx={{ fontSize: '30px' }} />
               </Stack>
-              
-              <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
-                View All Time Menu Items
-              </Button>
             </Stack>
           </Box>
 

@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 import StarIcon from "@mui/icons-material/Star";
+import BackToTop from "./components/BackToTop";
 import CommentDrawer from "./CommentDrawer";
 
 const DiningItemsPage = () => {
@@ -241,6 +242,8 @@ const DiningItemsPage = () => {
       >
         <CommentDrawer item={selectedItem} />
       </Drawer>
+
+      <BackToTop />
     </>
   );
 };

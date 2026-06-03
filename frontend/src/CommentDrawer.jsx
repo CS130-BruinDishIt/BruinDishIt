@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
-import { createReview, fetchReviews, reactToReview, updateReview } from "./api/dining";
+import { createReview, fetchReviews, reactToReview, updateReview, deleteReview, uploadImage } from "./api/dining";
+
+import "./styles/CommentDrawer.css";
 
 import {
   Box,
@@ -22,7 +24,18 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+
+import ImageLightbox from "./components/ImageLightbox";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const formatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short', // options: 'full', 'long', 'medium', 'short'
@@ -59,22 +72,53 @@ const buildPhotosFromReviews = (reviewList) => (
 const buildStars = (rating) => {
   const numericRating = Number(rating) || 0;
 
-  return Array.from({ length: 5 }, (_, index) => (
-    <StarIcon
-      key={index}
-      fontSize="small"
-      sx={{ color: index < numericRating ? "#f5b301" : "#d6d6d6" }}
-    />
-  ));
+  return Array.from({ length: 5 }, (_, index) => {
+    const starValue = index + 1;
+    // display full star
+    if (numericRating >= starValue) {
+      return (
+        <StarIcon
+          key={index}
+          fontSize="small"
+          sx={{ color: "#f5b301" }}
+        />
+      );
+    }
+
+    // display half star
+    if (numericRating >= starValue - 0.5) {
+      return (
+        <StarHalfIcon
+          key={index}
+          fontSize="small"
+          sx={{ color: "#f5b301" }}
+        />
+      );
+    }
+
+    return (
+      <StarBorderIcon
+        key={index}
+        fontSize="small"
+        sx={{ color: "#d6d6d6" }}
+      />
+    );
+  });
 };
 
 const CommentDrawer = ({ item }) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(null);
+  const openImage = (img) => {
+    setActiveImage(img);
+    setLightboxOpen(true);
+  };
   const navigate = useNavigate();
   const authUser = getAuthUser();
   const isLoggedIn = Boolean(authUser);
   const authUserId = authUser?.id || authUser?._id;
 
-  const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUser.id);
+  const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUserId);
 
 
   const [reviews, setReviews] = useState([]);
@@ -92,7 +136,7 @@ const CommentDrawer = ({ item }) => {
   // Derived form state used for button enablement and labels.
   const isEditing = Boolean(editingReviewId);
   const numericRating = Number(formRating);
-  const isFormValid = formText.trim().length > 0 && numericRating >= 1 && numericRating <= 5;
+  const isFormValid = formRating !== "" && numericRating >= 0.5 && numericRating <= 5; // no need to have formText.trim().length > 0 since only rating is required to submit
   const submitLabel = isEditing ? "Update review" : "Post review";
 
   // Reset the form when switching items or after successful submission.
@@ -105,16 +149,19 @@ const CommentDrawer = ({ item }) => {
   };
 
   // Cache uploaded images as data URLs so they can be stored in the DB.
-  const handleImageSelect = (event) => {
+  const handleImageSelect = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFormImageData(String(reader.result || ""));
-      setFormImageName(file.name);
-    };
-    reader.readAsDataURL(file);
+    setFormImageName(file.name); // show filename right away
+
+    try {
+      const url = await uploadImage(file); // upload to R2 and get back a URL
+      setFormImageData(url);
+    } catch (err) {
+      console.error("Image upload failed", err);
+    }
+
     event.target.value = "";
   };
 
@@ -142,11 +189,8 @@ const CommentDrawer = ({ item }) => {
       imageUrl: formImageData || null,
     };
 
-    // if (!isEditing) {
-    //   payload.user = "Guest";
-    // }
 
-    console.log(item)
+
     const itemType = item.type || "items";
     try {
       const response = isEditing
@@ -197,6 +241,37 @@ const CommentDrawer = ({ item }) => {
     }
   };
 
+  const handleDelete = async (reviewId) => {
+    if (!item?.id || !reviewId) return;
+    if (!isLoggedIn) {
+      navigate("/signin", {
+        state: { from: `${window.location.pathname}${window.location.hash}` },
+      });
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+
+    try {
+      const itemType = item.type || "items";
+      await deleteReview(item.id, itemType, reviewId);
+
+      setReviews((prev) => {
+        const next = prev.filter((review) => review.id !== reviewId);
+        setPhotos(buildPhotosFromReviews(next));
+        return next;
+      });
+      if (editingReviewId === reviewId) {   // removes immediately if user deletes
+        resetForm();
+      }
+
+    } catch (error) {
+      console.error("Failed to delete review", error);
+    }
+
+
+  }
+
   // Load reviews and gallery data from the backend for the selected item.
   useEffect(() => {
     if (!item?.id) return;
@@ -234,9 +309,10 @@ const CommentDrawer = ({ item }) => {
 
   if (!item) return null;
 
-  return (
-    <Box sx={{width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
-      }}
+  return (<>
+    <Box sx={{
+      width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
+    }}
     >
 
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -287,7 +363,7 @@ const CommentDrawer = ({ item }) => {
               onChange={(event) => setFormText(event.target.value)}
             />
 
-            <Stack direction="row" spacing={2} alignitems="center" flexwrap="wrap">
+            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel id="rating-label">Rating</InputLabel>
                 <Select
@@ -296,7 +372,7 @@ const CommentDrawer = ({ item }) => {
                   label="Rating"
                   onChange={(event) => setFormRating(event.target.value)}
                 >
-                  {[1, 2, 3, 4, 5].map((value) => (
+                  {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((value) => (  // half-star ratings supported
                     <MenuItem key={value} value={value}>
                       {value}
                     </MenuItem>
@@ -354,7 +430,7 @@ const CommentDrawer = ({ item }) => {
             Sign in to rate posts, leave comments, or upload photos.
           </Typography>
           {/* window.Location.pathname -> /dining/bruin-plate    window.location.hash -> #....menuitemID  */}
-          <Button component={Link} to="/signin" state={{from: `${window.location.pathname}${window.location.hash}`}}variant="contained">
+          <Button component={Link} to="/signin" state={{ from: `${window.location.pathname}${window.location.hash}` }} variant="contained">
             Sign In
           </Button>
         </Box>
@@ -369,39 +445,46 @@ const CommentDrawer = ({ item }) => {
             Gallery
           </Typography>
 
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{
-              overflowX: "hidden",
-              flexwrap: "nowrap",
-              gap: 1,
-              minWidth: 0,
-              pb: 1,
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={12}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+            breakpoints={{
+              600: { slidesPerView: 2 },
+              900: { slidesPerView: 3 },
+            }}
+            style={{
+              paddingBottom: "32px",
             }}
           >
             {photos.map((photo, idx) => (
-              <Box
-                key={idx}
-                sx={{
-                  flex: "1 1 0",
-                  minWidth: 0,
-                }}
-              >
+              <SwiperSlide key={idx}>
                 <Box
-                  component="img"
-                  src={resolvePhotoSrc(photo.path || photo.url || photo)}
-                  alt={photo.path}
                   sx={{
-                    width: "100%",
-                    height: 160,
-                    objectFit: "cover",
-                    display: "block",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    height: 220,
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
                   }}
-                />
-              </Box>
+                >
+                  <Box
+                    component="img"
+                    src={resolvePhotoSrc(photo.path || photo.url || photo)}
+                    alt={photo.path || "gallery image"}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                    onClick={() => openImage(photo)}
+                  />
+                </Box>
+              </SwiperSlide>
             ))}
-          </Stack>
+          </Swiper>
 
           <Divider sx={{ my: 2 }} />
         </>
@@ -428,15 +511,28 @@ const CommentDrawer = ({ item }) => {
                   {r.userID || r.user}
                 </Typography>
                 {isOwnReview(r) && (
-                  <IconButton
-                  size="small"
-                  aria-label="Edit review"
-                  disabled={!r.id}
-                  onClick={() => handleEditReview(r)}
-                >
-                  {/* Edit icon toggles the form above into update mode. */}
-                  <EditOutlinedIcon fontSize="small" />
-                </IconButton>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <IconButton
+                      size="small"
+                      aria-label="Edit review"
+                      disabled={!r.id}
+                      onClick={() => handleEditReview(r)}
+                      sx={{ color: "text.secondary", "&:hover": { color: "success.main"} }}
+                    >
+                      {/* Edit icon toggles the form above into update mode. */}
+                      <EditOutlinedIcon fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                      aria-label="Delete review"
+                      disabled={!r.id}
+                      onClick={() => handleDelete(r.id)}
+                      sx={{ color: "text.secondary", "&:hover": { color: "error.main"} }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 )}
               </Stack>
 
@@ -474,13 +570,13 @@ const CommentDrawer = ({ item }) => {
                       component="img"
                       src={resolvePhotoSrc(photo)}
                       sx={{
-                        flex: "1 1 0",
                         minWidth: 0,
-                        width: "100%",
-                        height: 96,
+                        maxWidth: "15%",
+                        maxHeight: "25vh",
                         objectFit: "cover",
                         borderRadius: 2,
                       }}
+                      onClick={() => openImage(photo)}
                     />
                   ))}
                 </Stack>
@@ -550,6 +646,12 @@ const CommentDrawer = ({ item }) => {
         })
       )}
     </Box>
+    <ImageLightbox
+      open={lightboxOpen}
+      image={activeImage}
+      onClose={() => setLightboxOpen(false)}
+    />
+  </>
   );
 };
 

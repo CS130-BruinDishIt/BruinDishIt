@@ -20,7 +20,7 @@ async function parseErrorMessage(response) {
 export async function signupUser({ username, password }) {
     const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: "POST",
-        headers: {
+        headers: {  
         Accept: "application/json",
         "Content-Type": "application/json",
         },
@@ -52,24 +52,23 @@ export async function loginUser({ username, password }) {
   return response.json();
 }
 
-// // ...
-// export async function updateUser({ currPassword, newPassword, confirmNewPassword }) {
 
-//     const response = await fetch(`${API_BASE_URL}/api/auth/update`, {
-//         method: "PATCH", //modification to existing, not creating new 
-//         headers: {
-//             Accept: "application/json",
-//             "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({ currPassword, newPassword, confirmNewPassword }),
-//     });
+export async function updatePW({currentPassword, newPassword}) {
+  const response = await fetch(`${API_BASE_URL}/api/auth/changePW`, {
+      method: "PATCH",
+      headers: authJsonHeaders(),
+      body: JSON.stringify({
+          currentPassword,
+          newPassword
+      }),
+  });
 
-//   if (!response.ok) {
-//     throw new Error(await parseErrorMessage(response));
-//   }
+  if (!response.ok) {
+      throw new Error(await parseErrorMessage(response));
+  }
 
-//   return response.json();
-// }
+  return response.json();
+}
 
 export function saveAuthSession({ token, user }) {
   localStorage.setItem("token", token);

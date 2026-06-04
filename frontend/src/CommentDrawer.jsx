@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuthUser } from "./api/auth";
 import { createReview, fetchReviews, reactToReview, updateReview, deleteReview, uploadImage } from "./api/dining";
@@ -27,6 +27,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
+import NorthIcon from "@mui/icons-material/North";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -142,6 +143,8 @@ const CommentDrawer = ({ item }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [sortBy, setSortBy] = useState("date");
+  const [sortAsc, setSortAsc] = useState(false); // false = descending by default
 
   // Derived form state used for button enablement and labels.
   const isEditing = Boolean(editingReviewId);
@@ -278,9 +281,17 @@ const CommentDrawer = ({ item }) => {
     } catch (error) {
       console.error("Failed to delete review", error);
     }
-
-
   }
+
+  const sortedReviews = useMemo(() => {
+    return [...reviews].sort((a, b) => {
+      let valA, valB;
+      if (sortBy === "date") { valA = new Date(a.date); valB = new Date(b.date); }
+      if (sortBy === "rating") { valA = a.rating; valB = b.rating; }
+      if (sortBy === "likes") { valA = a.likes; valB = b.likes; }
+      return sortAsc ? valA - valB : valB - valA;
+    });
+  }, [reviews, sortBy, sortAsc]);
 
   // Load reviews and gallery data from the backend for the selected item.
   useEffect(() => {
@@ -325,14 +336,14 @@ const CommentDrawer = ({ item }) => {
     }}
     >
 
-      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
+      <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", spacing: 2 }}>
         <Box>
           <Typography variant="h6">{item.name}</Typography>
           <Typography variant="caption" color="text.secondary">
             ID: {item.id}
           </Typography>
         </Box>
-      
+
 
 
         <Box sx={{ ml: 1, px: 0.75, py: 0.75, height: 'fit-content', alignSelf: 'center', borderRadius: 1, border: '1px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(item.averageRating) }}>
@@ -502,10 +513,32 @@ const CommentDrawer = ({ item }) => {
         </>
       )}
 
+      <Stack direction="row" sx={{ mb: 3, mt: 3, justifyContent: "space-between", alignItems: "center" }}>
+        <Typography variant="h6"
+          sx={{ fontWeight: 600 }}>
+          Reviews
+        </Typography>
+        <Box>
+          <Select
+            size="small"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <MenuItem value="date">Date</MenuItem>
+            <MenuItem value="rating">Rating</MenuItem>
+            <MenuItem value="likes">Likes</MenuItem>
+          </Select>
+
+          <IconButton onClick={() => setSortAsc(prev => !prev)}>
+            <NorthIcon sx={{ transform: sortAsc ? "scaleY(-1)" : "scaleY(1)" }} />
+          </IconButton>
+        </Box>
+      </Stack>
+
       {reviews.length === 0 ? (
         <Typography>No reviews yet.</Typography>
       ) : (
-        reviews.map((r, i) => {
+        sortedReviews.map((r, i) => {
           const likedBy = Array.isArray(r.likedBy) ? r.likedBy : [];
           const dislikedBy = Array.isArray(r.dislikedBy) ? r.dislikedBy : [];
           const userLiked = Boolean(authUserId) && likedBy.some((id) => String(id) === String(authUserId));
@@ -529,7 +562,7 @@ const CommentDrawer = ({ item }) => {
                       aria-label="Edit review"
                       disabled={!r.id}
                       onClick={() => handleEditReview(r)}
-                      sx={{ color: "text.secondary", "&:hover": { color: "success.main"} }}
+                      sx={{ color: "text.secondary", "&:hover": { color: "success.main" } }}
                     >
                       {/* Edit icon toggles the form above into update mode. */}
                       <EditOutlinedIcon fontSize="small" />
@@ -540,7 +573,7 @@ const CommentDrawer = ({ item }) => {
                       aria-label="Delete review"
                       disabled={!r.id}
                       onClick={() => handleDelete(r.id)}
-                      sx={{ color: "text.secondary", "&:hover": { color: "error.main"} }}
+                      sx={{ color: "text.secondary", "&:hover": { color: "error.main" } }}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>

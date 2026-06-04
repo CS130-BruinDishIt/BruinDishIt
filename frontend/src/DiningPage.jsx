@@ -26,6 +26,16 @@ import CommentDrawer from "./CommentDrawer";
 
 import BackToTop from "./components/BackToTop";
 
+const getRatingBoxStyle = (rating) => {
+  const num = Number(rating);
+  if (!num || num <= 0) return { bgcolor: 'grey.100', color: 'text.primary', borderColor: 'grey.300' };
+  if (num < 2.0) return { bgcolor: '#d32f2f', color: '#fff', borderColor: '#d32f2f' };
+  if (num < 3.0) return { bgcolor: '#ed6c02', color: '#fff', borderColor: '#ed6c02' };
+  if (num < 4.0) return { bgcolor: '#fbc02d', color: '#000', borderColor: '#fbc02d' };
+  if (num < 4.6) return { bgcolor: '#4caf50', color: '#fff', borderColor: '#4caf50' };
+  return { bgcolor: '#2e7d32', color: '#fff', borderColor: '#2e7d32' };
+};
+
 const DiningPage = () => {
 
   // Identify dining location being fetched
@@ -180,7 +190,8 @@ const DiningPage = () => {
         {/* Title */}
         <Box className="location-box">
           <Box className="location-header">
-            <Box>
+            <Box sx={{ width: "100%"}}>
+            
               <Stack direction="row" alignItems="center" spacing={1.5} className="location-title-row">
                 <Typography variant="h3" className="location-title">
                   {hall?.name || name}
@@ -188,24 +199,19 @@ const DiningPage = () => {
                 <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls', averageRating: hall?.averageRating })} className="review-btn">
                   <ModeCommentOutlinedIcon fontSize='medium' />
                 </IconButton>
-              </Stack>
-              <Typography variant="body2" className="location-datetime">
-                {currentPacificTime}
-              </Typography>
 
-            <Stack direction="row" alignItems="right" spacing={10} sx={{ px: 10 }}>
-              
-              <Stack direction="row" alignItems="center" spacing={.5} sx={{ color: '#f5b301' }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
-                {/* <StarIcon fontSize="large" /> */}
-                <StarIcon sx={{ fontSize: '30px' }} />
+
+
+                {/* Average Rating Box */}
+                <Box sx={{ ml: 'auto', px: 1.5, py: 0.5, borderRadius: 2, border: '2px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(hall?.averageRating) }}>
+                  <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: 'inherit' }}>
+                    <Typography variant="h5" sx={{ color: 'inherit', fontWeight: 600, fontSize: '1.875rem', lineHeight: 1 }}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
+                    <StarIcon sx={{ fontSize: '1.875rem', color: 'inherit' }} />
+                  </Stack>
+                </Box>
               </Stack>
               
-              <Button variant="contained" disableElevation onClick={() => navigate(`/dining/${name}/items`)}>
-                View All Time Menu Items
-              </Button>
-            </Stack>
-          </Box>
+            </Box>
 
             <Typography variant="body2" className="pill pill--time">
               {currentPacificTime}
@@ -224,11 +230,11 @@ const DiningPage = () => {
                 variant="outlined"
                 startIcon={<ModeCommentOutlinedIcon />}
                 onClick={() =>
-                  openComments({ id: hall?.id, name: hall?.name || name, type: "halls" })
+                  openComments({ id: hall?.id, name: hall?.name || name, type: "halls", averageRating: hall?.averageRating })
                 }
                 className="pill pill--reviews"
               >
-                View Hall Reviews
+                View Location Reviews
               </Button>
             </Box>
           </Box>
@@ -378,10 +384,10 @@ const DiningPage = () => {
                             </IconButton>
 
                             {/* Average Rating Box */}
-                            <Box sx={{ ml: 1, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: 'grey.100', border: '1px solid', borderColor: 'grey.300', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
-                              <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'black' }}>
-                                <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
-                                <StarIcon sx={{ fontSize: '14px' }} />
+                            <Box sx={{ ml: 1, px: 0.75, py: 0.75, height: 'fit-content', alignSelf: 'center', borderRadius: 1, border: '1px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(averageRating) }}>
+                              <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'inherit' }}>
+                                <Typography variant="body2" sx={{ color: 'inherit', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
+                                <StarIcon sx={{ fontSize: '0.875rem', color: 'inherit' }} />
                               </Stack>
                             </Box>
                           </Stack>

@@ -70,6 +70,23 @@ export async function updatePW({currentPassword, newPassword}) {
   return response.json();
 }
 
+export async function getUserPosts(userId) {
+  // Pass the userId dynamically into the URL endpoint
+  const response = await fetch(`${API_BASE_URL}/api/auth/user/${userId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        },
+  });
+
+  if (!response.ok) {
+      throw new Error(await parseErrorMessage(response));
+  }
+
+  return response.json();
+}
+
 export function saveAuthSession({ token, user }) {
   localStorage.setItem("token", token);
   localStorage.setItem("user", JSON.stringify(user));

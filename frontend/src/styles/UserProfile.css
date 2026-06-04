@@ -1,16 +1,18 @@
 .profile-container {
   min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 60px 20px;
+  width: 100%;
+  max-width: min(1400px, 96vw);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 60px 24px;
+  box-sizing: border-box;
 }
 
 .profile-box {
   width: 100%;
-  max-width: 700px;
   padding: 30px 40px;
   border-radius: 6px;
+  box-sizing: border-box;
 }
 
 .profile-header {
@@ -73,14 +75,18 @@
     height: 3px;
 }
 
-.profile-tab-content{
-    padding: 20px;
+.profile-tab-content {
+  width: 100%;
+  min-height: 280px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.settings-form{
-    display: grid;
-    flex-direction: column;
-    gap: 15px;
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
 }
 
 .settings-form .MuiButton-root{
@@ -89,11 +95,14 @@
     border-radius: 10px;
 }
 
-.posts{
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.posts {
+  width: 100%;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  box-sizing: border-box;
 }
 
 .profile-signout-button.MuiButton-root {

@@ -4,6 +4,8 @@ import { createAccountController } from "./createAccount.js";
 import {updateUsername, updateDescriptionOrImage} from "./editAccount.js";
 import { changePassword } from "./changePassword.js";
 import { authMiddleware } from "./authMiddleware.js";
+import { getUserReviews } from "./getPosts.js";
+
 
 const router = Router();
 
@@ -16,4 +18,7 @@ router.patch("/changeUsername", authMiddleware, updateUsername);
 router.patch("/editDescription", authMiddleware, updateDescriptionOrImage);
 router.patch("/editProfilePic", authMiddleware, updateDescriptionOrImage);
 router.patch("/changePW", authMiddleware, changePassword);
+
+router.get("/user/:userId", getUserReviews); 
+
 export default router;

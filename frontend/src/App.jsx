@@ -22,7 +22,7 @@ function Home() {
   const navigate = useNavigate();
 
   return (
-    <div maxWidth={false} className="app-container" disableGutters >
+    <div className="app-container" >
       <div className="bubble-wrapper">
         {diningLocations.map((place, index) => (
           <Button

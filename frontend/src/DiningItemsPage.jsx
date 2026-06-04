@@ -21,6 +21,16 @@ import StarIcon from "@mui/icons-material/Star";
 import BackToTop from "./components/BackToTop";
 import CommentDrawer from "./CommentDrawer";
 
+const getRatingBoxStyle = (rating) => {
+  const num = Number(rating);
+  if (!num || num <= 0) return { bgcolor: 'grey.100', color: 'text.primary', borderColor: 'grey.300' };
+  if (num < 2.0) return { bgcolor: '#d32f2f', color: '#fff', borderColor: '#d32f2f' };
+  if (num < 3.0) return { bgcolor: '#ed6c02', color: '#fff', borderColor: '#ed6c02' };
+  if (num < 4.0) return { bgcolor: '#fbc02d', color: '#000', borderColor: '#fbc02d' };
+  if (num < 4.6) return { bgcolor: '#4caf50', color: '#fff', borderColor: '#4caf50' };
+  return { bgcolor: '#2e7d32', color: '#fff', borderColor: '#2e7d32' };
+};
+
 const DiningItemsPage = () => {
   const { name } = useParams();
 
@@ -212,10 +222,10 @@ const DiningItemsPage = () => {
                         </IconButton>
 
                         {/* Average Rating Box */}
-                        <Box sx={{ ml: 1, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: 'grey.100', border: '1px solid', borderColor: 'grey.300', display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
-                          <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'black' }}>
-                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
-                            <StarIcon sx={{ fontSize: '14px' }} />
+                        <Box sx={{ ml: 1, px: 0.75, py: 0.75, height: 'fit-content', alignSelf: 'center', borderRadius: 1, border: '1px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(averageRating) }}>
+                          <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'inherit' }}>
+                            <Typography variant="body2" sx={{ color: 'inherit', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
+                            <StarIcon sx={{ fontSize: '14px', color: 'inherit' }} />
                           </Stack>
                         </Box>
                       </Stack>

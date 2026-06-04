@@ -230,7 +230,7 @@ const DiningPage = () => {
                 variant="outlined"
                 startIcon={<ModeCommentOutlinedIcon />}
                 onClick={() =>
-                  openComments({ id: hall?.id, name: hall?.name || name, type: "halls" })
+                  openComments({ id: hall?.id, name: hall?.name || name, type: "halls", averageRating: hall?.averageRating })
                 }
                 className="pill pill--reviews"
               >

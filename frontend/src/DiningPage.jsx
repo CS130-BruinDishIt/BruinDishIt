@@ -21,20 +21,10 @@ import {
   Typography,
 } from "@mui/material";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
-import StarIcon from "@mui/icons-material/Star";
 import CommentDrawer from "./CommentDrawer";
 
 import BackToTop from "./components/BackToTop";
-
-const getRatingBoxStyle = (rating) => {
-  const num = Number(rating);
-  if (!num || num <= 0) return { bgcolor: 'grey.100', color: 'text.primary', borderColor: 'grey.300' };
-  if (num < 2.0) return { bgcolor: '#d32f2f', color: '#fff', borderColor: '#d32f2f' };
-  if (num < 3.0) return { bgcolor: '#ed6c02', color: '#fff', borderColor: '#ed6c02' };
-  if (num < 4.0) return { bgcolor: '#fbc02d', color: '#000', borderColor: '#fbc02d' };
-  if (num < 4.6) return { bgcolor: '#4caf50', color: '#fff', borderColor: '#4caf50' };
-  return { bgcolor: '#2e7d32', color: '#fff', borderColor: '#2e7d32' };
-};
+import RatingBox from "./components/RatingBox";
 
 const DiningPage = () => {
 
@@ -188,141 +178,221 @@ const DiningPage = () => {
       <Container className="dining-container">
 
         {/* Title */}
-        <Box className="location-box">
+        <Box
+          className="location-box"
+          sx={{
+            position: "relative",
+            overflow: "hidden",
+            mb: 4,
+            p: 3.5,
+            borderRadius: "0 0 15px 15px",
+            backgroundColor: "#ffffff",
+            border: "1px solid rgba(0,0,0,0.06)",
+            backdropFilter: "blur(12px)",
+
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: 4,
+              backgroundColor: "#1976d2",
+            },
+          }}
+        >
           <Box className="location-header">
-            <Box sx={{ width: "100%"}}>
-            
+            <Box sx={{ width: "100%" }}>
               <Stack direction="row" alignItems="center" spacing={1.5} className="location-title-row">
                 <Typography variant="h3" className="location-title">
                   {hall?.name || name}
                 </Typography>
-                <IconButton onClick={() => openComments({ id: hall?.id, name: hall?.name || name, type: 'halls', averageRating: hall?.averageRating })} className="review-btn">
-                  <ModeCommentOutlinedIcon fontSize='medium' />
-                </IconButton>
-
-
-
-                {/* Average Rating Box */}
-                <Box sx={{ ml: 'auto', px: 1.5, py: 0.5, borderRadius: 2, border: '2px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(hall?.averageRating) }}>
-                  <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: 'inherit' }}>
-                    <Typography variant="h5" sx={{ color: 'inherit', fontWeight: 600, fontSize: '1.875rem', lineHeight: 1 }}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
-                    <StarIcon sx={{ fontSize: '1.875rem', color: 'inherit' }} />
-                  </Stack>
-                </Box>
               </Stack>
-              
+            </Box>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  fontWeight: 500,
+                  letterSpacing: "0.01em",
+                }}
+              >
+                {currentPacificTime}
+              </Typography>
+            </Stack>
+            <Box
+              sx={{
+                width:"100%",
+                height: "1px",
+                backgroundColor: "rgba(0,0,0,0.08)",
+              }}
+            >
             </Box>
 
-            <Typography variant="body2" className="pill pill--time">
-              {currentPacificTime}
-            </Typography>
 
-            <Box>
-              <Button
-                variant="contained"
-                disableElevation
-                onClick={() => navigate(`/dining/${name}/items`)}
-                className="pill pill--history"
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="stretch"
+            >
+              {/* Left Column */}
+              <Box
+                sx={{
+                  px: 2,
+                  py: 1.5,
+                  borderRadius: 3,
+                  backgroundColor: "white",
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: 160,
+                  paddingBottom: "20px",
+                }}
               >
-                View All-Time Menu Items
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<ModeCommentOutlinedIcon />}
-                onClick={() =>
-                  openComments({ id: hall?.id, name: hall?.name || name, type: "halls", averageRating: hall?.averageRating })
-                }
-                className="pill pill--reviews"
+                <Typography
+                  variant="caption"
+                  sx={{
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    fontWeight: 700,
+                    color: "text.secondary",
+                    mb: 0.75,
+                  }}
+                >
+                  Overall Rating
+                </Typography>
+
+                <RatingBox
+                  rating={hall?.averageRating}
+                  size="large"
+                />
+              </Box>
+
+              {/* Right Column */}
+              <Stack
+                spacing={1.25}
+                justifyContent="center"
               >
-                View Location Reviews
-              </Button>
-            </Box>
+                <Button
+                  variant="outlined"
+                  startIcon={<ModeCommentOutlinedIcon />}
+                  onClick={() =>
+                    openComments({
+                      id: hall?.id,
+                      name: hall?.name || name,
+                      type: "halls",
+                      averageRating: hall?.averageRating,
+                    })
+                  }
+                  className="pill pill--reviews"
+                >
+                  View Location Reviews
+                </Button>
+
+                <Button
+                  variant="contained"
+                  disableElevation
+                  onClick={() => navigate(`/dining/${name}/items`)}
+                  className="pill pill--history"
+                >
+                  View All-Time Menu Items
+                </Button>
+              </Stack>
+            </Stack>
           </Box>
         </Box>
 
         {/* Jump To Section */}
-        <Card
-          elevation={0}
+        <Box
           sx={{
-            mb: 4,
-            width: "fit-content",
-            display: "inline-block",
+            mb: 5,
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+
+            px: 2,
+            py: 1.5,
+
+            borderBottom: "1px solid rgba(0,0,0,0.08)",
+
             ml: 4,
-            mr: "auto",
-            borderRadius: 0,
-            boxShadow: "none",
-            border: "1px solid rgba(0,0,0,0.12)",
-            backdropFilter: "blur(8px)",
-            backgroundColor: "rgba(255,255,255,0.85)",
-            overflow: "hidden",
           }}
         >
-          <CardContent
+          {/* TITLE */}
+          <Typography
+            variant="subtitle1"
             sx={{
-              display: "flex",
-              flexDirection: "row",   
-              alignItems: "center",   
-              gap: 2,
-              p: 2,
+              fontWeight: 600,
               whiteSpace: "nowrap",
+              color: "text.primary",
             }}
           >
-            {/* TITLE */}
-            <Typography
-              variant="h6"
+            Go To
+          </Typography>
+
+          <Box
+            sx={{
+              width: "1px",
+              height: 20,
+              backgroundColor: "rgba(0,0,0,0.15)",
+            }}
+          />
+
+          {meals.map(({ mealType }) => (
+            <Button
+              key={mealType}
+              onClick={() => scrollToMeal(mealType)}
+              disableElevation
               sx={{
-                fontWeight: 600,
-                lineHeight: 1,
+                width: 180,
+
+                textTransform: "none",
+                fontWeight: 500,
+
+                py: 0.75,
+                px: 1.5,
+
+                borderRadius: 5,
+
+                color: "text.primary",
+                backgroundColor: "transparent",
+
+                justifyContent: "flex-start",
+
                 whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+
+                border: `1px solid ${MEALS[mealType].color || "rgba(0,0,0,0.12)"}`,
+
+                "&:hover": {
+                  backgroundColor: "rgba(0,0,0,0.04)",
+                },
               }}
             >
-              Go To
-            </Typography>
-            <Box
-              sx={{
-                width: "1px",
-                backgroundColor: "divider",
-                mx: 1,
-              }}
-            />
-            {meals.map(({ mealType }) => (
-              <Button
-                key={mealType}
-                onClick={() => scrollToMeal(mealType)}
-                sx={{
-                  width: 200,
-                  borderRadius: "999px",
+              <span style={{ marginRight: 8, display: "inline-flex", alignItems: "center" }}>
+                {MEALS[mealType].icon}
+              </span>
 
-                  textTransform: "none",
+              <span
+                style={{
                   fontWeight: 600,
-
-                  py: 1,
-                  px: 2,
-
-                  color: "#fff",
-                  backgroundColor: MEALS[mealType].color || "#1976d2",
-
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-
-                  transition: "all 0.2s ease",
-
-                  "&:hover": {
-                    backgroundColor: MEALS[mealType].color || "#1565c0",
-                    transform: "scale(1.03)",
-                  },
+                  fontSize: "0.9rem",
+                  letterSpacing: "0.3px",
                 }}
               >
-                <span style={{ marginRight: 8 }}>
-                  {MEALS[mealType].icon}
-                </span>
                 {MEALS[mealType].label || mealType}
-              </Button>
-            ))}
-
-          </CardContent>
-        </Card>
+              </span>
+            </Button>
+          ))}
+        </Box>
 
         {/* Meals */}
         <Stack spacing={4}>
@@ -376,7 +446,7 @@ const DiningPage = () => {
                             >
                               • {name}
                             </Typography>
-                            
+
 
                             {/* Button to view reviews */}
                             <IconButton onClick={() => openComments({ id, name, type: "items", averageRating })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
@@ -384,12 +454,7 @@ const DiningPage = () => {
                             </IconButton>
 
                             {/* Average Rating Box */}
-                            <Box sx={{ ml: 1, px: 0.75, py: 0.75, height: 'fit-content', alignSelf: 'center', borderRadius: 1, border: '1px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(averageRating) }}>
-                              <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'inherit' }}>
-                                <Typography variant="body2" sx={{ color: 'inherit', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
-                                <StarIcon sx={{ fontSize: '0.875rem', color: 'inherit' }} />
-                              </Stack>
-                            </Box>
+                            <RatingBox rating={averageRating} sx={{ ml: 1, alignSelf: "center" }} />
                           </Stack>
                         ))}
                       </Stack>
@@ -400,10 +465,10 @@ const DiningPage = () => {
             </Paper>
           ))}
         </Stack>
-      </Container>
+      </Container >
 
       {/* Review drawer overlay */}
-      <Drawer anchor="bottom" open={drawerOpen} onClose={closeComments}
+      < Drawer anchor="bottom" open={drawerOpen} onClose={closeComments}
         slotProps={{
           paper: {
             sx: {
@@ -413,10 +478,11 @@ const DiningPage = () => {
               overflowX: "hidden",
             },
           },
-        }}
+        }
+        }
       >
         <CommentDrawer item={selectedItem} />
-      </Drawer>
+      </Drawer >
 
       <BackToTop />
     </>

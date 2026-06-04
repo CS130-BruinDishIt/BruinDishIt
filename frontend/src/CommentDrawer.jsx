@@ -340,7 +340,7 @@ const CommentDrawer = ({ item }) => {
             <Typography variant="body2" sx={{ color: 'inherit', fontWeight: 600, lineHeight: 1 }}>
               {item.averageRating > 0 ? Number(item.averageRating).toFixed(1) : "--"}
             </Typography>
-            <StarIcon sx={{ fontSize: '14px', color: 'inherit' }} />
+            <StarIcon sx={{ fontSize: '0.875rem', color: 'inherit' }} />
           </Stack>
         </Box>
       </Stack>

@@ -205,8 +205,8 @@ const DiningPage = () => {
                 {/* Average Rating Box */}
                 <Box sx={{ ml: 'auto', px: 1.5, py: 0.5, borderRadius: 2, border: '2px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(hall?.averageRating) }}>
                   <Stack direction="row" alignItems="center" spacing={0.5} sx={{ color: 'inherit' }}>
-                    <Typography variant="h5" sx={{ color: 'inherit', fontWeight: 600, fontSize: '30px', lineHeight: 1 }}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
-                    <StarIcon sx={{ fontSize: '30px', color: 'inherit' }} />
+                    <Typography variant="h5" sx={{ color: 'inherit', fontWeight: 600, fontSize: '1.875rem', lineHeight: 1 }}>{hall?.averageRating > 0 ? Number(hall.averageRating).toFixed(1) : "--"}</Typography>
+                    <StarIcon sx={{ fontSize: '1.875rem', color: 'inherit' }} />
                   </Stack>
                 </Box>
               </Stack>
@@ -387,7 +387,7 @@ const DiningPage = () => {
                             <Box sx={{ ml: 1, px: 0.75, py: 0.75, height: 'fit-content', alignSelf: 'center', borderRadius: 1, border: '1px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(averageRating) }}>
                               <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'inherit' }}>
                                 <Typography variant="body2" sx={{ color: 'inherit', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
-                                <StarIcon sx={{ fontSize: '14px', color: 'inherit' }} />
+                                <StarIcon sx={{ fontSize: '0.875rem', color: 'inherit' }} />
                               </Stack>
                             </Box>
                           </Stack>

@@ -225,7 +225,7 @@ const DiningItemsPage = () => {
                         <Box sx={{ ml: 1, px: 0.75, py: 0.75, height: 'fit-content', alignSelf: 'center', borderRadius: 1, border: '1px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(averageRating) }}>
                           <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'inherit' }}>
                             <Typography variant="body2" sx={{ color: 'inherit', fontWeight: 600, lineHeight: 1 }}>{averageRating > 0 ? Number(averageRating).toFixed(1) : "--"}</Typography>
-                            <StarIcon sx={{ fontSize: '14px', color: 'inherit' }} />
+                            <StarIcon sx={{ fontSize: '0.875rem', color: 'inherit' }} />
                           </Stack>
                         </Box>
                       </Stack>

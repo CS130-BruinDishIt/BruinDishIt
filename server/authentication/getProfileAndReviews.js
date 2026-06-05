@@ -1,7 +1,7 @@
 import Review from "../models/Review.js";
+import User from "../models/User.js";
 
-
-export const getUserReviews = async (req, res) => {
+export const getUserProfileAndReviews = async (req, res) => {
   try {
     // You can pull the userId from the URL parameters (e.g., /api/reviews/user/:userId)
     // Or if you want the logged-in user to fetch their own posts, use req.user.id
@@ -10,18 +10,24 @@ export const getUserReviews = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "User ID parameter is required." });
     }
+    // Fetch user profile except password
+    const userProfile = await User.findById(userId).select("-password");
 
+    if (!userProfile) {
+      return res.status(404).json({ error: "User not found." });
+    }
     // Find all reviews matching the userId
     const reviews = await Review.find({ userId: userId })
-      .populate("itemId", "name")   // Grabs just the 'name' of the MenuItem
-      .populate("hallId", "name")   // Grabs just the 'name' of the DiningHall
+      .populate("itemId", "name hallName")   // Grabs just the 'name' of the MenuItem
+      .populate("hallId", "name slug")   // Grabs just the 'name' of the DiningHall
       .sort({ date: -1 });          // Sorts by newest first
 
     // Even if the user has 0 reviews, returning an empty array [] is standard 
     res.status(200).json({
       success: true,
       count: reviews.length,
-      reviews: reviews
+      reviews: reviews,
+      userProfile: userProfile
     });
 
   } catch (error) {

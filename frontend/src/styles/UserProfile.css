@@ -58,27 +58,43 @@
     margin-top: 20px;
 }
 
-.profile-tabs{
-    background-color: #1976d2; 
+.profile-tabs {
+  min-height: 44px;
 }
 
-/* both tabs */
-.profile-tabs .MuiTab-root{
-    color: white;
-    background-color: #1976d2;
-    border-right: 1px solid white;
+/* tab container spacing */
+.profile-tabs .MuiTabs-flexContainer {
+  gap: 8px;
+}
+
+/* individual tab */
+.profile-tabs .MuiTab-root {
+  text-transform: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  min-height: 44px;
+  padding: 8px 14px;
+  transition: all 0.15s ease;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* hover state */
+.profile-tabs .MuiTab-root:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.85);
 }
 
 /* selected tab */
-.profile-tabs .MuiTab-root.Mui-selected {
-  color: white;
-  background-color: #0758a8;
+.profile-tabs .Mui-selected {
+  color: #1976d2; /* primary.main */
+  font-weight: 600;
 }
 
-/* bar under selected tab */
-.profile-tabs .MuiTabs-indicator{
-    background-color: white;
-    height: 3px;
+/* indicator (bottom bar) */
+.profile-tabs .MuiTabs-indicator {
+  height: 3px;
+  border-radius: 3px;
+  background-color: #1976d2;
 }
 
 .profile-tab-content {
@@ -122,4 +138,10 @@
 .profile-signout-button.MuiButton-root:hover {
   background-color: #0758a8;
   transform: scale(1.02);
+}
+
+.joined {
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.6); 
+  line-height: 1.4;
 }

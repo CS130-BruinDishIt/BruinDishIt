@@ -448,18 +448,7 @@ const CommentDrawer = ({ item }) => {
                           aria-label="Edit review"
                           disabled={!r.id}
                           onClick={() => handleEditReview(r)}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 0.5,
-                            color: "text.secondary",
-                            transition: "color 0.15s ease",
-
-                            "&:hover": {
-                              color: "success.main",
-                              backgroundColor: "transparent",
-                            },
-                          }}
+                          className="edit-btn"
                         >
                           {/* Edit icon toggles the form above into update mode. */}
                           <EditOutlinedIcon fontSize="small" />
@@ -473,56 +462,22 @@ const CommentDrawer = ({ item }) => {
                           aria-label="Delete review"
                           disabled={!r.id}
                           onClick={() => handleDelete(r.id)}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 0.5,
-                            color: "text.secondary",
-                            transition: "color 0.15s ease",
-
-                            "&:hover": {
-                              color: "error.main",
-                              backgroundColor: "transparent",
-                            },
-                          }}>
+                          className="delete-btn"
+                        >
                           <DeleteIcon fontSize="small" />
-                          <Typography variant="caption" sx={{ fontSize: 11 }}>
-                            Delete
-                          </Typography>
+                          <Typography variant="caption" sx={{ fontSize: 11 }}>Delete</Typography>
                         </IconButton>
                       </Stack>
                     )}
                   </Stack>
 
                   {/* Meta (date) */}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: "0.72rem",
-                      letterSpacing: "0.2px",
-                      display: "block",
-                      mt: 0.2,
-                      opacity: 0.85,
-                    }}
-                  >
+                  <Typography variant="caption" className="date-metadata">
                     Posted {formatter.format(new Date(r.date))}
                   </Typography>
 
                   {/* Review text */}
-                  <Typography
-                    sx={{
-                      mt: 1,
-                      fontSize: "0.92rem",
-                      lineHeight: 1.5,
-                      color: "text.primary",
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                      overflowWrap: "anywhere",
-                    }}
-                  >
-                    {r.review}
-                  </Typography>
+                  <Typography className="review-txt">{r.review}</Typography>
 
                   <Stack
                     direction="row"
@@ -561,32 +516,15 @@ const CommentDrawer = ({ item }) => {
                     </Typography>
                   </Stack>
 
-
-
+                  {/* Review photo */}
                   {r.photos?.length > 0 && (
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      sx={{
-                        mt: 2,
-                        overflowX: "hidden",
-                        flexwrap: "nowrap",
-                        gap: 1,
-                        minWidth: 0,
-                      }}
-                    >
+                    <Stack direction="row" spacing={1} className="review-photo-container">
                       {r.photos.map((photo, idx) => (
                         <Box
                           key={idx}
                           component="img"
                           src={resolvePhotoSrc(photo)}
-                          sx={{
-                            minWidth: 0,
-                            maxWidth: "15%",
-                            maxHeight: "25vh",
-                            objectFit: "cover",
-                            borderRadius: 2,
-                          }}
+                          className="review-photo"
                           onClick={() => openImage(photo)}
                         />
                       ))}
@@ -605,17 +543,12 @@ const CommentDrawer = ({ item }) => {
                         disabled={!r.id}
                         onClick={() => handleReaction(r.id, "like")}
                       >
-                        <LikeIcon
-                          fontSize="small"
-                          sx={{ color: userLiked ? "primary.main" : "inherit" }}
-                        />
+                        <LikeIcon fontSize="small" sx={{ color: userLiked ? "primary.main" : "inherit" }} />
                       </IconButton>
                       <Typography
                         variant="body2"
+                        className="vote-count"
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          minHeight: 32,
                           fontWeight: userLiked ? 700 : 400,
                           color: userLiked ? "primary.main" : "text.primary",
                         }}
@@ -638,10 +571,8 @@ const CommentDrawer = ({ item }) => {
                       </IconButton>
                       <Typography
                         variant="body2"
+                        className="vote-count"
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          minHeight: 32,
                           fontWeight: userDisliked ? 700 : 400,
                           color: userDisliked ? "error.main" : "text.primary",
                         }}
@@ -661,20 +592,8 @@ const CommentDrawer = ({ item }) => {
 
       {/* Review input form (used for both create and edit flows). */}
       {isLoggedIn ? (
-        <Box
-          sx={{
-            width: "100%",
-            borderTop: "1px solid",
-            borderColor: "#b3b3b3",
-            bgcolor: "background.paper",
-            flexShrink: 0,
-          }}
-        >
-          <Box sx={{
-            mx: 3,
-            mt: 1.5,
-            mb: 2
-          }}>
+        <Box className="review-form-wrapper">
+          <Box className="review-form-container">
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
               {isEditing ? "Edit your review" : "Write a review!"}
             </Typography>
@@ -689,12 +608,7 @@ const CommentDrawer = ({ item }) => {
                 fullWidth
                 value={formText}
                 onChange={(event) => setFormText(event.target.value)}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    maxHeight: "6.5em",
-                    overflowY: "auto",
-                  },
-                }}
+                sx={{ "& .MuiInputBase-input": { maxHeight: "6.5em", overflowY: "auto" } }}
               />
 
               <Stack direction="row" spacing={2} >
@@ -707,59 +621,23 @@ const CommentDrawer = ({ item }) => {
                     onChange={(event) => setFormRating(event.target.value)}
                   >
                     {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((value) => (  // half-star ratings supported
-                      <MenuItem key={value} value={value}>
-                        {value}
-                      </MenuItem>
+                      <MenuItem key={value} value={value}>{value}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
 
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={handleImageSelect}
-                />
+                <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleImageSelect} />
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.5,
-                  }}
-                >
+                <Box className="upload-container">
                   <IconButton
                     aria-label="Upload image"
                     onClick={() => fileInputRef.current?.click()}
-                    sx={{
-                      border: "1px solid",
-                      borderColor: "divider",
-                      borderRadius: 2,
-                      p: 1,
-                      transition: "all 0.15s ease",
-                      backgroundColor: "background.paper",
-
-                      "&:hover": {
-                        backgroundColor: "action.hover",
-                      },
-
-                    }}
+                    className="upload-icon"
                   >
                     <UploadFileOutlinedIcon fontSize="small" />
                   </IconButton>
 
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{
-                      color: "#4f8cff",
-                      opacity: 0.75,
-                      lineHeight: 1,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
+                  <Typography variant="caption" color="text.secondary" className="upload-filename">
                     {formImageName || (formImageData ? "Image attached" : "No image selected")}
                   </Typography>
                 </Box>
@@ -774,13 +652,8 @@ const CommentDrawer = ({ item }) => {
                   bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",
                   color: "white",
                   alignSelf: "flex-start",
-                  "&:hover": {
-                    bgcolor: isFormValid ? "#2c974b" : "grey.400",
-                  },
-                  "&.Mui-disabled": {
-                    bgcolor: "grey.300",
-                    color: "grey.600",
-                  },
+                  "&:hover": { bgcolor: isFormValid ? "#2c974b" : "grey.400" },
+                  "&.Mui-disabled": { bgcolor: "grey.300", color: "grey.600" },
                 }}
               >
                 {submitLabel}

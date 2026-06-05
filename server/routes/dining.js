@@ -130,6 +130,7 @@ async function getReviews(id, idField, req, res, next) {
     }
 
     const reviews = await Review.find({ [idField]: id })
+	  .populate('userId', 'profileImageURL')
       .sort({ date: -1 })
       .lean();
 

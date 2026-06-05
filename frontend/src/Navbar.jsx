@@ -22,6 +22,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { getAuthUser, clearAuthSession } from "./api/auth";
 
+const resolvePhotoSrc = (value) => {
+  if (!value) return "";
+  if (/^(https?:\/\/|data:)/i.test(value)) return value;
+  return `/src/assets/${value}`;
+}; 
+
 const Navbar = () => {
   // Identify if page has been scrolled yet to adapt navbar height
   const [scrolled, setScrolled] = useState(false);
@@ -73,7 +79,14 @@ const Navbar = () => {
             {user ? (
               <>
                 <IconButton onClick={handleProfileClick} className="profile-button" size="large">
-                  <Avatar className="profile-icon"> <AccountCircleIcon /> </Avatar>
+                <Avatar 
+                  className="profile-icon"
+                  src={user?.profileImageURL ? resolvePhotoSrc(user.profileImageURL) : undefined}
+                  sx={{ width: 32, height: 32 }}
+                >
+                  {/* Fallback icon if no picture exists */}
+                  {!user?.profileImageURL && <AccountCircleIcon />}
+                </Avatar>
                 </IconButton>
 
                 <Menu anchorEl={anchorEl} open={menuOpen} onClose={handleMenuClose} className="profile-menu"
@@ -81,7 +94,7 @@ const Navbar = () => {
                   transformOrigin={{ vertical: "top", horizontal: "right" }}>
 
                   <Box className="profile-menu-header">
-                    <Avatar className="profile-menu-avatar"> <AccountCircleIcon /> </Avatar>
+                    {/* <Avatar className="profile-menu-avatar"> </Avatar> */}
                     <Box className="profile-menu-user">
                       <Typography className="profile-menu-username"> {user.username}</Typography>
                     </Box>
@@ -91,7 +104,7 @@ const Navbar = () => {
 
                   <MenuItem className="profile-menu-item" onClick={handleSettingsClick}>
                     <ListItemIcon> <SettingsIcon fontSize="small" /></ListItemIcon>
-                    Settings
+                    Profile
                   </MenuItem>
 
                   <Divider className="profile-menu-divider" />

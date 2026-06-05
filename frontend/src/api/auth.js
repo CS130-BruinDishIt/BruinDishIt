@@ -70,7 +70,7 @@ export async function updatePW({currentPassword, newPassword}) {
   return response.json();
 }
 
-export async function getUserPosts(userId) {
+export async function getUserProfileAndReviews(userId) {
   // Pass the userId dynamically into the URL endpoint
   const response = await fetch(`${API_BASE_URL}/api/auth/user/${userId}`, {
       method: "GET",

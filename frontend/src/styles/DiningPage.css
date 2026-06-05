@@ -2,7 +2,7 @@
 
 .dining-container {
     padding: 100px 0px;
-    width: 60vw !important;
+    width: 60vw;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -22,7 +22,6 @@
 .location-box {
   position: relative;
 
-  width: 100%;
   margin-bottom: 24px;
 
   padding: 18px 28px;

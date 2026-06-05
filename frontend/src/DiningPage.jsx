@@ -203,7 +203,7 @@ const DiningPage = () => {
         >
           <Box className="location-header">
             <Box sx={{ width: "100%" }}>
-              <Stack direction="row" alignItems="center" spacing={1.5} className="location-title-row">
+              <Stack direction="row" spacing={1.5} className="location-title-row">
                 <Typography variant="h3" className="location-title">
                   {hall?.name || name}
                 </Typography>
@@ -211,7 +211,6 @@ const DiningPage = () => {
             </Box>
             <Stack
               direction="row"
-              alignItems="center"
               spacing={1}
             >
               <Typography
@@ -227,7 +226,7 @@ const DiningPage = () => {
             </Stack>
             <Box
               sx={{
-                width:"100%",
+                width: "100%",
                 height: "1px",
                 backgroundColor: "rgba(0,0,0,0.08)",
               }}
@@ -238,7 +237,9 @@ const DiningPage = () => {
             <Stack
               direction="row"
               spacing={2}
-              alignItems="stretch"
+              sx={{
+                alignItems: "stretch",
+              }}
             >
               {/* Left Column */}
               <Box
@@ -278,7 +279,9 @@ const DiningPage = () => {
               {/* Right Column */}
               <Stack
                 spacing={1.25}
-                justifyContent="center"
+                sx={{
+                  justifyContent: "center"
+                }}
               >
                 <Button
                   variant="outlined"
@@ -344,54 +347,55 @@ const DiningPage = () => {
               backgroundColor: "rgba(0,0,0,0.15)",
             }}
           />
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            {meals.map(({ mealType }) => (
+              <Button
+                key={mealType}
+                onClick={() => scrollToMeal(mealType)}
+                disableElevation
+                sx={{
+                  width: 180,
 
-          {meals.map(({ mealType }) => (
-            <Button
-              key={mealType}
-              onClick={() => scrollToMeal(mealType)}
-              disableElevation
-              sx={{
-                width: 180,
+                  textTransform: "none",
+                  fontWeight: 500,
 
-                textTransform: "none",
-                fontWeight: 500,
+                  py: 0.75,
+                  px: 1.5,
 
-                py: 0.75,
-                px: 1.5,
+                  borderRadius: 5,
 
-                borderRadius: 5,
+                  color: "text.primary",
+                  backgroundColor: "transparent",
 
-                color: "text.primary",
-                backgroundColor: "transparent",
+                  justifyContent: "flex-start",
 
-                justifyContent: "flex-start",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
 
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
+                  border: `1px solid ${MEALS[mealType].color || "rgba(0,0,0,0.12)"}`,
 
-                border: `1px solid ${MEALS[mealType].color || "rgba(0,0,0,0.12)"}`,
-
-                "&:hover": {
-                  backgroundColor: "rgba(0,0,0,0.04)",
-                },
-              }}
-            >
-              <span style={{ marginRight: 8, display: "inline-flex", alignItems: "center" }}>
-                {MEALS[mealType].icon}
-              </span>
-
-              <span
-                style={{
-                  fontWeight: 600,
-                  fontSize: "0.9rem",
-                  letterSpacing: "0.3px",
+                  "&:hover": {
+                    backgroundColor: "rgba(0,0,0,0.04)",
+                  },
                 }}
               >
-                {MEALS[mealType].label || mealType}
-              </span>
-            </Button>
-          ))}
+                <span style={{ marginRight: 8, display: "inline-flex", alignItems: "center" }}>
+                  {MEALS[mealType].icon}
+                </span>
+
+                <span
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    letterSpacing: "0.3px",
+                  }}
+                >
+                  {MEALS[mealType].label || mealType}
+                </span>
+              </Button>
+            ))}
+          </Box>
         </Box>
 
         {/* Meals */}
@@ -426,7 +430,7 @@ const DiningPage = () => {
                       {/* Items */}
                       <Stack spacing={1}>
                         {items.map(({ id, name, averageRating }) => (
-                          <Stack key={id} direction="row" alignItems="center" sx={{ py: 0.5 }}>
+                          <Stack key={id} direction="row" sx={{ py: 0.5 }}>
 
                             {/* Item Name */}
                             <Typography

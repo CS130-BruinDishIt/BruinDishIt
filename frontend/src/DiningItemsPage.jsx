@@ -138,8 +138,8 @@ const DiningItemsPage = () => {
     <>
       <Container maxWidth="lg" className="dining-container">
         <Box className="location-box">
-          <Stack direction="column" alignItems="flex-start" spacing={2}>
-            <Stack direction="row" alignItems="center" spacing={2}>
+          <Stack direction="column"  spacing={2}>
+            <Stack direction="row"  spacing={2}>
               <Typography variant="h3" className="location-title">
                 {hall?.name || name}
               </Typography>
@@ -181,8 +181,8 @@ const DiningItemsPage = () => {
                   <Divider sx={{ mb: 2 }} />
                   <Stack spacing={1}>
                     {letterItems.map(({ id, name, lastSeen, dateAdded, averageRating }) => (
-                      <Stack key={id} direction="row" alignItems="center" sx={{ py: 0.75 }}>
-                        <Stack direction="row" alignItems="baseline">
+                      <Stack key={id} direction="row" sx={{ py: 0.75 }}>
+                        <Stack direction="row" >
                           {/* Item Name */}
                           <Typography
                             component="button"

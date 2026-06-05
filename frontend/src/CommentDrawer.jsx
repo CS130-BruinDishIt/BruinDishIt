@@ -122,7 +122,7 @@ const CommentDrawer = ({ item }) => {
   const isLoggedIn = Boolean(authUser);
   const authUserId = authUser?.id || authUser?._id;
 
-  const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUserId);
+  const isOwnReview = (review) => isLoggedIn && String(review.userId._id) === String(authUserId);
 
   const [reviews, setReviews] = useState([]);
   const [photos, setPhotos] = useState([]);
@@ -418,7 +418,7 @@ const CommentDrawer = ({ item }) => {
 
               return (
                 <Box key={r.id || i} className="reviews-container">
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                  <Stack direction="row" sx={{ alignItems: "center", gap: 1, mb: 0.5 }}>
                   <Avatar
                     // If populated, use the URL. Otherwise, fallback.
                     src={resolvePhotoSrc(profilePic)}
@@ -436,7 +436,7 @@ const CommentDrawer = ({ item }) => {
                         display: "flex",
                         alignItems: "center",
                         color: "primary.main",
-                        mr: 2,
+                        mr: 4,
                       }}
                     >{r.userID || r.user}</Typography>
                     {isOwnReview(r) && (

@@ -46,7 +46,7 @@ function slugToName(slug) {
 await mongoose.connect(process.env.MONGODB_URI);
 console.log('Connected to MongoDB');
 
-const { stdout } = await execAsync('python scraper/scrape.py');
+const { stdout } = await execAsync('python3 scraper/scrape.py');
 const scrapedJson = JSON.parse(stdout);
 
 for (const hallSlug of Object.keys(scrapedJson)) {

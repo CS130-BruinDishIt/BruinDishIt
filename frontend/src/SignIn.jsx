@@ -31,7 +31,7 @@ function SignIn() {
   const onSubmit = handleSubmit(async ({ username, password }) => {
     const data = await loginUser({ username, password });
     saveAuthSession({ token: data.token, user: data.user });
-    navigate(location.state?.from || `/user/${data.user.id}`); // redirect to profile page if login success or whererever they sign in from
+    navigate(location.state?.from || `/`); // redirect to wherever they sign in from or home page
   },
     "Could not sign in. Please check your username and password and try again."
   );

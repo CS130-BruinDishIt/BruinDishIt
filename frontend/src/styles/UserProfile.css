@@ -129,8 +129,7 @@
 
 .profile-signout-button.MuiButton-root {
   display: block;
-  width: 50%;
-  margin: 22px auto 0;
+  margin: 10px 0;
   padding: 10px;
   border-radius: 10px;
   font-weight: 600;

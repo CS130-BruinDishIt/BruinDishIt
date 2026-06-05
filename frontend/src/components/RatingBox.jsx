@@ -30,9 +30,10 @@ const RatingBox = ({ rating, size = "small", sx = {}, }) => {
     >
       <Stack
         direction="row"
-        alignItems="center"
         spacing={large ? 0.5 : 0.25}
-        sx={{ color: "inherit" }}
+        sx={{
+          color: "inherit",
+        }}
       >
         <Typography
           variant={large ? "h5" : "body2"}
@@ -45,7 +46,7 @@ const RatingBox = ({ rating, size = "small", sx = {}, }) => {
         >
           {rating > 0 ? Number(rating).toFixed(1) : "--"}
         </Typography>
-        <StarIcon sx={{fontSize: large ? "1.875rem" : "0.875rem", color: "inherit"}}/>
+        <StarIcon sx={{ fontSize: large ? "1.875rem" : "0.875rem", color: "inherit" }} />
       </Stack>
     </Box>
   );

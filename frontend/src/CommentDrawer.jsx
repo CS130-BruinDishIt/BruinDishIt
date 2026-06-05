@@ -64,7 +64,7 @@ const buildPhotosFromReviews = (reviewList) => (
       if (!path) return null;
       return {
         path,
-        userID: review.user || review.userID,
+        userId: review.user || review.userId,
         date: review.date,
       };
     })
@@ -122,7 +122,9 @@ const CommentDrawer = ({ item }) => {
   const isLoggedIn = Boolean(authUser);
   const authUserId = authUser?.id || authUser?._id;
 
-  const isOwnReview = (review) => isLoggedIn && String(review.userId._id) === String(authUserId);
+  const isOwnReview = (review) => {
+    return isLoggedIn && String(review.userId._id) === String(authUserId);
+  };
 
   const [reviews, setReviews] = useState([]);
   const [photos, setPhotos] = useState([]);
@@ -316,7 +318,7 @@ const CommentDrawer = ({ item }) => {
       });
 
     return () => controller.abort();
-  }, [item]);
+  }, [item?.id, item?.type]);
 
   if (!item) return null;
 
@@ -341,9 +343,6 @@ const CommentDrawer = ({ item }) => {
           <Stack direction="row" className="drawer-header">
             <Box>
               <Typography variant="h6" sx={{ fontWeight: "700" }}>{item.name}</Typography>
-              <Typography variant="caption" color="text.secondary">
-                ID: {item.id}
-              </Typography>
             </Box>
             <RatingBox rating={item.averageRating} sx={{ ml: 1, alignSelf: "center" }} />
           </Stack>
@@ -384,7 +383,8 @@ const CommentDrawer = ({ item }) => {
           {/* Reviews Header */}
           <Stack direction="row" className="review-header-container">
             <Typography variant="h5" sx={{ fontWeight: 700 }}>Reviews</Typography>
-            <Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography>Sort by: </Typography>
               <Select size="small" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                 <MenuItem value="date">Date</MenuItem>
                 <MenuItem value="rating">Rating</MenuItem>
@@ -419,17 +419,30 @@ const CommentDrawer = ({ item }) => {
               return (
                 <Box key={r.id || i} className="reviews-container">
                   <Stack direction="row" sx={{ alignItems: "center", gap: 1, mb: 0.5 }}>
-                    <Avatar
-                      // If populated, use the URL. Otherwise, fallback.
-                      src={resolvePhotoSrc(profilePic)}
-                      sx={{ width: 32, height: 32 }}
-                    >
-                      {/* Fallback icon if no picture exists */}
-                      {!profilePic && <AccountCircleIcon />}
-                    </Avatar>
-                    <Typography variant="body1" className="username">{r.userID || r.user}</Typography>
+                    <IconButton onClick={() => navigate(`/user/${r.userId._id}`)} size="small">
+                      <Avatar
+                        // If populated, use the URL. Otherwise, fallback.
+                        src={resolvePhotoSrc(profilePic)}
+                        sx={{ width: 32, height: 32 }}
+                      >
+                        {/* Fallback icon if no picture exists */}
+                        {!profilePic && <AccountCircleIcon />}
+                      </Avatar>
+                    </IconButton>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "1.05rem",
+                        lineHeight: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        color: "primary.main",
+                        mr: 4,
+                      }}
+                    >{r.user}</Typography>
                     {isOwnReview(r) && (
-                      <Stack direction="row" spacing={1} alignItems="center">
+                      <Stack direction="row" spacing={1}>
                         <IconButton
                           size="small"
                           aria-label="Edit review"
@@ -466,12 +479,41 @@ const CommentDrawer = ({ item }) => {
                   {/* Review text */}
                   <Typography className="review-txt">{r.review}</Typography>
 
-                  <Stack direction="row" alignItems="center" sx={{ mt: 1.2 }}>
-                    {/* Review Stars */}
-                    <Box className="review-stars">{buildStars(r.rating)}</Box>
+                  <Stack
+                    direction="row"
+                    sx={{ mt: 1.2, alignItems: "center"}}
+                  >
+                    {/* Star badge */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.3,
+                        px: 1,
+                        py: 0.4,
+                        borderRadius: 1.5,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        backgroundColor: "background.paper",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {buildStars(r.rating)}
+                    </Box>
 
-                    {/* Rating Score */}
-                    <Typography variant="body2" className="rating-score">{Number(r.rating) || 0}/5</Typography>
+                    {/* Score (perfect vertical alignment) */}
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.85rem",
+                        color: "text.secondary",
+                        ml: 1,
+                        lineHeight: 1,
+                      }}
+                    >
+                      {Number(r.rating) || 0}/5
+                    </Typography>
                   </Stack>
 
                   {/* Review photo */}
@@ -489,8 +531,12 @@ const CommentDrawer = ({ item }) => {
                     </Stack>
                   )}
 
-                  <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                    <Stack direction="row" spacing={0.5} alignItems="center">
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ mt: 2 }}
+                  >
+                    <Stack direction="row" spacing={0.5}>
                       <IconButton
                         size="small"
                         aria-label="Like review"
@@ -511,7 +557,7 @@ const CommentDrawer = ({ item }) => {
                       </Typography>
                     </Stack>
 
-                    <Stack direction="row" spacing={0.5} alignItems="center">
+                    <Stack direction="row" spacing={0.5}>
                       <IconButton
                         size="small"
                         aria-label="Dislike review"
@@ -565,7 +611,7 @@ const CommentDrawer = ({ item }) => {
                 sx={{ "& .MuiInputBase-input": { maxHeight: "6.5em", overflowY: "auto" } }}
               />
 
-              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+              <Stack direction="row" spacing={2} >
                 <FormControl size="small" sx={{ minWidth: 120 }}>
                   <InputLabel id="rating-label">Rating</InputLabel>
                   <Select

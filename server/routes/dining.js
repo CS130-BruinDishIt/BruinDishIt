@@ -140,7 +140,7 @@ async function getReviews(id, idField, req, res, next) {
         .filter((review) => review.imageUrl)
         .map((review) => ({
           path: review.imageUrl,
-          userID: review.user,
+          userId: review.userId,
           date: review.date,
         })),
     });
@@ -187,7 +187,7 @@ async function updateAverageRating(id, idField) {
   }
 }
 
-// // Create a new review for a menu item.
+// Create a new review for a menu item.
 async function createReview(id, idField, req, res, next) {
   try {
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -205,11 +205,12 @@ async function createReview(id, idField, req, res, next) {
       return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
     }
 
-    const review = await Review.create({
+    const created = await Review.create({
       [idField]: id,  // either "itemId" or "hallId"
       user, userId, rating, text, imageUrl,
       date: new Date(),
     });
+	const review = await created.populate('userId', 'profileImageURL');
 
     await updateAverageRating(id, idField);
 
@@ -253,7 +254,7 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 	  { _id: reviewId, [idField]: id, userId: req.user.id || req.user.userId || req.user._id }, // users can only edit their own reviews
 	  update,
 	  { returnDocument: "after", runValidators: true }
-	);
+	).populate('userId', 'profileImageURL');
 
 	if (!review) {
 	  return res.status(404).json({ message: "Review not found or You are not the owner of this review." });
@@ -329,6 +330,7 @@ async function reactToReview(id, idField, reviewId, req, res, next) {
 		review.dislikes = review.dislikedBy.length;
 
 		await review.save();
+		await review.populate('userId', 'profileImageURL');
 
 		return res.json({ review: mapReviewForDrawer(review) });
 	} catch (error) {

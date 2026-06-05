@@ -4,7 +4,7 @@ import { createAccountController } from "./createAccount.js";
 import {updateUsername, updateDescriptionOrImage} from "./editAccount.js";
 import { changePassword } from "./changePassword.js";
 import { authMiddleware } from "./authMiddleware.js";
-import { getUserReviews } from "./getPosts.js";
+import { getUserProfileAndReviews } from "./getProfileAndReviews.js";
 import { uploadImage } from "./uploadImage.js";
 import multer from "multer";
 
@@ -28,7 +28,7 @@ router.patch("/editDescription", authMiddleware, updateDescriptionOrImage);
 router.patch("/editProfilePic", authMiddleware, updateDescriptionOrImage);
 router.patch("/changePW", authMiddleware, changePassword);
 
-router.get("/user/:userId", getUserReviews); 
+router.get("/user/:userId", getUserProfileAndReviews); // No authMiddleware here since we want to allow fetching public profiles
 
 router.post("/uploadImage", upload.single("image"), uploadImage);
 

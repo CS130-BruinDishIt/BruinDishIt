@@ -160,7 +160,7 @@ function UserProfile() {
             <Typography variant="h4" component="h1" className="profile-username">
               {user?.username || "User"}
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="text.secondary" className="joined">
               Joined {joinDate}
             </Typography>
           </Box>

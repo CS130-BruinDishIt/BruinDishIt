@@ -1,13 +1,14 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert } from "@mui/material";
-import { getAuthUser, clearAuthSession, getUserPosts } from "./api/auth";
+import { getAuthUser, clearAuthSession, getUserPosts, uploadImage } from "./api/auth";
 import { updatePW, editProfilePic } from "./api/auth";
 import "./styles/UserProfile.css";
 import {
   Box,
   Avatar,
   Tab,
+  IconButton,
   Tabs,
   TextField,
   Button,
@@ -17,17 +18,11 @@ import {
   Typography,
 } from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
-const resolvePhotoSrc = (value) => {
-  if (!value) return "";
-  if (/^(https?:\/\/|data:)/i.test(value)) return value;
-  return `/src/assets/${value}`;
-};
+import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 
 function UserProfile() {
-  const { id } = useParams(); //Grab the ID from the URL (e.g., /profile/:id)
-  const [posts, setPosts] = useState([]); // State to hold the fetched reviews/posts
-  const [newPicURL, setNewPicURL] = useState(""); //profile pic
+  const { id } = useParams(); 
+  const [posts, setPosts] = useState([]); 
   const [tab, setTab] = useState(0);
   const user = getAuthUser();
   const navigate = useNavigate();
@@ -35,9 +30,40 @@ function UserProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // Good practice to show errors too!
+  const [errorMessage, setErrorMessage] = useState(""); 
+  const [formImageData, setFormImageData] = useState("");
+  const [formImageName, setFormImageName] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
-  const joinDate = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : null;; // actual join date from backend, or null case (which happens sometimes?)
+  const resolvePhotoSrc = (value) => {
+    if (!value) return "";
+    if (/^(https?:\/\/|data:)/i.test(value)) return value;
+    return `/src/assets/${value}`;
+  };
+  
+  const handleImageSelect = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+  
+    setFormImageName(file.name); 
+    setIsUploading(true);
+    setErrorMessage("");
+  
+    try {
+      const url = await uploadImage(file); 
+      setFormImageData(url);
+    } catch (err) {
+      console.error("Image upload failed", err);
+      setErrorMessage("Failed to process image file upload.");
+    } finally {
+      setIsUploading(false);
+    }
+  
+    event.target.value = "";
+  };
+  
+  const joinDate = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : null;
 
   function handleSignOutClick() {
     clearAuthSession();
@@ -46,82 +72,74 @@ function UserProfile() {
 
   const handleUpdateProfilePic = async (e) => {
     e.preventDefault();
+    if (!formImageData) {
+      setErrorMessage("Please pick an image file first before updating.");
+      return;
+    }
+
     setSuccessMessage("");
     setErrorMessage("");
   
     try { 
-      const result = await editProfilePic(newPicURL);
+      // Changed from newPicURL to use the actual R2 cloud link string from image selector
+      const result = await editProfilePic(formImageData);
       setSuccessMessage("Profile picture updated successfully!");
-      setNewPicURL("");
+      setFormImageData("");
+      setFormImageName("");
     
-      // 1. Grab the current string data out of localStorage using your "user" key
       const sessionData = localStorage.getItem("user"); 
       
       if (sessionData) {
         const updatedUserData = JSON.parse(sessionData);
-
         updatedUserData.profileImageURL = result.user.profileImageURL;
-        
-        // Save the updated object back down to localStorage as a string
         localStorage.setItem("user", JSON.stringify(updatedUserData));
       }
     
-      // Tell the browser to refresh the route cleanly so the avatar updates instantly on screen
       navigate(0); 
     
     } catch (err) {
-      setErrorMessage(err.message || "Failed to update profile picture.");
+      setErrorMessage(err.message || "Failed to save profile picture changes.");
     }
   };
 
   const isOwnProfile = user?.id === id;
+  
   useEffect(() => {
     const root = document.getElementById("root");
     root?.classList.add("profile-full-width");
     return () => root?.classList.remove("profile-full-width");
   }, []);
 
-  useEffect(() => {  //fetch posts when profile ID changes
+  useEffect(() => {  
     async function fetchUserPosts() {
-      if (!id) return; // Guard clause if no ID is present
+      if (!id) return; 
       try {
         const data = await getUserPosts(id);
-        // Assumes your backend responds with { success: true, reviews: [...] }
         setPosts(data.reviews || []); 
       } catch (err) {
         console.error("Error fetching posts:", err.message);
       }
     }
-
     fetchUserPosts();
   }, [id]);
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    // Clear any existing messages on a new submission
     setSuccessMessage("");
     setErrorMessage("");
   
-    // Frontend validation check
     if (newPassword !== confirmNewPassword) {
       setErrorMessage("New passwords do not match.");
       return;
     }
-      try { 
+    try { 
       const result = await updatePW({ currentPassword, newPassword });
-  
-      console.log("Password updated:", result);
-      
-      // Set your success message
       setSuccessMessage("Password updated successfully!");
-      
-      // Reset form fields
       setCurrPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
     } catch (err) {
       console.error(err.message);
-      // Set error message if the backend rejects it (e.g., wrong current password)
       setErrorMessage(err.message || "Failed to update password.");
     }
   };
@@ -131,14 +149,12 @@ function UserProfile() {
       <Paper elevation={3} className="profile-box">
 
         <Box className="profile-header">
-        <Avatar 
-          className="profile-pic"
-          // If the image exists, MUI will use this src attribute automatically
-          src={user?.profileImageURL ? resolvePhotoSrc(user.profileImageURL) : undefined}
-        >
-          {/* Fallback content: If src fails or doesn't exist, render the icon */}
-          {!user?.profileImageURL && <AccountCircleIcon />}
-        </Avatar>
+          <Avatar 
+            className="profile-pic"
+            src={user?.profileImageURL ? resolvePhotoSrc(user.profileImageURL) : undefined}
+          >
+            {!user?.profileImageURL && <AccountCircleIcon />}
+          </Avatar>
 
           <Box className="profile-info">
             <Typography variant="h4" component="h1" className="profile-username">
@@ -154,29 +170,48 @@ function UserProfile() {
 
         <Box className="profile-tabs-box">
           <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} className="profile-tabs" >
-            {/* Show Settings tab only if it's their own profile */}
             {isOwnProfile && <Tab label="Settings" />}
             <Tab label="Posts" />
           </Tabs>
 
           <Box className="profile-tab-content">
-            {/* Render Settings only if tab index matches and it's their profile */}
             {tab === (isOwnProfile ? 0 : -1) && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 
-                {/* Form 1: Update Profile Picture */}
+                {/* Form 1: Update Profile Picture Layout Wrapper */}
                 <Box component="form" className="settings-form" onSubmit={handleUpdateProfilePic}>
-                  <Typography variant="h6" sx={{ mb: -1 }}>Update Profile Picture</Typography>
-                  <TextField 
-                    label="Profile Image URL" 
-                    type="text" 
-                    fullWidth 
-                    value={newPicURL} 
-                    onChange={(e) => setNewPicURL(e.target.value)} 
-                    placeholder="https://example.com/image.jpg"
+                  <Typography variant="h6" sx={{ mb: 1 }}>Update Profile Picture</Typography>
+                  
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleImageSelect}
                   />
-                  <Button type="submit" variant="contained" fullWidth>
-                    Update Photo
+                  
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+                    <Button 
+                      variant="outlined" 
+                      startIcon={<UploadFileOutlinedIcon />}
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                    >
+                      {isUploading ? "Processing..." : "Choose Image"}
+                    </Button>
+                    
+                    <Typography variant="body2" color="text.secondary" sx={{ fontStyle: "italic" }}>
+                      {formImageName || "No file selected"}
+                    </Typography>
+                  </Box>
+
+                  <Button 
+                    type="submit" 
+                    variant="contained" 
+                    fullWidth 
+                    disabled={!formImageData || isUploading}
+                  >
+                    Save New Profile Picture
                   </Button>
                 </Box>
 
@@ -189,7 +224,6 @@ function UserProfile() {
                   <TextField label="New Password" type="password" fullWidth value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                   <TextField label="Confirm New Password" type="password" fullWidth value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />
                   
-                  {/* Alert display handles notifications for both actions */}
                   {successMessage && <Alert severity="success" sx={{ mt: 2 }}>{successMessage}</Alert>}
                   {errorMessage && <Alert severity="error" sx={{ mt: 2 }}>{errorMessage}</Alert>}  
                   
@@ -201,7 +235,6 @@ function UserProfile() {
               </Box>
             )}
 
-            {/* Adjusting tab matching logic dynamically based on whether Settings is visible */}
             {tab === (isOwnProfile ? 1 : 0) && (
               <Box className="posts" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {posts.length === 0 ? (
@@ -209,26 +242,21 @@ function UserProfile() {
                     No posts yet!
                   </Typography>
                 ) : (
-                  // 4. Map through the posts array and display them
                   posts.map((post) => (
-                    <Paper key={post._id} variant="outlined" sx={{ p: 3 }}> {/* Increased padding from 2 to 3 to match larger text */}
+                    <Paper key={post._id} variant="outlined" sx={{ p: 3 }}> 
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, mb: 1.5 }}>
-                        {/* Title scaled from subtitle1 to h6 */}
                         <Typography variant="h6" fontWeight="bold" sx={{ fontSize: '1.4rem' }}>
                           {post.itemId?.name || post.hallId?.name || "Review"}
                         </Typography>
-                        {/* Rating scaled from body2 to body1 */}
                         <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.1rem' }}>
                           Rating: {post.rating} / 5
                         </Typography>
                       </Box>
                       
-                      {/* Main body text scaled from body2 to body1 with explicit larger font sizing */}
                       <Typography variant="body1" sx={{ fontSize: '1.2rem', mb: post.imageUrl ? 2.5 : 0, lineHeight: 1.6 }}>
                         {post.text}
                       </Typography>
                   
-                      {/* Image render remains beautifully constrained but adjusted bottom margin */}
                       {post.imageUrl && (
                         <Box
                           component="img"
@@ -236,8 +264,8 @@ function UserProfile() {
                           alt={`Review attachment for ${post.itemId?.name || 'item'}`}
                           sx={{
                             width: '100%',
-                            maxWidth: '500px',       // Slightly widened max-width to match larger layout
-                            maxHeight: '350px',      // Slightly taller max-height
+                            maxWidth: '500px',       
+                            maxHeight: '350px',      
                             objectFit: 'cover',
                             borderRadius: '6px',
                             display: 'block',
@@ -246,7 +274,6 @@ function UserProfile() {
                         />
                       )}
                   
-                      {/* Date caption scaled from caption to body2 */}
                       <Typography variant="body2" color="text.secondary" sx={{ display: 'block', mt: 1.5, fontSize: '0.95rem' }}>
                         {new Date(post.date).toLocaleDateString()}
                       </Typography>
@@ -259,13 +286,10 @@ function UserProfile() {
         </Box>
         <Button type="button" variant="contained" className="profile-signout-button" onClick={handleSignOutClick}>
             Sign Out
-          </Button>
+        </Button>
       </Paper>
     </Container>
-  )
+  );
 }
-
-
-
 
 export default UserProfile;

@@ -103,6 +103,23 @@ export async function editProfilePic(profileImageURL) {
   return response.json();
 }
 
+export async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append("image", file); // "image" matches upload.single("image") on the backend
+
+  const url = new URL(`/api/auth/uploadImage`, API_BASE_URL);
+
+  const response = await fetch(url, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) throw new Error("Image upload failed.");
+
+  const data = await response.json();
+  return data.url;
+}
+
 export function saveAuthSession({ token, user }) {
   localStorage.setItem("token", token);
   localStorage.setItem("user", JSON.stringify(user));

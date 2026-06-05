@@ -30,6 +30,7 @@ import StarHalfIcon from "@mui/icons-material/StarHalf";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import NorthIcon from "@mui/icons-material/North";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -38,7 +39,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 
 import ImageLightbox from "./components/ImageLightbox";
-import DeleteIcon from "@mui/icons-material/Delete";
+import RatingBox from "./components/RatingBox"
 
 const formatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short', // options: 'full', 'long', 'medium', 'short'
@@ -109,16 +110,6 @@ const buildStars = (rating) => {
   });
 };
 
-const getRatingBoxStyle = (rating) => {
-  const num = Number(rating);
-  if (!num || num <= 0) return { bgcolor: 'grey.100', color: 'text.primary', borderColor: 'grey.300' };
-  if (num < 2.0) return { bgcolor: '#d32f2f', color: '#fff', borderColor: '#d32f2f' };
-  if (num < 3.0) return { bgcolor: '#ed6c02', color: '#fff', borderColor: '#ed6c02' };
-  if (num < 4.0) return { bgcolor: '#fbc02d', color: '#000', borderColor: '#fbc02d' };
-  if (num < 4.6) return { bgcolor: '#4caf50', color: '#fff', borderColor: '#4caf50' };
-  return { bgcolor: '#2e7d32', color: '#fff', borderColor: '#2e7d32' };
-};
-
 const CommentDrawer = ({ item }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(null);
@@ -132,7 +123,6 @@ const CommentDrawer = ({ item }) => {
   const authUserId = authUser?.id || authUser?._id;
 
   const isOwnReview = (review) => isLoggedIn && String(review.userId) === String(authUserId);
-
 
   const [reviews, setReviews] = useState([]);
   const [photos, setPhotos] = useState([]);
@@ -203,8 +193,6 @@ const CommentDrawer = ({ item }) => {
       rating: numericRating,
       imageUrl: formImageData || null,
     };
-
-
 
     const itemType = item.type || "items";
     try {
@@ -333,117 +321,473 @@ const CommentDrawer = ({ item }) => {
   if (!item) return null;
 
   return (<>
-    <Box sx={{
-      width: "100%", maxWidth: "100%", boxSizing: "border-box", height: "100%", p: 3, overflowY: "auto", overflowX: "hidden",
-    }}
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
     >
-
-      <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", spacing: 2 }}>
-        <Box>
-          <Typography variant="h6">{item.name}</Typography>
-          <Typography variant="caption" color="text.secondary">
-            ID: {item.id}
-          </Typography>
-        </Box>
-
-
-
-        <Box sx={{ ml: 1, px: 0.75, py: 0.75, height: 'fit-content', alignSelf: 'center', borderRadius: 1, border: '1px solid', display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...getRatingBoxStyle(item.averageRating) }}>
-          <Stack direction="row" alignItems="center" spacing={0.25} sx={{ color: 'inherit' }}>
-            <Typography variant="body2" sx={{ color: 'inherit', fontWeight: 600, lineHeight: 1 }}>
-              {item.averageRating > 0 ? Number(item.averageRating).toFixed(1) : "--"}
-            </Typography>
-            <StarIcon sx={{ fontSize: '0.875rem', color: 'inherit' }} />
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          overflowX: "hidden",
+        }}
+      >
+        {/* Drawer Header */}
+        <Box className="drawer-container">
+          <Stack direction="row" className="drawer-header">
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: "700" }}>{item.name}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                ID: {item.id}
+              </Typography>
+            </Box>
+            <RatingBox rating={item.averageRating} sx={{ ml: 1, alignSelf: "center" }} />
           </Stack>
-        </Box>
-      </Stack>
 
-      <Divider sx={{ my: 2 }} />
+          {/* Image Gallery */}
+          {photos.length > 0 && (
+            <Box className="gallery-container">
+              <Typography variant="h6" className="gallery-title">Photos</Typography>
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={14}
+                slidesPerView={1}
+                navigation
+                pagination={{ clickable: true }}
+                breakpoints={{
+                  600: { slidesPerView: 2 },
+                  900: { slidesPerView: 3 },
+                }}
+                className="gallery-swiper"
+              >
+                {photos.map((photo, idx) => (
+                  <SwiperSlide key={idx}>
+                    <Box className="gallery-image-container">
+                      <Box
+                        component="img"
+                        src={resolvePhotoSrc(photo.path || photo.url || photo)}
+                        alt={photo.path || "gallery image"}
+                        className="gallery-image"
+                        onClick={() => openImage(photo)}
+                      />
+                    </Box>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </Box>
+          )}
+
+          {/* Reviews Header */}
+          <Stack direction="row" className="review-header-container">
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>Reviews</Typography>
+            <Box>
+              <Select size="small" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <MenuItem value="date">Date</MenuItem>
+                <MenuItem value="rating">Rating</MenuItem>
+                <MenuItem value="likes">Likes</MenuItem>
+              </Select>
+
+              <IconButton onClick={() => setSortAsc(prev => !prev)}>
+                <NorthIcon sx={{ transform: sortAsc ? "scaleY(-1)" : "scaleY(1)" }} />
+              </IconButton>
+            </Box>
+          </Stack>
+          <Divider sx={{ m: 2 }} />
+
+          {/* Reviews */}
+          {reviews.length === 0 ? (
+            <Box className="reviews-container">
+              <Typography>No reviews yet.</Typography>
+            </Box>
+          ) : (
+            sortedReviews.map((r, i) => {
+              const likedBy = Array.isArray(r.likedBy) ? r.likedBy : [];
+              const dislikedBy = Array.isArray(r.dislikedBy) ? r.dislikedBy : [];
+              const userLiked = Boolean(authUserId) && likedBy.some((id) => String(id) === String(authUserId));
+              const userDisliked = Boolean(authUserId) && dislikedBy.some((id) => String(id) === String(authUserId));
+              const likeCount = Number.isFinite(Number(r.likes)) ? Number(r.likes) : likedBy.length;
+              const dislikeCount = Number.isFinite(Number(r.dislikes)) ? Number(r.dislikes) : dislikedBy.length;
+              const profilePic = r.userId?.profileImageURL ? resolvePhotoSrc(r.userId.profileImageURL) : undefined;
+
+              const LikeIcon = userLiked ? ThumbUpAltIcon : ThumbUpAltOutlinedIcon;
+              const DislikeIcon = userDisliked ? ThumbDownAltIcon : ThumbDownAltOutlinedIcon;
+
+              return (
+                <Box key={r.id || i} className="reviews-container">
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                  <Avatar
+                    // If populated, use the URL. Otherwise, fallback.
+                    src={resolvePhotoSrc(profilePic)}
+                    sx={{ width: 32, height: 32 }}
+                  >
+                    {/* Fallback icon if no picture exists */}
+                    {!profilePic && <AccountCircleIcon />}
+                  </Avatar>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "1.05rem",
+                        lineHeight: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        color: "primary.main",
+                        mr: 2,
+                      }}
+                    >{r.userID || r.user}</Typography>
+                    {isOwnReview(r) && (
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <IconButton
+                          size="small"
+                          aria-label="Edit review"
+                          disabled={!r.id}
+                          onClick={() => handleEditReview(r)}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            color: "text.secondary",
+                            transition: "color 0.15s ease",
+
+                            "&:hover": {
+                              color: "success.main",
+                              backgroundColor: "transparent",
+                            },
+                          }}
+                        >
+                          {/* Edit icon toggles the form above into update mode. */}
+                          <EditOutlinedIcon fontSize="small" />
+                          <Typography variant="caption" sx={{ fontSize: 11 }}>
+                            Edit
+                          </Typography>
+                        </IconButton>
+
+                        <IconButton
+                          size="small"
+                          aria-label="Delete review"
+                          disabled={!r.id}
+                          onClick={() => handleDelete(r.id)}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            color: "text.secondary",
+                            transition: "color 0.15s ease",
+
+                            "&:hover": {
+                              color: "error.main",
+                              backgroundColor: "transparent",
+                            },
+                          }}>
+                          <DeleteIcon fontSize="small" />
+                          <Typography variant="caption" sx={{ fontSize: 11 }}>
+                            Delete
+                          </Typography>
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </Stack>
+
+                  {/* Meta (date) */}
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontSize: "0.72rem",
+                      letterSpacing: "0.2px",
+                      display: "block",
+                      mt: 0.2,
+                      opacity: 0.85,
+                    }}
+                  >
+                    Posted {formatter.format(new Date(r.date))}
+                  </Typography>
+
+                  {/* Review text */}
+                  <Typography
+                    sx={{
+                      mt: 1,
+                      fontSize: "0.92rem",
+                      lineHeight: 1.5,
+                      color: "text.primary",
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {r.review}
+                  </Typography>
+
+                  <Stack
+  direction="row"
+  alignItems="center"
+  sx={{ mt: 1.2 }}
+>
+  {/* Star badge */}
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 0.3,
+      px: 1,
+      py: 0.4,
+      borderRadius: 1.5,
+      border: "1px solid",
+      borderColor: "divider",
+      backgroundColor: "background.paper",
+      lineHeight: 1,
+    }}
+  >
+    {buildStars(r.rating)}
+  </Box>
+
+  {/* Score (perfect vertical alignment) */}
+  <Typography
+    variant="body2"
+    sx={{
+      fontWeight: 600,
+      fontSize: "0.85rem",
+      color: "text.secondary",
+      ml: 1,
+      display: "flex",
+      alignItems: "center",
+      lineHeight: 1,
+    }}
+  >
+    {Number(r.rating) || 0}/5
+  </Typography>
+</Stack>
+
+
+
+                  {r.photos?.length > 0 && (
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{
+                        mt: 2,
+                        overflowX: "hidden",
+                        flexwrap: "nowrap",
+                        gap: 1,
+                        minWidth: 0,
+                      }}
+                    >
+                      {r.photos.map((photo, idx) => (
+                        <Box
+                          key={idx}
+                          component="img"
+                          src={resolvePhotoSrc(photo)}
+                          sx={{
+                            minWidth: 0,
+                            maxWidth: "15%",
+                            maxHeight: "25vh",
+                            objectFit: "cover",
+                            borderRadius: 2,
+                          }}
+                          onClick={() => openImage(photo)}
+                        />
+                      ))}
+                    </Stack>
+                  )}
+
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ mt: 2 }}
+                  >
+                    <Stack direction="row" spacing={0.5} alignItems="center">
+                      <IconButton
+                        size="small"
+                        aria-label="Like review"
+                        disabled={!r.id}
+                        onClick={() => handleReaction(r.id, "like")}
+                      >
+                        <LikeIcon
+                          fontSize="small"
+                          sx={{ color: userLiked ? "primary.main" : "inherit" }}
+                        />
+                      </IconButton>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          minHeight: 32,
+                          fontWeight: userLiked ? 700 : 400,
+                          color: userLiked ? "primary.main" : "text.primary",
+                        }}
+                      >
+                        {likeCount}
+                      </Typography>
+                    </Stack>
+
+                    <Stack direction="row" spacing={0.5} alignItems="center">
+                      <IconButton
+                        size="small"
+                        aria-label="Dislike review"
+                        disabled={!r.id}
+                        onClick={() => handleReaction(r.id, "dislike")}
+                      >
+                        <DislikeIcon
+                          fontSize="small"
+                          sx={{ color: userDisliked ? "error.main" : "inherit" }}
+                        />
+                      </IconButton>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          minHeight: 32,
+                          fontWeight: userDisliked ? 700 : 400,
+                          color: userDisliked ? "error.main" : "text.primary",
+                        }}
+                      >
+                        {dislikeCount}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+
+                  <Divider sx={{ my: 2 }} />
+                </Box>
+              );
+            })
+          )}
+        </Box>
+      </Box>
 
       {/* Review input form (used for both create and edit flows). */}
       {isLoggedIn ? (
         <Box
-          ref={formRef}
           sx={{
-            p: 2,
-            borderRadius: 2,
-            border: "1px solid",
-            borderColor: "divider",
+            width: "100%",
+            borderTop: "1px solid",
+            borderColor: "#b3b3b3",
             bgcolor: "background.paper",
-            mb: 3,
+            flexShrink: 0,
           }}
         >
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            {isEditing ? "Edit your review" : "Write a review"}
-          </Typography>
+          <Box sx={{
+            mx: 3,
+            mt: 1.5,
+            mb: 2
+          }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              {isEditing ? "Edit your review" : "Write a review!"}
+            </Typography>
 
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField
-              label="Review"
-              placeholder="Share your thoughts"
-              multiline
-              minRows={3}
-              fullWidth
-              value={formText}
-              onChange={(event) => setFormText(event.target.value)}
-            />
-
-            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel id="rating-label">Rating</InputLabel>
-                <Select
-                  labelId="rating-label"
-                  value={formRating}
-                  label="Rating"
-                  onChange={(event) => setFormRating(event.target.value)}
-                >
-                  {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((value) => (  // half-star ratings supported
-                    <MenuItem key={value} value={value}>
-                      {value}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={handleImageSelect}
+            <Stack spacing={2} sx={{ mt: 1 }}>
+              <TextField
+                label="Review"
+                placeholder="Share your thoughts"
+                multiline
+                minRows={2}
+                maxRows={2}
+                fullWidth
+                value={formText}
+                onChange={(event) => setFormText(event.target.value)}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    maxHeight: "6.5em",
+                    overflowY: "auto",
+                  },
+                }}
               />
-              <IconButton
-                aria-label="Upload image"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <UploadFileOutlinedIcon fontSize="small" />
-              </IconButton>
-              <Typography variant="caption" color="text.secondary">
-                {formImageName || (formImageData ? "Image attached" : "No image")}
-              </Typography>
-            </Stack>
 
-            <Button
-              variant="contained"
-              disableElevation
-              disabled={!isFormValid || isSubmitting}
-              onClick={handleSubmit}
-              sx={{
-                bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",
-                color: "white",
-                alignSelf: "flex-start",
-                "&:hover": {
-                  bgcolor: isFormValid ? "#2c974b" : "grey.400",
-                },
-                "&.Mui-disabled": {
-                  bgcolor: "grey.300",
-                  color: "grey.600",
-                },
-              }}
-            >
-              {submitLabel}
-            </Button>
-          </Stack>
+              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel id="rating-label">Rating</InputLabel>
+                  <Select
+                    labelId="rating-label"
+                    value={formRating}
+                    label="Rating"
+                    onChange={(event) => setFormRating(event.target.value)}
+                  >
+                    {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((value) => (  // half-star ratings supported
+                      <MenuItem key={value} value={value}>
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageSelect}
+                />
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                  }}
+                >
+                  <IconButton
+                    aria-label="Upload image"
+                    onClick={() => fileInputRef.current?.click()}
+                    sx={{
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      p: 1,
+                      transition: "all 0.15s ease",
+                      backgroundColor: "background.paper",
+
+                      "&:hover": {
+                        backgroundColor: "action.hover",
+                      },
+
+                    }}
+                  >
+                    <UploadFileOutlinedIcon fontSize="small" />
+                  </IconButton>
+
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{
+                      color: "#4f8cff",
+                      opacity: 0.75,
+                      lineHeight: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {formImageName || (formImageData ? "Image attached" : "No image selected")}
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Button
+                variant="contained"
+                disableElevation
+                disabled={!isFormValid || isSubmitting}
+                onClick={handleSubmit}
+                sx={{
+                  bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",
+                  color: "white",
+                  alignSelf: "flex-start",
+                  "&:hover": {
+                    bgcolor: isFormValid ? "#2c974b" : "grey.400",
+                  },
+                  "&.Mui-disabled": {
+                    bgcolor: "grey.300",
+                    color: "grey.600",
+                  },
+                }}
+              >
+                {submitLabel}
+              </Button>
+            </Stack>
+          </Box>
         </Box>
       ) : (
         <Box sx={{ p: 2, borderRadius: 2, border: "1px solid", borderColor: "divider", bgcolor: "background.paper", mb: 3, textAlign: "center", }}>
@@ -460,250 +804,8 @@ const CommentDrawer = ({ item }) => {
           </Button>
         </Box>
       )}
-
-      {photos.length > 0 && (
-        <>
-          <Typography
-            variant="h6"
-            sx={{ mt: 2, mb: 1, fontWeight: 600 }}
-          >
-            Gallery
-          </Typography>
-
-          <Swiper
-            modules={[Navigation, Pagination]}
-            spaceBetween={12}
-            slidesPerView={1}
-            navigation
-            pagination={{ clickable: true }}
-            breakpoints={{
-              600: { slidesPerView: 2 },
-              900: { slidesPerView: 3 },
-            }}
-            style={{
-              paddingBottom: "32px",
-            }}
-          >
-            {photos.map((photo, idx) => (
-              <SwiperSlide key={idx}>
-                <Box
-                  sx={{
-                    borderRadius: 2,
-                    overflow: "hidden",
-                    height: 220,
-                    boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={resolvePhotoSrc(photo.path || photo.url || photo)}
-                    alt={photo.path || "gallery image"}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      display: "block",
-                    }}
-                    onClick={() => openImage(photo)}
-                  />
-                </Box>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-
-          <Divider sx={{ my: 2 }} />
-        </>
-      )}
-
-      <Stack direction="row" sx={{ mb: 3, mt: 3, justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="h6"
-          sx={{ fontWeight: 600 }}>
-          Reviews
-        </Typography>
-        <Box>
-          <Select
-            size="small"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <MenuItem value="date">Date</MenuItem>
-            <MenuItem value="rating">Rating</MenuItem>
-            <MenuItem value="likes">Likes</MenuItem>
-          </Select>
-
-          <IconButton onClick={() => setSortAsc(prev => !prev)}>
-            <NorthIcon sx={{ transform: sortAsc ? "scaleY(-1)" : "scaleY(1)" }} />
-          </IconButton>
-        </Box>
-      </Stack>
-
-      {reviews.length === 0 ? (
-        <Typography>No reviews yet.</Typography>
-      ) : (
-        sortedReviews.map((r, i) => {
-          const likedBy = Array.isArray(r.likedBy) ? r.likedBy : [];
-          const dislikedBy = Array.isArray(r.dislikedBy) ? r.dislikedBy : [];
-          const userLiked = Boolean(authUserId) && likedBy.some((id) => String(id) === String(authUserId));
-          const userDisliked = Boolean(authUserId) && dislikedBy.some((id) => String(id) === String(authUserId));
-          const likeCount = Number.isFinite(Number(r.likes)) ? Number(r.likes) : likedBy.length;
-          const dislikeCount = Number.isFinite(Number(r.dislikes)) ? Number(r.dislikes) : dislikedBy.length;
-          const profilePic = r.userId?.profileImageURL ? resolvePhotoSrc(r.userId.profileImageURL) : undefined;
-
-          const LikeIcon = userLiked ? ThumbUpAltIcon : ThumbUpAltOutlinedIcon;
-          const DislikeIcon = userDisliked ? ThumbDownAltIcon : ThumbDownAltOutlinedIcon;
-
-          return (
-            <Box key={r.id || i} sx={{ mb: 2 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack direction="row" alignItems="center" spacing={1.5}>
-                  <Avatar
-                    // If populated, use the URL. Otherwise, fallback.
-                    src={resolvePhotoSrc(profilePic)}
-                    sx={{ width: 32, height: 32 }}
-                  >
-                    {/* Fallback icon if no picture exists */}
-                    {!profilePic && <AccountCircleIcon />}
-                  </Avatar>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    {r.user}
-                  </Typography>
-                </Stack>
-                {isOwnReview(r) && (
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <IconButton
-                      size="small"
-                      aria-label="Edit review"
-                      disabled={!r.id}
-                      onClick={() => handleEditReview(r)}
-                      sx={{ color: "text.secondary", "&:hover": { color: "success.main" } }}
-                    >
-                      {/* Edit icon toggles the form above into update mode. */}
-                      <EditOutlinedIcon fontSize="small" />
-                    </IconButton>
-
-                    <IconButton
-                      size="small"
-                      aria-label="Delete review"
-                      disabled={!r.id}
-                      onClick={() => handleDelete(r.id)}
-                      sx={{ color: "text.secondary", "&:hover": { color: "error.main" } }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </Stack>
-                )}
-              </Stack>
-
-              <Typography variant="caption" color="text.secondary">
-                {formatter.format(new Date(r.date))}
-              </Typography>
-
-              {/* Display star icons for the rating. */}
-              <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-                {buildStars(r.rating)}
-                <Typography variant="body2" sx={{ fontWeight: 600, ml: 2.5 }}>
-                  {Number(r.rating) || 0}/5
-                </Typography>
-              </Stack>
-
-              <Typography sx={{ mt: 0.5, whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere" }}>
-                {r.review}
-              </Typography>
-
-              {r.photos?.length > 0 && (
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{
-                    mt: 2,
-                    overflowX: "hidden",
-                    flexwrap: "nowrap",
-                    gap: 1,
-                    minWidth: 0,
-                  }}
-                >
-                  {r.photos.map((photo, idx) => (
-                    <Box
-                      key={idx}
-                      component="img"
-                      src={resolvePhotoSrc(photo)}
-                      sx={{
-                        minWidth: 0,
-                        maxWidth: "15%",
-                        maxHeight: "25vh",
-                        objectFit: "cover",
-                        borderRadius: 2,
-                      }}
-                      onClick={() => openImage(photo)}
-                    />
-                  ))}
-                </Stack>
-              )}
-
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{ mt: 2 }}
-              >
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <IconButton
-                    size="small"
-                    aria-label="Like review"
-                    disabled={!r.id}
-                    onClick={() => handleReaction(r.id, "like")}
-                  >
-                    <LikeIcon
-                      fontSize="small"
-                      sx={{ color: userLiked ? "primary.main" : "inherit" }}
-                    />
-                  </IconButton>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: 32,
-                      fontWeight: userLiked ? 700 : 400,
-                      color: userLiked ? "primary.main" : "text.primary",
-                    }}
-                  >
-                    {likeCount}
-                  </Typography>
-                </Stack>
-
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <IconButton
-                    size="small"
-                    aria-label="Dislike review"
-                    disabled={!r.id}
-                    onClick={() => handleReaction(r.id, "dislike")}
-                  >
-                    <DislikeIcon
-                      fontSize="small"
-                      sx={{ color: userDisliked ? "error.main" : "inherit" }}
-                    />
-                  </IconButton>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: 32,
-                      fontWeight: userDisliked ? 700 : 400,
-                      color: userDisliked ? "error.main" : "text.primary",
-                    }}
-                  >
-                    {dislikeCount}
-                  </Typography>
-                </Stack>
-              </Stack>
-
-              <Divider sx={{ my: 2 }} />
-            </Box>
-          );
-        })
-      )}
     </Box>
+
     <ImageLightbox
       open={lightboxOpen}
       image={activeImage}

@@ -51,7 +51,6 @@
     font-weight: 800;
     letter-spacing: -0.5px;
     line-height: 1.2;
-    margin-bottom: 4px;
 }
 
 .pill {
@@ -86,6 +85,7 @@
 }
 
 .pill--history:hover {
+    background-color: #929ac1 !important;
     transform: scale(1.03);
 }
 

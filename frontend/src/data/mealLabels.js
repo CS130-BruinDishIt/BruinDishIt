@@ -3,7 +3,7 @@
 export const MEALS = {
   allday: {
     label: "All Day",
-    color: "#7bcedb",
+    color: "#9ac8cf",
     icon: "☀️",
   },
   breakfast: {
@@ -22,7 +22,7 @@ export const MEALS = {
     icon: "🍽️",
   },
   "extended dinner": {
-    label: "Extended Dinner",
+    label: "Late Night",
     color: "#9971aa",
     icon: "🌙",
   },

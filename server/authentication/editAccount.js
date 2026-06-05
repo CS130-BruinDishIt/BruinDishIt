@@ -22,7 +22,7 @@ export const updateUsername = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { username: trimmedUsername },
-      { new: true, runValidators: true }
+      { returnDocument: "after", runValidators: true }
     );
 
     if (!updatedUser) {
@@ -63,7 +63,7 @@ export const updateDescriptionOrImage = async (req, res) => {
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         updateFields,
-        { new: true, runValidators: true }
+        { returnDocument: "after", runValidators: true }
       );
   
       if (!updatedUser) {

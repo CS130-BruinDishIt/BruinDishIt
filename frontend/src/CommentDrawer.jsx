@@ -6,6 +6,7 @@ import { createReview, fetchReviews, reactToReview, updateReview, deleteReview, 
 import "./styles/CommentDrawer.css";
 
 import {
+  Avatar,
   Box,
   Button,
   Divider,
@@ -18,6 +19,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
@@ -409,17 +411,22 @@ const CommentDrawer = ({ item }) => {
               const userDisliked = Boolean(authUserId) && dislikedBy.some((id) => String(id) === String(authUserId));
               const likeCount = Number.isFinite(Number(r.likes)) ? Number(r.likes) : likedBy.length;
               const dislikeCount = Number.isFinite(Number(r.dislikes)) ? Number(r.dislikes) : dislikedBy.length;
+              const profilePic = r.userId?.profileImageURL ? resolvePhotoSrc(r.userId.profileImageURL) : undefined;
 
               const LikeIcon = userLiked ? ThumbUpAltIcon : ThumbUpAltOutlinedIcon;
               const DislikeIcon = userDisliked ? ThumbDownAltIcon : ThumbDownAltOutlinedIcon;
 
               return (
                 <Box key={r.id || i} className="reviews-container">
-                  <Stack direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ mb: 0.5 }}
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                  <Avatar
+                    // If populated, use the URL. Otherwise, fallback.
+                    src={resolvePhotoSrc(profilePic)}
+                    sx={{ width: 32, height: 32 }}
                   >
+                    {/* Fallback icon if no picture exists */}
+                    {!profilePic && <AccountCircleIcon />}
+                  </Avatar>
                     <Typography
                       variant="body1"
                       sx={{

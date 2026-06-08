@@ -660,7 +660,7 @@ const CommentDrawer = ({ item }) => {
                   </Typography>
                 </Box>
               </Stack>
-              
+
               <Button
                 variant="contained"
                 disableElevation
@@ -676,6 +676,11 @@ const CommentDrawer = ({ item }) => {
               >
                 {submitLabel}
               </Button>
+              {isEditing && (
+                <Button disabled={isSubmitting || isLoading} onClick={resetForm}>
+                  CANCEL EDIT
+                </Button>
+              )}
             </Stack>
           </Box>
         </Box>

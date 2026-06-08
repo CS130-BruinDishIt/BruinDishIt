@@ -8,6 +8,8 @@ import { runUpdate } from './scripts/updateMenus.js';
 import diningRoutes from './routes/dining.js';
 import authRoutes from "./authentication/routes.js";
 
+const PORT = process.env.PORT || 3000;
+
 const app = express();
 // Allow larger payloads to support base64 image uploads in reviews.
 app.use(express.json({ limit: "5mb" }));
@@ -31,6 +33,6 @@ cron.schedule('0 7 * * *', async () => {
   console.log("Cron job menu update complete");
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

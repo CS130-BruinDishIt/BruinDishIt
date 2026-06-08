@@ -10,6 +10,7 @@ import {
   Avatar,
   Box,
   Button,
+  Collapse,
   Divider,
   FormControl,
   IconButton,
@@ -32,6 +33,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import NorthIcon from "@mui/icons-material/North";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -136,6 +138,7 @@ const CommentDrawer = ({ item }) => {
   const [formImageName, setFormImageName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
+  const [formCollapsed, setFormCollapsed] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -612,80 +615,93 @@ const CommentDrawer = ({ item }) => {
       {isLoggedIn ? (
         <Box className="review-form-wrapper">
           <Box className="review-form-container">
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              {isEditing ? "Edit your review" : "Write a review!"}
-            </Typography>
-
-            <Stack spacing={2} sx={{ mt: 1 }}>
-              <TextField
-                label="Review"
-                placeholder="Share your thoughts"
-                multiline
-                minRows={2}
-                maxRows={2}
-                fullWidth
-                value={formText}
-                onChange={(event) => setFormText(event.target.value)}
-                sx={{ "& .MuiInputBase-input": { maxHeight: "6.5em", overflowY: "auto" } }}
-              />
-
-              <Stack direction="row" spacing={2} >
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                  <InputLabel id="rating-label">Rating</InputLabel>
-                  <Select
-                    labelId="rating-label"
-                    value={formRating}
-                    label="Rating"
-                    onChange={(event) => setFormRating(event.target.value)}
-                  >
-                    {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((value) => (  // half-star ratings supported
-                      <MenuItem key={value} value={value}>{value}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleImageSelect} />
-
-                <Box className="upload-container">
-                  <IconButton
-                    aria-label="Upload image"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="upload-icon"
-                  >
-                    <UploadFileOutlinedIcon fontSize="small" />
-                  </IconButton>
-
-                  <Typography variant="caption" color="text.secondary" className="upload-filename">
-                    {formImageName || (formImageData ? "Image attached" : "No image selected")}
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <Button
-                variant="contained"
-                disableElevation
-                disabled={!isFormValid || isSubmitting || isLoading}
-                onClick={handleSubmit}
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                {isEditing ? "Edit your review" : "Write a review!"}
+              </Typography>
+              <ArrowDropDownCircleIcon
+                fontSize="large"
                 sx={{
-                  bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",
-                  color: "white",
-                  alignSelf: "flex-start",
-                  "&:hover": { bgcolor: isFormValid ? "#2c974b" : "grey.400" },
-                  "&.Mui-disabled": { bgcolor: "grey.300", color: "grey.600" },
+                  color: "#1976d2",
+                  cursor: "pointer",
+                  transform: formCollapsed ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.2s",
                 }}
-              >
-                {submitLabel}
-              </Button>
-              {isEditing && (
-                <Button disabled={isSubmitting || isLoading} onClick={resetForm}>
-                  CANCEL EDIT
+                onClick={() => setFormCollapsed(prev => !prev)}
+              />
+            </Box>
+            <Collapse in={!formCollapsed}>
+              <Stack spacing={2} sx={{ mt: 1 }}>
+                <TextField
+                  label="Review"
+                  placeholder="Share your thoughts"
+                  multiline
+                  minRows={2}
+                  maxRows={2}
+                  fullWidth
+                  value={formText}
+                  onChange={(event) => setFormText(event.target.value)}
+                  sx={{ "& .MuiInputBase-input": { maxHeight: "6.5em", overflowY: "auto" } }}
+                />
+
+                <Stack direction="row" spacing={2} >
+                  <FormControl size="small" sx={{ minWidth: 120 }}>
+                    <InputLabel id="rating-label">Rating</InputLabel>
+                    <Select
+                      labelId="rating-label"
+                      value={formRating}
+                      label="Rating"
+                      onChange={(event) => setFormRating(event.target.value)}
+                    >
+                      {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((value) => (  // half-star ratings supported
+                        <MenuItem key={value} value={value}>{value}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleImageSelect} />
+
+                  <Box className="upload-container">
+                    <IconButton
+                      aria-label="Upload image"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="upload-icon"
+                    >
+                      <UploadFileOutlinedIcon fontSize="small" />
+                    </IconButton>
+
+                    <Typography variant="caption" color="text.secondary" className="upload-filename">
+                      {formImageName || (formImageData ? "Image attached" : "No image selected")}
+                    </Typography>
+                  </Box>
+                </Stack>
+
+                <Button
+                  variant="contained"
+                  disableElevation
+                  disabled={!isFormValid || isSubmitting || isLoading}
+                  onClick={handleSubmit}
+                  sx={{
+                    bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",
+                    color: "white",
+                    alignSelf: "flex-start",
+                    "&:hover": { bgcolor: isFormValid ? "#2c974b" : "grey.400" },
+                    "&.Mui-disabled": { bgcolor: "grey.300", color: "grey.600" },
+                  }}
+                >
+                  {submitLabel}
                 </Button>
-              )}
-            </Stack>
+                {isEditing && (
+                  <Button disabled={isSubmitting || isLoading} onClick={resetForm}>
+                    CANCEL EDIT
+                  </Button>
+                )}
+              </Stack>
+            </Collapse>
           </Box>
         </Box>
       ) : (
-        <Box sx={{ p: 2, borderRadius: 2, border: "1px solid", borderColor: "divider", bgcolor: "background.paper", mb: 3, textAlign: "center", }}>
+        <Box sx={{ p: 2, borderRadius: 2, border: "1px solid", borderColor: "divider", bgcolor: "background.paper", textAlign: "center", }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
             Want to leave a review?
           </Typography>

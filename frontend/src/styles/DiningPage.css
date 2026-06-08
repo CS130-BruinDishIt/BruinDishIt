@@ -20,21 +20,21 @@
 }
 
 .location-box {
-  position: relative;
+    position: relative;
 
-  margin-bottom: 24px;
+    margin-bottom: 24px;
 
-  padding: 18px 28px;
+    padding: 18px 28px;
 
-  background: #ffffff;
+    background: #ffffff;
 
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  gap: 16px;
+    gap: 16px;
 }
 
 
@@ -50,6 +50,12 @@
     font-weight: 800;
     letter-spacing: -0.5px;
     line-height: 1.2;
+}
+
+.MuiTypography-root.location-status {
+    font-family: "Nunito", sans-serif;
+    font-weight: 600;
+    color: #606060;
 }
 
 .pill {

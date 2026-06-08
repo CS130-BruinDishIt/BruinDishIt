@@ -22,21 +22,23 @@ function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="app-container" >
-      <div className="bubble-wrapper">
-        {diningLocations.map((place, index) => (
-          <Button
-            key={place.id}
-            variant="contained"
-            className={`circle-button ${place.id} ${place.level}`}
-            onClick={() => navigate(`/dining/${place.id}`)}
-            style={{ animationDelay: `${index * 0.12}s` }}
-          >
-            {place.shortname}
-          </Button>
-        ))}
-      </div>
-    </div >
+    <div className="app-wrapper" >
+      <div className="app-container" >
+        <div className="bubble-wrapper">
+          {diningLocations.map((place, index) => (
+            <Button
+              key={place.id}
+              variant="contained"
+              className={`circle-button ${place.id} ${place.level}`}
+              onClick={() => navigate(`/dining/${place.id}`)}
+              style={{ animationDelay: `${index * 0.12}s` }}
+            >
+              {place.shortname}
+            </Button>
+          ))}
+        </div>
+      </div >
+    </div>
   );
 }
 

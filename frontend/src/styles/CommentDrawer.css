@@ -17,10 +17,9 @@
 }
 
 .drawer-header {
-  padding: 24px;
+  padding: 24px 24px 0px 24px;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
 }
 
 .gallery-container {

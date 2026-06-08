@@ -367,6 +367,11 @@ const CommentDrawer = ({ item }) => {
             </Box>
             <RatingBox rating={item.averageRating} sx={{ ml: 1, alignSelf: "center" }} />
           </Stack>
+          {item.type === "items" && (
+            <Typography variant="subtitle2" sx={{ pl: 3, mb: 1, color: "text.secondary" }}>
+              Last served:  {new Date(item.lastSeen ?? item.dateAdded).toLocaleDateString()}
+            </Typography>
+          )}
 
           {/* Image Gallery */}
           {photos.length > 0 && (

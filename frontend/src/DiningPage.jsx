@@ -23,6 +23,7 @@ import {
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 import CommentDrawer from "./CommentDrawer";
 
+import PacificClock from "./components/PacificClock";
 import BackToTop from "./components/BackToTop";
 import RatingBox from "./components/RatingBox";
 
@@ -41,17 +42,9 @@ const DiningPage = () => {
   // Track if reviews are being viewed for any menu item currently
   const [selectedItem, setSelectedItem] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [currentPacificTime, setCurrentPacificTime] = useState(() =>
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Los_Angeles",
-      dateStyle: "full",
-      timeStyle: "medium",
-      hour12: true,
-    }).format(new Date())
-  );
 
-  const openComments = ({ id, name, type = "items", averageRating }) => {
-    setSelectedItem({ id, name, type, averageRating });
+  const openComments = ({ id, name, type = "items", averageRating, lastSeen = null }) => {
+    setSelectedItem({ id, name, type, averageRating, lastSeen });
     setDrawerOpen(true);
 
     const key = encodeURIComponent(`${id}`);
@@ -70,25 +63,6 @@ const DiningPage = () => {
       .then((data) => setHall(data))
       .catch((error) => console.error("Error fetching dining hall:", error));
   }, [name]);
-
-  // Show current date and time in Pacific timezone, updating every second
-  useEffect(() => {
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Los_Angeles",
-      dateStyle: "full",
-      timeStyle: "medium",
-      hour12: true,
-    });
-
-    const updateTime = () => {
-      setCurrentPacificTime(formatter.format(new Date()));
-    };
-
-    updateTime();
-    const intervalId = window.setInterval(updateTime, 1000);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
 
   // Fetch latest data from database
   useEffect(() => {
@@ -213,16 +187,7 @@ const DiningPage = () => {
               direction="row"
               spacing={1}
             >
-              <Typography
-                variant="body2"
-                sx={{
-                  color: "text.secondary",
-                  fontWeight: 500,
-                  letterSpacing: "0.01em",
-                }}
-              >
-                {currentPacificTime}
-              </Typography>
+              <PacificClock />
             </Stack>
             <Box
               sx={{
@@ -429,7 +394,7 @@ const DiningPage = () => {
 
                       {/* Items */}
                       <Stack spacing={1}>
-                        {items.map(({ id, name, averageRating }) => (
+                        {items.map(({ id, name, averageRating, lastSeen = new Date() }) => (
                           <Stack key={id} direction="row" sx={{ py: 0.5 }}>
 
                             {/* Item Name */}
@@ -437,7 +402,7 @@ const DiningPage = () => {
                               component="button"
                               type="button"
                               variant="body1"
-                              onClick={() => openComments({ id, name, type: "items", averageRating })}
+                              onClick={() => openComments({ id, name, type: "items", averageRating, lastSeen })}
                               sx={{
                                 px: 1,
                                 py: 0,
@@ -453,7 +418,7 @@ const DiningPage = () => {
 
 
                             {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name, type: "items", averageRating })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
+                            <IconButton onClick={() => openComments({ id, name, type: "items", averageRating, lastSeen })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
                               <ModeCommentOutlinedIcon fontSize="small" />
                             </IconButton>
 

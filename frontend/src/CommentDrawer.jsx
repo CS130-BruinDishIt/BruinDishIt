@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import heic2any from "heic2any";
 import { getAuthUser } from "./api/auth";
 import { createReview, fetchReviews, reactToReview, updateReview, deleteReview, uploadImage } from "./api/dining";
 
@@ -133,6 +134,7 @@ const CommentDrawer = ({ item }) => {
   const [formRating, setFormRating] = useState("");
   const [formImageData, setFormImageData] = useState("");
   const [formImageName, setFormImageName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef(null);
@@ -157,8 +159,22 @@ const CommentDrawer = ({ item }) => {
 
   // Cache uploaded images as data URLs so they can be stored in the DB.
   const handleImageSelect = async (event) => {
-    const file = event.target.files?.[0];
+    let file = event.target.files?.[0];
     if (!file) return;
+
+    // convert HEIC to JPEG before uploading
+    setIsLoading(true);
+    const ext = file.name.split(".").pop().toLowerCase();
+    if (ext === "heic" || ext === "heif") {
+      try {
+        const converted = await heic2any({ blob: file, toType: "image/jpeg" });
+        file = new File([converted], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" });
+      } catch (err) {
+        console.error("HEIC conversion failed", err);
+        event.target.value = "";
+        return;
+      }
+    }
 
     setFormImageName(file.name); // show filename right away
 
@@ -167,6 +183,8 @@ const CommentDrawer = ({ item }) => {
       setFormImageData(url);
     } catch (err) {
       console.error("Image upload failed", err);
+    } finally {
+      setIsLoading(false);
     }
 
     event.target.value = "";
@@ -481,7 +499,7 @@ const CommentDrawer = ({ item }) => {
 
                   <Stack
                     direction="row"
-                    sx={{ mt: 1.2, alignItems: "center"}}
+                    sx={{ mt: 1.2, alignItems: "center" }}
                   >
                     {/* Star badge */}
                     <Box
@@ -642,11 +660,11 @@ const CommentDrawer = ({ item }) => {
                   </Typography>
                 </Box>
               </Stack>
-
+              
               <Button
                 variant="contained"
                 disableElevation
-                disabled={!isFormValid || isSubmitting}
+                disabled={!isFormValid || isSubmitting || isLoading}
                 onClick={handleSubmit}
                 sx={{
                   bgcolor: isFormValid ? READY_BUTTON_COLOR : "grey.400",

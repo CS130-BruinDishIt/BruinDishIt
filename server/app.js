@@ -25,12 +25,14 @@ app.use("/api/auth", authRoutes);
 await mongoose.connect(process.env.MONGODB_URI);
 console.log("Connected to MongoDB");
 
-await runUpdate();  // Keep it here in case server crashes and restarts
-console.log("Server startup menu update complete");
+// await runUpdate();  // Keep it here in case server crashes and restarts
+// console.log("Server startup menu update complete");
 
-cron.schedule('0 7 * * *', async () => {
+cron.schedule('50 16 * * *', async () => {
   await runUpdate();
   console.log("Cron job menu update complete");
+}, {
+  timezone: 'America/Los_Angeles'
 });
 
 app.listen(PORT, () => {

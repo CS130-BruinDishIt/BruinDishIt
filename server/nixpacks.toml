@@ -1,5 +1,0 @@
-[phases.setup]
-nixPkgs = ["...", "python312"]
-
-[phases.install]
-cmds = ["npm install", "pip install -r scraper/requirements.txt"]

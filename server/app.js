@@ -28,7 +28,7 @@ console.log("Connected to MongoDB");
 // await runUpdate();  // Keep it here in case server crashes and restarts
 // console.log("Server startup menu update complete");
 
-cron.schedule('50 16 * * *', async () => {
+cron.schedule('0 4 * * *', async () => {
   await runUpdate();
   console.log("Cron job menu update complete");
 }, {

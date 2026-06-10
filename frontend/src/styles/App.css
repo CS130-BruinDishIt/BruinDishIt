@@ -3,6 +3,13 @@
 body {
   margin: 0;
   padding-top: 50px;
+}
+
+.app-wrapper {
+  width: 100vw;
+  height: calc(100vh - 50px);
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   justify-content: center;
 }
@@ -11,8 +18,9 @@ body {
   position: relative;
   width: 1600px;
   height: 800px;
-  transform-origin: top left;
-  transform: scale(min(1, calc(100vw / 1600px), calc((100vh - 50px) / 800px)));
+  transform-origin: center;
+  transform: scale(min(1, calc(100vw / 1100px), calc((100vh - 50px) / 600px)));
+  flex-shrink: 0;
 }
 
 .MuiButton-root.circle-button {

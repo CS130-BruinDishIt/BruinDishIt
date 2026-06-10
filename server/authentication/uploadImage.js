@@ -1,5 +1,4 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import multer from "multer";
 import crypto from "crypto";
 
 const r2 = new S3Client({
@@ -10,8 +9,6 @@ const r2 = new S3Client({
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY, // like a password for R2
   },
 });
-
-// Configure multer to hold uploaded files in memory and limit file size to 5MB
 
 
 export const uploadImage = async (req, res, next) => {

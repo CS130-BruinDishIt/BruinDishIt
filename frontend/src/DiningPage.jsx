@@ -23,6 +23,7 @@ import {
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 import CommentDrawer from "./CommentDrawer";
 
+import PacificClock from "./components/PacificClock";
 import BackToTop from "./components/BackToTop";
 import RatingBox from "./components/RatingBox";
 
@@ -34,6 +35,7 @@ const DiningPage = () => {
 
   // Track request lifecycle to handle async loading and error states cleanly.
   const [hall, setHall] = useState(null);
+  const [isHallOpen, setIsHallOpen] = useState(true);
   const [menuData, setMenuData] = useState(null);
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -41,17 +43,9 @@ const DiningPage = () => {
   // Track if reviews are being viewed for any menu item currently
   const [selectedItem, setSelectedItem] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [currentPacificTime, setCurrentPacificTime] = useState(() =>
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Los_Angeles",
-      dateStyle: "full",
-      timeStyle: "medium",
-      hour12: true,
-    }).format(new Date())
-  );
 
-  const openComments = ({ id, name, type = "items", averageRating }) => {
-    setSelectedItem({ id, name, type, averageRating });
+  const openComments = ({ id, name, type = "items", averageRating, lastSeen = null }) => {
+    setSelectedItem({ id, name, type, averageRating, lastSeen });
     setDrawerOpen(true);
 
     const key = encodeURIComponent(`${id}`);
@@ -71,25 +65,6 @@ const DiningPage = () => {
       .catch((error) => console.error("Error fetching dining hall:", error));
   }, [name]);
 
-  // Show current date and time in Pacific timezone, updating every second
-  useEffect(() => {
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Los_Angeles",
-      dateStyle: "full",
-      timeStyle: "medium",
-      hour12: true,
-    });
-
-    const updateTime = () => {
-      setCurrentPacificTime(formatter.format(new Date()));
-    };
-
-    updateTime();
-    const intervalId = window.setInterval(updateTime, 1000);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
-
   // Fetch latest data from database
   useEffect(() => {
     if (!name) return;
@@ -108,6 +83,7 @@ const DiningPage = () => {
         if (error?.name === "AbortError") return;
         setErrorMessage(error?.message || "Menu unavailable.");
         setStatus("error");
+        setIsHallOpen(false);
       });
 
     return () => controller.abort();
@@ -153,30 +129,9 @@ const DiningPage = () => {
     );
   }
 
-  if (status === "error") {
-    return (
-      <Container maxWidth="lg" className="dining-container">
-        <Container maxWidth="md" sx={{ py: 6 }}>
-          <Typography variant="h4">Dining hall "{name}" was not found.</Typography>
-        </Container>
-      </Container>
-    );
-  }
-
-  if (!meals.length) {
-    return (
-      <Container maxWidth="lg" className="dining-container">
-        <Container maxWidth="md" sx={{ py: 6 }}>
-          <Typography variant="h4">Menus unavailable for "{name}."</Typography>
-        </Container>
-      </Container>
-    );
-  }
-
   return (
     <>
       <Container className="dining-container">
-
         {/* Title */}
         <Box
           className="location-box"
@@ -213,16 +168,7 @@ const DiningPage = () => {
               direction="row"
               spacing={1}
             >
-              <Typography
-                variant="body2"
-                sx={{
-                  color: "text.secondary",
-                  fontWeight: 500,
-                  letterSpacing: "0.01em",
-                }}
-              >
-                {currentPacificTime}
-              </Typography>
+              <PacificClock />
             </Stack>
             <Box
               sx={{
@@ -311,164 +257,175 @@ const DiningPage = () => {
             </Stack>
           </Box>
         </Box>
-
-        {/* Jump To Section */}
-        <Box
-          sx={{
-            mb: 5,
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-
-            px: 2,
-            py: 1.5,
-
-            borderBottom: "1px solid rgba(0,0,0,0.08)",
-
-            ml: 4,
-          }}
-        >
-          {/* TITLE */}
-          <Typography
-            variant="subtitle1"
-            sx={{
-              fontWeight: 600,
-              whiteSpace: "nowrap",
-              color: "text.primary",
-            }}
-          >
-            Go To
-          </Typography>
-
-          <Box
-            sx={{
-              width: "1px",
-              height: 20,
-              backgroundColor: "rgba(0,0,0,0.15)",
-            }}
-          />
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-            {meals.map(({ mealType }) => (
-              <Button
-                key={mealType}
-                onClick={() => scrollToMeal(mealType)}
-                disableElevation
+        {!isHallOpen ? (
+      <Container maxWidth="lg" className="dining-container">
+        <Container maxWidth="md" sx={{ py: 6 }}>
+          <Typography variant="h4" className="location-status"
+          >"{name}" is not open today.</Typography>
+        </Container>
+      </Container>
+        ) :
+          (
+            <Container>
+              {/* Jump To Section */}
+              < Box
                 sx={{
-                  width: 180,
+                  mb: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
 
-                  textTransform: "none",
-                  fontWeight: 500,
+                  px: 2,
+                  py: 1.5,
 
-                  py: 0.75,
-                  px: 1.5,
+                  borderBottom: "1px solid rgba(0,0,0,0.08)",
 
-                  borderRadius: 5,
-
-                  color: "text.primary",
-                  backgroundColor: "transparent",
-
-                  justifyContent: "flex-start",
-
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-
-                  border: `1px solid ${MEALS[mealType].color || "rgba(0,0,0,0.12)"}`,
-
-                  "&:hover": {
-                    backgroundColor: "rgba(0,0,0,0.04)",
-                  },
+                  ml: 4,
                 }}
               >
-                <span style={{ marginRight: 8, display: "inline-flex", alignItems: "center" }}>
-                  {MEALS[mealType].icon}
-                </span>
-
-                <span
-                  style={{
+                {/* TITLE */}
+                <Typography
+                  variant="subtitle1"
+                  sx={{
                     fontWeight: 600,
-                    fontSize: "0.9rem",
-                    letterSpacing: "0.3px",
+                    whiteSpace: "nowrap",
+                    color: "text.primary",
                   }}
                 >
-                  {MEALS[mealType].label || mealType}
-                </span>
-              </Button>
-            ))}
-          </Box>
-        </Box>
+                  Go To
+                </Typography>
 
-        {/* Meals */}
-        <Stack spacing={4}>
+                <Box
+                  sx={{
+                    width: "1px",
+                    height: 20,
+                    backgroundColor: "rgba(0,0,0,0.15)",
+                  }}
+                />
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {meals.map(({ mealType }) => (
+                    <Button
+                      key={mealType}
+                      onClick={() => scrollToMeal(mealType)}
+                      disableElevation
+                      sx={{
+                        width: 180,
 
-          {meals.map(({ mealType, stations }) => (
-            <Paper
-              key={mealType}
-              ref={(el) => (mealRefs.current[mealType] = el)}
-              elevation={3}
-              sx={{
-                p: 4,
-                borderRadius: 4,
-                scrollMarginTop: "100px",
-              }}
-            >
-              <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
-                {MEALS[mealType].label || mealType}
-              </Typography>
+                        textTransform: "none",
+                        fontWeight: 500,
 
-              {/* Stations */}
-              <Stack spacing={3}>
-                {stations.map(({ stationName, items }) => (
-                  <Card key={stationName} variant="outlined" sx={{ borderRadius: 3 }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                        {stationName}
-                      </Typography>
+                        py: 0.75,
+                        px: 1.5,
 
-                      <Divider sx={{ mb: 2 }} />
+                        borderRadius: 5,
 
-                      {/* Items */}
-                      <Stack spacing={1}>
-                        {items.map(({ id, name, averageRating }) => (
-                          <Stack key={id} direction="row" sx={{ py: 0.5 }}>
+                        color: "text.primary",
+                        backgroundColor: "transparent",
 
-                            {/* Item Name */}
-                            <Typography
-                              component="button"
-                              type="button"
-                              variant="body1"
-                              onClick={() => openComments({ id, name, type: "items", averageRating })}
-                              sx={{
-                                px: 1,
-                                py: 0,
-                                border: 0,
-                                background: "transparent",
-                                textAlign: "left",
-                                cursor: "pointer",
-                                color: "#1976d2",
-                              }}
-                            >
-                              • {name}
+                        justifyContent: "flex-start",
+
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+
+                        border: `1px solid ${MEALS[mealType].color || "rgba(0,0,0,0.12)"}`,
+
+                        "&:hover": {
+                          backgroundColor: "rgba(0,0,0,0.04)",
+                        },
+                      }}
+                    >
+                      <span style={{ marginRight: 8, display: "inline-flex", alignItems: "center" }}>
+                        {MEALS[mealType].icon}
+                      </span>
+
+                      <span
+                        style={{
+                          fontWeight: 600,
+                          fontSize: "0.9rem",
+                          letterSpacing: "0.3px",
+                        }}
+                      >
+                        {MEALS[mealType].label || mealType}
+                      </span>
+                    </Button>
+                  ))}
+                </Box>
+              </Box>
+
+              {/* Meals */}
+              <Stack spacing={4}>
+
+                {meals.map(({ mealType, stations }) => (
+                  <Paper
+                    key={mealType}
+                    ref={(el) => (mealRefs.current[mealType] = el)}
+                    elevation={3}
+                    sx={{
+                      p: 4,
+                      borderRadius: 4,
+                      scrollMarginTop: "100px",
+                    }}
+                  >
+                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
+                      {MEALS[mealType].label || mealType}
+                    </Typography>
+
+                    {/* Stations */}
+                    <Stack spacing={3}>
+                      {stations.map(({ stationName, items }) => (
+                        <Card key={stationName} variant="outlined" sx={{ borderRadius: 3 }}>
+                          <CardContent>
+                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                              {stationName}
                             </Typography>
 
+                            <Divider sx={{ mb: 2 }} />
 
-                            {/* Button to view reviews */}
-                            <IconButton onClick={() => openComments({ id, name, type: "items", averageRating })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
-                              <ModeCommentOutlinedIcon fontSize="small" />
-                            </IconButton>
+                            {/* Items */}
+                            <Stack spacing={1}>
+                              {items.map(({ id, name, averageRating, lastSeen = new Date() }) => (
+                                <Stack key={id} direction="row" sx={{ py: 0.5 }}>
 
-                            {/* Average Rating Box */}
-                            <RatingBox rating={averageRating} sx={{ ml: 1, alignSelf: "center" }} />
-                          </Stack>
-                        ))}
-                      </Stack>
-                    </CardContent>
-                  </Card>
+                                  {/* Item Name */}
+                                  <Typography
+                                    component="button"
+                                    type="button"
+                                    variant="body1"
+                                    onClick={() => openComments({ id, name, type: "items", averageRating, lastSeen })}
+                                    sx={{
+                                      px: 1,
+                                      py: 0,
+                                      border: 0,
+                                      background: "transparent",
+                                      textAlign: "left",
+                                      cursor: "pointer",
+                                      color: "#1976d2",
+                                    }}
+                                  >
+                                    • {name}
+                                  </Typography>
+
+
+                                  {/* Button to view reviews */}
+                                  <IconButton onClick={() => openComments({ id, name, type: "items", averageRating, lastSeen })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
+                                    <ModeCommentOutlinedIcon fontSize="small" />
+                                  </IconButton>
+
+                                  {/* Average Rating Box */}
+                                  <RatingBox rating={averageRating} sx={{ ml: 1, alignSelf: "center" }} />
+                                </Stack>
+                              ))}
+                            </Stack>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </Stack>
+                  </Paper>
                 ))}
               </Stack>
-            </Paper>
-          ))}
-        </Stack>
+            </Container>
+          )}
       </Container >
 
       {/* Review drawer overlay */}

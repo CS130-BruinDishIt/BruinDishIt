@@ -4,7 +4,7 @@ import DailyMenu from "../models/Menu.js";
 import Review from "../models/Review.js";
 import MenuItem from "../models/MenuItem.js";
 import DiningHall from "../models/DiningHall.js";
-import {requireAuth} from "../authentication/requireAuth.js";
+import { requireAuth } from "../authentication/requireAuth.js";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import multer from "multer";
 import crypto from "crypto";
@@ -68,7 +68,13 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 	try {
 		const { hallSlug } = req.params;
 		// Default to today so the frontend can omit the query param.
-		const date = req.query.date || new Date().toISOString().split("T")[0];
+		const date = req.query.date || new Intl.DateTimeFormat('en-CA', {
+			timeZone: 'America/Los_Angeles',
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit'
+		}).format(new Date());;
+		console.log(date);
 
 		if (!hallSlug) {
 			return res.status(400).json({ message: "Hall slug is required." });
@@ -124,42 +130,42 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 
 // Fetch reviews for a menu item and normalize them to the frontend's existing shape.
 async function getReviews(id, idField, req, res, next) {
-  try {
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Valid id is required." });
-    }
+	try {
+		if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Valid id is required." });
+		}
 
-    const reviews = await Review.find({ [idField]: id })
-	  .populate('userId', 'profileImageURL')
-      .sort({ date: -1 })
-      .lean();
+		const reviews = await Review.find({ [idField]: id })
+			.populate('userId', 'profileImageURL')
+			.sort({ date: -1 })
+			.lean();
 
-    return res.json({
-      reviews: reviews.map(mapReviewForDrawer),
-      photos: reviews
-        .filter((review) => review.imageUrl)
-        .map((review) => ({
-          path: review.imageUrl,
-          userId: review.userId,
-          date: review.date,
-        })),
-    });
-  } catch (error) {
-    return next(error);
-  }
+		return res.json({
+			reviews: reviews.map(mapReviewForDrawer),
+			photos: reviews
+				.filter((review) => review.imageUrl)
+				.map((review) => ({
+					path: review.imageUrl,
+					userId: review.userId,
+					date: review.date,
+				})),
+		});
+	} catch (error) {
+		return next(error);
+	}
 }
 
 // Separate endpoints for fetching reviews for menu items vs dining halls
 router.get("/items/:itemId/reviews", (req, res, next) =>
-  getReviews(req.params.itemId, "itemId", req, res, next)
+	getReviews(req.params.itemId, "itemId", req, res, next)
 );
 router.get("/halls/:hallId/reviews", (req, res, next) =>
-  getReviews(req.params.hallId, "hallId", req, res, next)
+	getReviews(req.params.hallId, "hallId", req, res, next)
 );
 
 // Helper function to calculate and update average rating
 async function updateAverageRating(id, idField) {
-  try {
+	try {
 		const objectId = toObjectId(id);
 		if (!objectId) {
 			return;
@@ -177,102 +183,102 @@ async function updateAverageRating(id, idField) {
 
 		const averageRating = result ? roundAverageRating(result.averageRating) : 0;
 
-    if (idField === "itemId") {
-      await MenuItem.findByIdAndUpdate(id, { averageRating });
-    } else if (idField === "hallId") {
-      await DiningHall.findByIdAndUpdate(id, { averageRating });
-    }
-  } catch (error) {
-    console.error(`Failed to update average rating for ${idField} ${id}:`, error);
-  }
+		if (idField === "itemId") {
+			await MenuItem.findByIdAndUpdate(id, { averageRating });
+		} else if (idField === "hallId") {
+			await DiningHall.findByIdAndUpdate(id, { averageRating });
+		}
+	} catch (error) {
+		console.error(`Failed to update average rating for ${idField} ${id}:`, error);
+	}
 }
 
 // Create a new review for a menu item.
 async function createReview(id, idField, req, res, next) {
-  try {
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Valid id is required." });
-    }
+	try {
+		if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Valid id is required." });
+		}
 
-    const text = String(req.body.text || "").trim();
-    const rating = Number(req.body.rating);
-    const user = req.user.username;
-	const userId = req.user.id || req.user._id;
-    const imageUrl = req.body.imageUrl || null;
+		const text = String(req.body.text || "").trim();
+		const rating = Number(req.body.rating);
+		const user = req.user.username;
+		const userId = req.user.id || req.user._id;
+		const imageUrl = req.body.imageUrl || null;
 
-    //if (!text) return res.status(400).json({ message: "Review text is required." });
-    if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) {
-      return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
-    }
+		//if (!text) return res.status(400).json({ message: "Review text is required." });
+		if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) {
+			return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
+		}
 
-    const created = await Review.create({
-      [idField]: id,  // either "itemId" or "hallId"
-      user, userId, rating, text, imageUrl,
-      date: new Date(),
-    });
-	const review = await created.populate('userId', 'profileImageURL');
+		const created = await Review.create({
+			[idField]: id,  // either "itemId" or "hallId"
+			user, userId, rating, text, imageUrl,
+			date: new Date(),
+		});
+		const review = await created.populate('userId', 'profileImageURL');
 
-    await updateAverageRating(id, idField);
+		await updateAverageRating(id, idField);
 
-    return res.status(201).json({ review: mapReviewForDrawer(review) });
-  } catch (error) {
-    return next(error);
-  }
+		return res.status(201).json({ review: mapReviewForDrawer(review) });
+	} catch (error) {
+		return next(error);
+	}
 }
 // Separate endpoints for uploading reviews for menu items vs dining halls
-router.post("/items/:itemId/reviews", requireAuth, (req, res, next) => 
-  createReview(req.params.itemId, "itemId", req, res, next)
+router.post("/items/:itemId/reviews", requireAuth, (req, res, next) =>
+	createReview(req.params.itemId, "itemId", req, res, next)
 );
-router.post("/halls/:hallId/reviews", requireAuth, (req, res, next) => 
-  createReview(req.params.hallId, "hallId", req, res, next)
+router.post("/halls/:hallId/reviews", requireAuth, (req, res, next) =>
+	createReview(req.params.hallId, "hallId", req, res, next)
 );
 
 
 async function updateReview(id, idField, reviewId, req, res, next) {
-  try {
-	if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-	  return res.status(400).json({ message: "Valid id is required." });
+	try {
+		if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Valid id is required." });
+		}
+		if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
+			return res.status(400).json({ message: "Valid review id is required." });
+		}
+
+		const text = String(req.body.text || "").trim();
+		const rating = Number(req.body.rating);
+
+		//if (!text) return res.status(400).json({ message: "Review text is required." });
+		if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) {
+			return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
+		}
+
+		const update = { text, rating, date: new Date() };
+		if (Object.prototype.hasOwnProperty.call(req.body, "imageUrl")) {
+			update.imageUrl = req.body.imageUrl || null;
+		}
+
+		const review = await Review.findOneAndUpdate(
+			{ _id: reviewId, [idField]: id, userId: req.user.id || req.user.userId || req.user._id }, // users can only edit their own reviews
+			update,
+			{ returnDocument: "after", runValidators: true }
+		).populate('userId', 'profileImageURL');
+
+		if (!review) {
+			return res.status(404).json({ message: "Review not found or You are not the owner of this review." });
+		}
+
+		await updateAverageRating(id, idField);
+
+		return res.json({ review: mapReviewForDrawer(review) });
+	} catch (error) {
+		return next(error);
 	}
-	if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
-	  return res.status(400).json({ message: "Valid review id is required." });
-	}
-
-	const text = String(req.body.text || "").trim();
-	const rating = Number(req.body.rating);
-
-	//if (!text) return res.status(400).json({ message: "Review text is required." });
-	if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) {
-	  return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
-	}
-
-	const update = { text, rating, date: new Date() };
-	if (Object.prototype.hasOwnProperty.call(req.body, "imageUrl")) {
-	  update.imageUrl = req.body.imageUrl || null;
-	}
-
-	const review = await Review.findOneAndUpdate(
-	  { _id: reviewId, [idField]: id, userId: req.user.id || req.user.userId || req.user._id }, // users can only edit their own reviews
-	  update,
-	  { returnDocument: "after", runValidators: true }
-	).populate('userId', 'profileImageURL');
-
-	if (!review) {
-	  return res.status(404).json({ message: "Review not found or You are not the owner of this review." });
-	}
-
-	await updateAverageRating(id, idField);
-
-	return res.json({ review: mapReviewForDrawer(review) });
-  } catch (error) {
-	return next(error);
-  }
 }
 // Separate endpoints for updating reviews for menu items vs dining halls
 router.put("/items/:itemId/reviews/:reviewId", requireAuth, (req, res, next) =>
-  updateReview(req.params.itemId, "itemId", req.params.reviewId, req, res, next)
+	updateReview(req.params.itemId, "itemId", req.params.reviewId, req, res, next)
 );
 router.put("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) =>
-  updateReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
+	updateReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
 );
 
 // Increment like/dislike counts for a review and return the updated review.
@@ -355,9 +361,9 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 		}
 
 		// get all unique menu items
-		const items = await MenuItem.find({hallName: hallSlug})
+		const items = await MenuItem.find({ hallName: hallSlug })
 			.select("name averageRating dateAdded lastSeen")
-			.sort({name: 1})
+			.sort({ name: 1 })
 			.lean();
 
 		if (!items.length) {
@@ -384,40 +390,40 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 });
 
 async function deleteReview(id, idField, reviewId, req, res, next) {
-  try {
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Valid id is required." });
-    }
+	try {
+		if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).json({ message: "Valid id is required." });
+		}
 
-    if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
-      return res.status(400).json({ message: "Valid review id is required." });
-    }
+		if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
+			return res.status(400).json({ message: "Valid review id is required." });
+		}
 
-	const userId = req.user.id || req.user._id;
-    const review = await Review.findOneAndDelete({
-      _id: reviewId,
-      [idField]: id,
-      userId,
-    });
+		const userId = req.user.id || req.user._id;
+		const review = await Review.findOneAndDelete({
+			_id: reviewId,
+			[idField]: id,
+			userId,
+		});
 
-    if (!review) {
-      return res.status(404).json({
-        message: "Review not found or you do not have permission to delete it.",
-      });
-    }
+		if (!review) {
+			return res.status(404).json({
+				message: "Review not found or you do not have permission to delete it.",
+			});
+		}
 
-    return res.json({ message: "Review deleted successfully.", reviewId });
-  } catch (error) {
-    return next(error);
-  }
+		return res.json({ message: "Review deleted successfully.", reviewId });
+	} catch (error) {
+		return next(error);
+	}
 }
 
 // Separate endpoints for deleting reviews for menu items vs dining halls
 router.delete("/items/:itemId/reviews/:reviewId", requireAuth, (req, res, next) =>
-  deleteReview(req.params.itemId, "itemId", req.params.reviewId, req, res, next)
+	deleteReview(req.params.itemId, "itemId", req.params.reviewId, req, res, next)
 );
-router.delete("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) => 
-  deleteReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
+router.delete("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) =>
+	deleteReview(req.params.hallId, "hallId", req.params.reviewId, req, res, next)
 );
 
 // Return a list of all dining halls with basic info for the homepage and navigation.
@@ -473,45 +479,45 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 
 // Upload images to Cloudflare R2
 const r2 = new S3Client({
-  region: "auto",
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID, // like a username for R2
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY, // like a password for R2
-  },
+	region: "auto",
+	endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+	credentials: {
+		accessKeyId: process.env.R2_ACCESS_KEY_ID, // like a username for R2
+		secretAccessKey: process.env.R2_SECRET_ACCESS_KEY, // like a password for R2
+	},
 });
 
 // Configure multer to hold uploaded files in memory and limit file size to 5MB
 const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
 router.post("/uploadImage", upload.single("image"), async (req, res, next) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file provided." });
-    }
+	try {
+		if (!req.file) {
+			return res.status(400).json({ message: "No file provided." });
+		}
 
-	// Generate a unique filename using UUID and preserve the original file extension
-    const ext = req.file.originalname.split(".").pop();
-    const key = `reviews/${crypto.randomUUID()}.${ext}`;
+		// Generate a unique filename using UUID and preserve the original file extension
+		const ext = req.file.originalname.split(".").pop();
+		const key = `reviews/${crypto.randomUUID()}.${ext}`;
 
-	// Upload file to R2
-    await r2.send(new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
-      Key: key,
-      Body: req.file.buffer,
-      ContentType: req.file.mimetype,
-    }));
+		// Upload file to R2
+		await r2.send(new PutObjectCommand({
+			Bucket: process.env.R2_BUCKET_NAME,
+			Key: key,
+			Body: req.file.buffer,
+			ContentType: req.file.mimetype,
+		}));
 
-	// Build the public URL to access the uploaded image
-    const url = `${process.env.R2_PUBLIC_URL}/${key}`;
-    return res.json({ url });
+		// Build the public URL to access the uploaded image
+		const url = `${process.env.R2_PUBLIC_URL}/${key}`;
+		return res.json({ url });
 
-  } catch (error) {
-    return next(error);
-  }
+	} catch (error) {
+		return next(error);
+	}
 });
 
 export default router;

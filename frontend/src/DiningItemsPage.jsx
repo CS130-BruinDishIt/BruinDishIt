@@ -33,8 +33,8 @@ const DiningItemsPage = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const openComments = ({ id, name, type = "items", averageRating }) => {
-    setSelectedItem({ id, name, type, averageRating });
+  const openComments = ({ id, name, type = "items", averageRating, lastSeen = null }) => {
+    setSelectedItem({ id, name, type, averageRating, lastSeen });
     setDrawerOpen(true);
 
     const key = encodeURIComponent(`${id}`);
@@ -188,7 +188,7 @@ const DiningItemsPage = () => {
                             component="button"
                             type="button"
                             variant="body1"
-                            onClick={() => openComments({ id, name, type: "items", averageRating })}
+                            onClick={() => openComments({ id, name, type: "items", averageRating, lastSeen })}
                             sx={{
                               px: 1,
                               py: 0,
@@ -208,7 +208,7 @@ const DiningItemsPage = () => {
                         </Stack>
 
                         {/* Button to view reviews */}
-                        <IconButton onClick={() => openComments({ id, name, type: "items", averageRating })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
+                        <IconButton onClick={() => openComments({ id, name, type: "items", averageRating, lastSeen })} className="review-btn" sx={{ ml: 1, flexShrink: 0 }}>
                           <ModeCommentOutlinedIcon fontSize="small" />
                         </IconButton>
 

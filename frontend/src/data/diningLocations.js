@@ -19,7 +19,7 @@ export const diningLocations = [
     },
     { // dinner
         id: "spice-kitchen",
-        name: "Feast",
+        name: "Spice Kitchen",
         shortname: "Feast",
         level: "med",
     },
@@ -55,7 +55,7 @@ export const diningLocations = [
     },
     {
         id: "epicuria-at-ackerman",
-        name: "Epic At Ackerman",
+        name: "Epicuria At Ackerman",
         shortname: "Epic @ Ackerman",
         level: "small",
         

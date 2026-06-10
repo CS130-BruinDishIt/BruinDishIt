@@ -305,6 +305,7 @@ const DiningPage = () => {
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                   {meals.map(({ mealType }) => (
                     <Button
+                      data-testid={`meal-button-${mealType}`}
                       key={mealType}
                       onClick={() => scrollToMeal(mealType)}
                       disableElevation

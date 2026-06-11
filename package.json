@@ -2,7 +2,10 @@
   "scripts": {
     "frontend": "cd frontend && npm run dev",
     "backend": "cd server && node app.js",
-    "start:dev": "run-p frontend backend"
+    "start:dev": "run-p frontend backend",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

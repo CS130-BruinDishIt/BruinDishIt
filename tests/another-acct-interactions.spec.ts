@@ -7,8 +7,7 @@ test.describe.serial('interact with dining hall menu, reviews, and user profile'
   // Setup a shared browser context and page before any tests run
   test.beforeAll(async ({ browser }, testInfo) => {
     context = await browser.newContext({
-      // Fallback to localhost if baseURL isn't properly defined in playwright.config.ts
-      baseURL: testInfo.project.use.baseURL || 'http://localhost:5173'
+    baseURL: 'https://bruin-dish-it.vercel.app'
     });
     page = await context.newPage();
   });
@@ -23,7 +22,9 @@ test.describe.serial('interact with dining hall menu, reviews, and user profile'
     const username = 'bdi-test';
     const password = 'bruinseat247';
 
-    await page.goto('/signin');
+    // Go to homepage first and navigate to signin
+    await page.goto('/');
+    await page.getByRole('link', { name: /sign in/i }).click();
     await page.getByLabel('Username').fill(username);
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
@@ -130,7 +131,8 @@ test.describe.serial('interact with dining hall menu, reviews, and user profile'
 
   test('14. Click the arrow next to drop down and verify it triggers arrow in other direction', async () => {
     const sortDirectionBtn = page.locator('.review-header-container button').last();
-    const sortIcon = sortDirectionBtn.getByTestId('NorthIcon');
+    // In production builds (like Vercel), Material UI strips 'data-testid' attributes by default!
+    const sortIcon = sortDirectionBtn.locator('svg');
     await sortDirectionBtn.click();
     await expect(sortIcon).toHaveCSS('transform', 'matrix(1, 0, 0, -1, 0, 0)');
   });

@@ -62,3 +62,5 @@ The application can be found at http://localhost:5173. The backend server will b
 $ npm install -D @playwright/test
 $ npx playwright install
 $ npx playwright test --headed 
+
+$ npx playwright test tests/test-set-name.spec.ts

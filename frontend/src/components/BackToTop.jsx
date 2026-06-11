@@ -16,6 +16,7 @@ export default function BackToTop({ showAfter = 200, bottom = 24, right = 24 }) 
     return (
         <Fade in={visible}>
             <Fab
+                data-testid="back-to-top"
                 size="medium"
                 onClick={scrollToTop}
                 sx={{

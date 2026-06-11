@@ -1,0 +1,27 @@
+>npx playwright test tests/guest-view.spec.ts
+
+Running 21 tests using 1 worker
+
+  ✓   1 tests\guest-view.spec.ts:5:5 › Site has title (658ms)
+  ✓   2 tests\guest-view.spec.ts:13:5 › Navbar home button navigates to /home (710ms)
+  ✓   3 tests\guest-view.spec.ts:23:5 › Navbar signin button navigates to /signin (648ms)
+  ✓   4 tests\guest-view.spec.ts:35:9 › Bplate shows correct hall name (2.2s)
+  ✓   5 tests\guest-view.spec.ts:35:9 › De Neve shows correct hall name (2.1s)
+  ✓   6 tests\guest-view.spec.ts:35:9 › Epic @ Covel shows correct hall name (1.2s)
+  ✓   7 tests\guest-view.spec.ts:35:9 › Feast shows correct hall name (995ms)
+  ✓   8 tests\guest-view.spec.ts:35:9 › Bcafe shows correct hall name (1.5s)
+  ✓   9 tests\guest-view.spec.ts:35:9 › Rende shows correct hall name (1.2s)
+  ✓  10 tests\guest-view.spec.ts:35:9 › Study shows correct hall name (1.5s)
+  ✓  11 tests\guest-view.spec.ts:35:9 › Drey shows correct hall name (1.2s)
+  ✓  12 tests\guest-view.spec.ts:35:9 › Cafe 1919 shows correct hall name (1.1s)
+  ✓  13 tests\guest-view.spec.ts:35:9 › Epic @ Ackerman shows correct hall name (984ms)
+  ✓  14 tests\guest-view.spec.ts:51:5 › Navigate to menu history page from dining page (1.2s)
+  ✓  15 tests\guest-view.spec.ts:64:5 › Each Go To button scrolls to its meal section (1.1s)
+  ✓  16 tests\guest-view.spec.ts:85:5 › BackToTop appears after scrolling and returns to top (2.4s)
+  ✓  17 tests\guest-view.spec.ts:106:5 › Open hall review drawer (1.5s)
+  ✓  18 tests\guest-view.spec.ts:123:5 › Open menu item review drawer (1.5s)
+  ✓  19 tests\guest-view.spec.ts:137:5 › Liking a review redirects to /signin as guest (1.8s)
+  ✓  20 tests\guest-view.spec.ts:158:5 › Disliking a review redirects to /signin as guest (1.8s)
+  ✓  21 tests\guest-view.spec.ts:179:5 › Lightbox opens and closes for every image in drawer (3.8s)
+
+  21 passed (2.7m)

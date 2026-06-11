@@ -57,3 +57,8 @@ $ cd ..
 $ npm run start:dev
 ```
 The application can be found at http://localhost:5173. The backend server will be running at http://localhost:3000.
+
+### Running Test Suite
+$ npm install -D @playwright/test
+$ npx playwright install
+$ npx playwright test --headed 

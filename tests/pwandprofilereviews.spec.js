@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe.serial('Change Password', () => {
+  test.use({ baseURL: 'https://bruin-dish-it.vercel.app' });
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/signin');
@@ -48,6 +49,7 @@ test.describe.serial('Change Password', () => {
 });
 
 test.describe.serial('Navigate to a user review', () => {
+  test.use({ baseURL: 'https://bruin-dish-it.vercel.app' });
 
   test('navigates to a user review', async ({ page }) => {
     await page.goto('/signin');

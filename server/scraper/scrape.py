@@ -6,10 +6,12 @@ import json, sys
  
 dining_locations = [
     "bruin-plate",
+    "sproul-dining", # bplate is sproul dining in summer
     "spice-kitchen",
     "de-neve-dining",
     "epicuria-at-covel",
-    "sack-lunch-program",
+    "covel-dining-2" # epic is covel-dining-2 in summer
+,    "sack-lunch-program",
     "bruin-bowl",
     "bruin-cafe",
     "cafe-1919",
@@ -98,13 +100,22 @@ data = {}
 for location in dining_locations:
     url = f"https://dining.ucla.edu/{location}/"
  
-    response = requests.get(url, headers=headers)
-    sleep(0.5)  # be polite to the server
-    response.raise_for_status()
+    try:
+        response = requests.get(url, headers=headers)
+        sleep(0.5)  # be polite to the server
+        response.raise_for_status()
+    except requests.RequestException as e:
+        continue
+
     soup = BeautifulSoup(response.text, "html.parser")
  
     hours = scrape_hours(soup)
-    data[location] = {}
+    if location == "sproul-dining":
+        data["bruin-plate"] = {}
+    elif location == "covel-dining-2":
+        data["epicuria-at-covel"] = {}
+    else:
+        data[location] = {}
  
     for meal_name, anchor_id in MEAL_ANCHORS.items():
         stations = scrape_meal(soup, anchor_id)

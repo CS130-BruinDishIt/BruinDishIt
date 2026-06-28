@@ -50,11 +50,7 @@
   height: 35px;
 }
 
-.title.MuiTypography-root  {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.title.MuiTypography-root {
   transition: left 0.3s ease, transform 0.3s ease;
   font-weight: 900;
   font-family: "Nunito", sans-serif;
@@ -66,6 +62,15 @@
 @media (max-width: 768px) {
   .title.MuiTypography-root {
     font-size: 2rem;
+  }
+
+  .toolbar-content {
+    width: 95%;
+    justify-content: space-between;
+  }
+
+  .toolbar {
+    margin: 0px;
   }
 }
 
@@ -97,6 +102,11 @@
 .profile-button:hover {
   background-color: #e5e5e5 !important;
   transform: scale(1.05);
+}
+
+.sign-in-text.MuiTypography-root {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
 }
 
 .profile-icon {

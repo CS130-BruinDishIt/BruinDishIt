@@ -74,7 +74,6 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 			month: '2-digit',
 			day: '2-digit'
 		}).format(new Date());;
-		console.log(date);
 
 		if (!hallSlug) {
 			return res.status(400).json({ message: "Hall slug is required." });

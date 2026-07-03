@@ -669,7 +669,18 @@ const CommentDrawer = ({ item }) => {
       {isLoggedIn ? (
         <Box className="review-form-wrapper">
           <Box className="review-form-container">
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Box
+              onClick={() => setFormCollapsed(prev => !prev)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                cursor: "pointer",
+                borderBottom: "1px solid #e0e0e0",
+                px: 2,
+                py: 1,
+                "&:hover": { backgroundColor: "#f5f5f5" },
+              }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                 {isEditing ? "Edit your review" : "Write a review!"}
               </Typography>
@@ -681,11 +692,16 @@ const CommentDrawer = ({ item }) => {
                   transform: formCollapsed ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 0.2s",
                 }}
-                onClick={() => setFormCollapsed(prev => !prev)}
               />
             </Box>
             <Collapse in={!formCollapsed}>
-              <Stack spacing={2} sx={{ mt: 1 }}>
+              <Stack spacing={2}
+                sx={{
+                  m: 2,
+                  "@media (max-width: 600px)": {
+                    m: 1,
+                  }
+                }}>
                 <TextField
                   label="Review"
                   placeholder="Share your thoughts"

@@ -256,6 +256,7 @@ function UserProfile() {
                   posts.map((post) => {
                     const hallSlug = post.hallId?.slug || post.itemId?.hallName; // hallName is the hall slug for menu items
                     const itemId = post.itemId?._id || post.hallId?._id; // will be hallId for hall reviews, itemId for item reviews;
+                    const isHall = !post.itemId; // if itemId is null, it's a hall review
                     return (
                       <Paper key={post._id} variant="outlined"
                         sx={{
@@ -269,7 +270,12 @@ function UserProfile() {
                         }}
                         onClick={() => {
                           if (hallSlug && itemId) {
-                            navigate(`/dining/${hallSlug}/items#${itemId}`);
+                            if (isHall) {
+                              navigate(`/dining/${hallSlug}#${itemId}`);
+                            }
+                            else {
+                              navigate(`/dining/${hallSlug}/items#${itemId}`);
+                            }
                             return;
                           }
                         }}

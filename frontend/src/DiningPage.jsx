@@ -117,6 +117,32 @@ const DiningPage = () => {
       setDrawerOpen(true);
     }
   }, [meals]);
+  useEffect(() => {
+    const id = window.location.hash.replace("#", "");
+    if (!id || !hall) return;
+
+    if (id === encodeURIComponent(hall.id)) {
+      openComments({
+        id: hall?.id,
+        name: hall?.name || name,
+        type: "halls",
+        averageRating: hall?.averageRating,
+      })
+    }
+  }, [hall]);
+
+  useEffect(() => {
+    if (drawerOpen) {
+      window.history.pushState(null, "", window.location.href);
+
+      const handlePopState = () => {
+        closeComments();
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    }
+  }, [drawerOpen]);
 
   // Handle different display responses
   if (isLoading) {

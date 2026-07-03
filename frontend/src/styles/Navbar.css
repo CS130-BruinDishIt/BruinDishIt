@@ -51,7 +51,6 @@
 }
 
 .title.MuiTypography-root {
-  transition: left 0.3s ease, transform 0.3s ease;
   font-weight: 900;
   font-family: "Nunito", sans-serif;
 
@@ -78,11 +77,6 @@
   .title.MuiTypography-root {
     font-size: 1.5rem;
   }
-}
-
-.navbar-scrolled .title {
-  left: 100px;
-  transform: translate(0, -50%);
 }
 
 .profile-button {

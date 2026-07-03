@@ -13,13 +13,20 @@ export default function ImageLightbox({ open, image, onClose }) {
       scroll="paper"
       sx={{
         "& .MuiDialog-container": {
-          overflow: "hidden",
+
         },
         "& .MuiDialog-paper": {
           backgroundColor: "transparent",
           boxShadow: "none",
           margin: 0,
           overflow: "hidden",
+          outline: "none",
+          width: "100vw",
+          height: "100vh",
+          maxWidth: "100vw",
+          maxHeight: "100vh",
+          padding: 0,
+
         },
         "& .MuiBackdrop-root": {
           backgroundColor: "rgba(0,0,0,0.75)",
@@ -29,8 +36,8 @@ export default function ImageLightbox({ open, image, onClose }) {
       <Box
         onClick={onClose}
         sx={{
-          width: "100vw",
-          height: "100vh",
+          width: "100dvw",
+          height: "100dvh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -41,12 +48,14 @@ export default function ImageLightbox({ open, image, onClose }) {
         <Typography
           sx={{
             position: "absolute",
-            bottom: 24,
+            bottom: 40,
             color: "rgba(255,255,255,0.7)",
             fontSize: 12,
             letterSpacing: "0.3px",
             pointerEvents: "none", // ensures it doesn't interfere with clicks
             textAlign: "center",
+            bgcolor: "rgb(141, 140, 140, 0.5)",
+            px: 1,
           }}
         >
           Click anywhere outside image to close
@@ -57,8 +66,8 @@ export default function ImageLightbox({ open, image, onClose }) {
           src={src}
           onClick={(e) => e.stopPropagation()}
           sx={{
-            maxWidth: "92vw",
-            maxHeight: "92vh",
+            maxWidth: "92dvw",
+            maxHeight: "92dvh",
             objectFit: "contain",
             display: "block",
             borderRadius: 2,

@@ -17,7 +17,7 @@
 }
 
 .drawer-header {
-  padding: 24px 24px 0px 24px;
+  padding: 12px 24px 12px 24px;
   align-items: center;
   justify-content: space-between;
 }
@@ -205,4 +205,19 @@
   line-height: 1;
   display: flex;
   align-items: center;
+}
+
+@media (max-width: 600px) {
+  .gallery-container {
+    padding: 16px 24px 32px;
+  }
+
+  .review-header-container {
+    padding: 0px 16px;
+  }
+
+  .reviews-container {
+    padding-left: 24px;
+    padding-right: 16px;
+  }
 }

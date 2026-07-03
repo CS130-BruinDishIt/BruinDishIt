@@ -111,11 +111,10 @@ for location in dining_locations:
  
     hours = scrape_hours(soup)
     if location == "sproul-dining":
-        data["bruin-plate"] = {}
+        location = "bruin-plate"
     elif location == "covel-dining-2":
-        data["epicuria-at-covel"] = {}
-    else:
-        data[location] = {}
+        location = "epicuria-at-covel"
+    data[location] = {}
  
     for meal_name, anchor_id in MEAL_ANCHORS.items():
         stations = scrape_meal(soup, anchor_id)

@@ -117,6 +117,32 @@ const DiningPage = () => {
       setDrawerOpen(true);
     }
   }, [meals]);
+  useEffect(() => {
+    const id = window.location.hash.replace("#", "");
+    if (!id || !hall) return;
+
+    if (id === encodeURIComponent(hall.id)) {
+      openComments({
+        id: hall?.id,
+        name: hall?.name || name,
+        type: "halls",
+        averageRating: hall?.averageRating,
+      })
+    }
+  }, [hall]);
+
+  useEffect(() => {
+    if (drawerOpen) {
+      window.history.pushState(null, "", window.location.href);
+
+      const handlePopState = () => {
+        closeComments();
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    }
+  }, [drawerOpen]);
 
   // Handle different display responses
   if (isLoading) {
@@ -137,8 +163,6 @@ const DiningPage = () => {
           className="location-box"
           sx={{
             position: "relative",
-            overflow: "hidden",
-            mb: 4,
             p: 3.5,
             borderRadius: "0 0 15px 15px",
             backgroundColor: "#ffffff",
@@ -178,16 +202,16 @@ const DiningPage = () => {
               }}
             >
             </Box>
-
-
             <Stack
               direction="row"
               spacing={2}
               sx={{
-                alignItems: "stretch",
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
               }}
             >
-              {/* Left Column */}
+              {/* Rating */}
               <Box
                 sx={{
                   px: 2,
@@ -222,12 +246,10 @@ const DiningPage = () => {
                 />
               </Box>
 
-              {/* Right Column */}
+              {/* Location Reviews and All-Time Menu Buttons */}
               <Stack
                 spacing={1.25}
-                sx={{
-                  justifyContent: "center"
-                }}
+                className="pills-stack"
               >
                 <Button
                   variant="outlined"
@@ -258,12 +280,21 @@ const DiningPage = () => {
           </Box>
         </Box>
         {!isHallOpen ? (
-      <Container maxWidth="lg" className="dining-container">
-        <Container maxWidth="md" sx={{ py: 6 }}>
-          <Typography variant="h4" className="location-status"
-          >"{name}" is not open today.</Typography>
-        </Container>
-      </Container>
+          <Container maxWidth={false} className="location-closed-container">
+            <Container maxWidth={false} className="location-closed-message">
+              <Typography variant="h4" className="location-status"
+              >"{name}" is not open today. You can</Typography>
+              <Typography variant="h4"
+                onClick={() => navigate(`/dining/${name}/items`)}
+                className="all-time-menu-link"
+              >
+                View All-Time Menu Items
+              </Typography>
+              <Typography variant="h4" className="location-status">
+                instead.
+              </Typography>
+            </Container>
+          </Container>
         ) :
           (
             <Container>
@@ -276,7 +307,7 @@ const DiningPage = () => {
                   gap: 2,
 
                   px: 2,
-                  py: 1.5,
+                  py: 2,
 
                   borderBottom: "1px solid rgba(0,0,0,0.08)",
 

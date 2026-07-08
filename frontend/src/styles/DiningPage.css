@@ -1,28 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
 .dining-container {
-    padding: 100px 0px;
-    width: 60vw;
+    padding: 100px 10px !important; 
     max-width: 1200px;
-    margin: 0 auto;
-}
-
-@media (max-width: 900px) {
-    .dining-container {
-        width: 90vw;
-    }
-}
-
-@media (max-width: 600px) {
-    .dining-container {
-        width: 95vw;
-    }
 }
 
 .location-box {
     position: relative;
-
-    margin-bottom: 24px;
 
     padding: 18px 28px;
 
@@ -52,18 +36,11 @@
     line-height: 1.2;
 }
 
-.MuiTypography-root.location-status {
-    font-family: "Nunito", sans-serif;
-    font-weight: 600;
-    color: #606060;
-}
-
 .pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
 
-    margin-left: 10px !important;
     padding: 6px 12px;
     border-radius: 999px !important;
 
@@ -111,8 +88,66 @@
     background: rgba(25, 118, 210, 0.08) !important;
     border-radius: 10px !important;
     padding: 8px !important;
+    max-height: 40px !important;
 }
 
 .review-btn:hover {
     background: rgba(25, 118, 210, 0.15) !important;
+}
+
+.MuiContainer-root.location-closed-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5% 10%;
+}
+
+.MuiContainer-root.location-closed-message {
+    width: fit-content;
+    max-width: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.MuiTypography-root.location-status {
+    font-family: "Nunito", sans-serif;
+    font-weight: 600;
+    color: #606060;
+    margin-right: 8px;
+}
+
+.MuiTypography-root.all-time-menu-link {
+    font-family: "Nunito", sans-serif;
+    font-weight: 600;
+    color: #1976d2;
+    cursor: pointer;
+    transition: 0.2s ease;
+    margin-right: 8px;
+}
+
+.all-time-menu-link:hover {
+    text-decoration: underline;
+}
+
+
+@media (max-width: 900px) {
+    
+}
+
+@media (max-width: 700px) {
+    .dining-container {
+        padding: 100px 5px !important;
+    }
+
+    .MuiContainer-root.location-closed-container {
+        padding: 5% 0%;
+    }
+}
+
+@media (max-width: 551px) {
+    .pills-stack {
+        margin-top: 10px !important;
+        margin-left: 0px !important;
+    }
 }

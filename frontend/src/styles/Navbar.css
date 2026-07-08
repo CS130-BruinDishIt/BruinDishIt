@@ -50,12 +50,7 @@
   height: 35px;
 }
 
-.title.MuiTypography-root  {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: left 0.3s ease, transform 0.3s ease;
+.title.MuiTypography-root {
   font-weight: 900;
   font-family: "Nunito", sans-serif;
 
@@ -67,17 +62,21 @@
   .title.MuiTypography-root {
     font-size: 2rem;
   }
+
+  .toolbar-content {
+    width: 95%;
+    justify-content: space-between;
+  }
+
+  .toolbar {
+    margin: 0px;
+  }
 }
 
 @media (max-width: 480px) {
   .title.MuiTypography-root {
     font-size: 1.5rem;
   }
-}
-
-.navbar-scrolled .title {
-  left: 100px;
-  transform: translate(0, -50%);
 }
 
 .profile-button {
@@ -97,6 +96,11 @@
 .profile-button:hover {
   background-color: #e5e5e5 !important;
   transform: scale(1.05);
+}
+
+.sign-in-text.MuiTypography-root {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
 }
 
 .profile-icon {

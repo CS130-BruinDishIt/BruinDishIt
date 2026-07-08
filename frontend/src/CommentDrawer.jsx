@@ -34,12 +34,14 @@ import StarIcon from "@mui/icons-material/Star";
 import NorthIcon from "@mui/icons-material/North";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
+import GridViewIcon from '@mui/icons-material/GridView';
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "swiper/css/grid";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Grid } from "swiper/modules";
 
 import ImageLightbox from "./components/ImageLightbox";
 import RatingBox from "./components/RatingBox"
@@ -113,6 +115,34 @@ const buildStars = (rating) => {
   });
 };
 
+const PhotoGrid = ({ photos, onPhotoClick }) => {
+  return (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+      gap: "12px",
+    }}>
+      {photos.map((photo, idx) => (
+        <Box
+          key={idx}
+          loading="lazy"
+          component="img"
+          src={resolvePhotoSrc(photo.path || photo.url || photo)}
+          alt={photo.path || "gallery image"}
+          onClick={() => onPhotoClick(photo)}
+          sx={{
+            width: "100%",
+            aspectRatio: "1",
+            objectFit: "cover",
+            borderRadius: 2,
+            cursor: "pointer",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 const CommentDrawer = ({ item }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(null);
@@ -151,6 +181,7 @@ const CommentDrawer = ({ item }) => {
   const isFormValid = formRating !== "" && numericRating >= 0.5 && numericRating <= 5; // no need to have formText.trim().length > 0 since only rating is required to submit
   const submitLabel = isEditing ? "Update review" : "Post review";
 
+  const [imageGridView, setImageGridView] = useState(false);
   // Reset the form when switching items or after successful submission.
   const resetForm = () => {
     setFormText("");
@@ -376,33 +407,51 @@ const CommentDrawer = ({ item }) => {
           {/* Image Gallery */}
           {photos.length > 0 && (
             <Box className="gallery-container">
-              <Typography variant="h6" className="gallery-title">Photos</Typography>
-              <Swiper
-                modules={[Navigation, Pagination]}
-                spaceBetween={14}
-                slidesPerView={1}
-                navigation
-                pagination={{ clickable: true }}
-                breakpoints={{
-                  600: { slidesPerView: 2 },
-                  900: { slidesPerView: 3 },
-                }}
-                className="gallery-swiper"
-              >
-                {photos.map((photo, idx) => (
-                  <SwiperSlide key={idx}>
-                    <Box className="gallery-image-container">
-                      <Box
-                        component="img"
-                        src={resolvePhotoSrc(photo.path || photo.url || photo)}
-                        alt={photo.path || "gallery image"}
-                        className="gallery-image"
-                        onClick={() => openImage(photo)}
-                      />
-                    </Box>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+              <Box component="span" sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <Typography variant="h6" className="gallery-title">Photos</Typography>
+                <GridViewIcon className="gallery-title"
+                  sx={{
+                    cursor: "pointer",
+                    color: "text.secondary",
+                    '&:hover': {
+                      color: "primary.main",
+                    },
+                    color: imageGridView ? "primary.main" : "text.secondary",
+                  }}
+                  onClick={() => setImageGridView(prev => !prev)}
+                />
+              </Box>
+              {imageGridView
+                ? <PhotoGrid photos={photos} onPhotoClick={openImage} />
+                :
+                <Swiper
+                  modules={[Navigation, Pagination]}
+                  spaceBetween={14}
+                  slidesPerView={1}
+                  navigation
+                  pagination={{ clickable: true }}
+                  breakpoints={{
+                    600: { slidesPerView: 2 },
+                    900: { slidesPerView: 3 },
+                  }}
+                  className="gallery-swiper"
+                >
+                  {photos.map((photo, idx) => (
+                    <SwiperSlide key={idx}>
+                      <Box className="gallery-image-container">
+                        <Box
+                          component="img"
+                          loading="lazy"
+                          src={resolvePhotoSrc(photo.path || photo.url || photo)}
+                          alt={photo.path || "gallery image"}
+                          className="gallery-image"
+                          onClick={() => openImage(photo)}
+                        />
+                      </Box>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              }
             </Box>
           )}
 
@@ -620,7 +669,18 @@ const CommentDrawer = ({ item }) => {
       {isLoggedIn ? (
         <Box className="review-form-wrapper">
           <Box className="review-form-container">
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Box
+              onClick={() => setFormCollapsed(prev => !prev)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                cursor: "pointer",
+                borderBottom: "1px solid #e0e0e0",
+                px: 2,
+                py: 1,
+                "&:hover": { backgroundColor: "#f5f5f5" },
+              }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                 {isEditing ? "Edit your review" : "Write a review!"}
               </Typography>
@@ -632,11 +692,16 @@ const CommentDrawer = ({ item }) => {
                   transform: formCollapsed ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 0.2s",
                 }}
-                onClick={() => setFormCollapsed(prev => !prev)}
               />
             </Box>
             <Collapse in={!formCollapsed}>
-              <Stack spacing={2} sx={{ mt: 1 }}>
+              <Stack spacing={2}
+                sx={{
+                  m: 2,
+                  "@media (max-width: 600px)": {
+                    m: 1,
+                  }
+                }}>
                 <TextField
                   label="Review"
                   placeholder="Share your thoughts"

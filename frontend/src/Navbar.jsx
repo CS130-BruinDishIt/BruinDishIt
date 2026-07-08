@@ -117,7 +117,9 @@ const Navbar = () => {
               </>
             ) : (
               <Button component={Link} to="/signin" className="profile-button">
-                SIGN IN
+                <Typography variant="body2" className="sign-in-text">
+                  SIGN IN
+                </Typography>
                 <Avatar src={profileIcon} alt="Profile" className="profile-icon" />
               </Button>
             )}

@@ -163,7 +163,6 @@ const DiningPage = () => {
           className="location-box"
           sx={{
             position: "relative",
-            mb: 4,
             p: 3.5,
             borderRadius: "0 0 15px 15px",
             backgroundColor: "#ffffff",
@@ -308,7 +307,7 @@ const DiningPage = () => {
                   gap: 2,
 
                   px: 2,
-                  py: 1.5,
+                  py: 2,
 
                   borderBottom: "1px solid rgba(0,0,0,0.08)",
 

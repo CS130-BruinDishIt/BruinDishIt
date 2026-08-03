@@ -45,7 +45,7 @@ function UserProfile() {
   };
 
   const handleImageSelect = async (event) => {
-    const file = event.target.files?.[0];
+    let file = event.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);

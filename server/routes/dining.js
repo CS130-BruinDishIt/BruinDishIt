@@ -5,7 +5,7 @@ import Review from "../models/Review.js";
 import MenuItem from "../models/MenuItem.js";
 import DiningHall from "../models/DiningHall.js";
 import { requireAuth } from "../authentication/requireAuth.js";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import multer from "multer";
 import crypto from "crypto";
 import 'dotenv/config';
@@ -61,6 +61,22 @@ const mapReviewForDrawer = (review) => ({
 	dislikedBy: (review.dislikedBy || []).map((id) => String(id)),
 	imageUrl: review.imageUrl || null,
 	photos: review.imageUrl ? [review.imageUrl] : [],
+});
+
+// Upload images to Cloudflare R2
+const r2 = new S3Client({
+	region: "auto",
+	endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+	credentials: {
+		accessKeyId: process.env.R2_ACCESS_KEY_ID, // like a username for R2
+		secretAccessKey: process.env.R2_SECRET_ACCESS_KEY, // like a password for R2
+	},
+});
+
+// Configure multer to hold uploaded files in memory and limit file size to 5MB
+const upload = multer({
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
 // Return the daily menus for a hall, optionally filtered by date.
@@ -245,10 +261,17 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 		const text = String(req.body.text || "").trim();
 		const rating = Number(req.body.rating);
 
-		//if (!text) return res.status(400).json({ message: "Review text is required." });
 		if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) {
 			return res.status(400).json({ message: "Rating must be between 0.5 and 5." });
 		}
+
+		// Fetch the old review first so we know what image to delete
+		const userId = req.user.id || req.user.userId || req.user._id;
+        const oldReview = await Review.findOne({ _id: reviewId, [idField]: id, userId });
+        if (!oldReview) {
+            return res.status(404).json({ message: "Review not found or you are not the owner." });
+        }
+        const oldImageUrl = oldReview.imageUrl;
 
 		const update = { text, rating, date: new Date() };
 		if (Object.prototype.hasOwnProperty.call(req.body, "imageUrl")) {
@@ -256,10 +279,19 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 		}
 
 		const review = await Review.findOneAndUpdate(
-			{ _id: reviewId, [idField]: id, userId: req.user.id || req.user.userId || req.user._id }, // users can only edit their own reviews
+			{ _id: reviewId, [idField]: id, userId: userId }, // users can only edit their own reviews
 			update,
 			{ returnDocument: "after", runValidators: true }
 		).populate('userId', 'profileImageURL');
+
+		// Delete the old image from R2 if it exists and a new one is being uploaded
+		if (update.imageUrl && oldImageUrl && update.imageUrl !== oldImageUrl) {
+			const key = oldImageUrl.replace(`${process.env.R2_PUBLIC_URL}/`, "");
+			await r2.send(new DeleteObjectCommand({
+				Bucket: process.env.R2_BUCKET_NAME,
+				Key: key,
+			}));
+		}
 
 		if (!review) {
 			return res.status(404).json({ message: "Review not found or You are not the owner of this review." });
@@ -411,6 +443,16 @@ async function deleteReview(id, idField, reviewId, req, res, next) {
 			});
 		}
 
+		// delete image from R2 if it exists
+		if (review.imageUrl) {
+			const key = review.imageUrl.replace(`${process.env.R2_PUBLIC_URL}/`, "");
+			await r2.send(new DeleteObjectCommand({
+				Bucket: process.env.R2_BUCKET_NAME,
+				Key: key,
+			}));
+		}
+
+
 		return res.json({ message: "Review deleted successfully.", reviewId });
 	} catch (error) {
 		return next(error);
@@ -474,22 +516,6 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 	} catch (error) {
 		return next(error);
 	}
-});
-
-// Upload images to Cloudflare R2
-const r2 = new S3Client({
-	region: "auto",
-	endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-	credentials: {
-		accessKeyId: process.env.R2_ACCESS_KEY_ID, // like a username for R2
-		secretAccessKey: process.env.R2_SECRET_ACCESS_KEY, // like a password for R2
-	},
-});
-
-// Configure multer to hold uploaded files in memory and limit file size to 5MB
-const upload = multer({
-	storage: multer.memoryStorage(),
-	limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
 router.post("/uploadImage", upload.single("image"), async (req, res, next) => {

@@ -45,12 +45,24 @@ function UserProfile() {
   };
 
   const handleImageSelect = async (event) => {
-    const file = event.target.files?.[0];
+    let file = event.target.files?.[0];
     if (!file) return;
 
-    setFormImageName(file.name);
     setIsUploading(true);
     setErrorMessage("");
+    const ext = file.name.split(".").pop().toLowerCase();
+    if (ext === "heic" || ext === "heif") {
+      try {
+        const converted = await heic2any({ blob: file, toType: "image/jpeg" });
+        file = new File([converted], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" });
+      } catch (err) {
+        console.error("HEIC conversion failed", err);
+        event.target.value = "";
+        return;
+      }
+    }
+    setFormImageName(file.name);
+
 
     try {
       const url = await uploadImage(file);

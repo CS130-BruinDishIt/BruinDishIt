@@ -29,12 +29,6 @@ const UserSchema = new mongoose.Schema(
       required: true,
       select: false,
     },
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
-    ],
     profileImageURL: {
       type: String,
       default: "",

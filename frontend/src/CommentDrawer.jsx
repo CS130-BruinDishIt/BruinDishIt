@@ -197,29 +197,22 @@ const CommentDrawer = ({ item }) => {
     if (!file) return;
 
     // convert HEIC to JPEG before uploading
-    setIsLoading(true);
     const ext = file.name.split(".").pop().toLowerCase();
     if (ext === "heic" || ext === "heif") {
+      setIsLoading(true);
       try {
         const converted = await heic2any({ blob: file, toType: "image/jpeg" });
         file = new File([converted], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" });
       } catch (err) {
         console.error("HEIC conversion failed", err);
         event.target.value = "";
+        setIsLoading(false);
         return;
       }
     }
 
     setFormImageName(file.name); // show filename right away
-
-    try {
-      const url = await uploadImage(file); // upload to R2 and get back a URL
-      setFormImageData(url);
-    } catch (err) {
-      console.error("Image upload failed", err);
-    } finally {
-      setIsLoading(false);
-    }
+    setFormImageData(file);
 
     event.target.value = "";
   };
@@ -242,14 +235,16 @@ const CommentDrawer = ({ item }) => {
     if (!item?.id || !isFormValid || isSubmitting) return;
     setIsSubmitting(true);
 
-    const payload = {
-      text: formText.trim(),
-      rating: numericRating,
-      imageUrl: formImageData || null,
-    };
+
 
     const itemType = item.type || "items";
     try {
+      const uploadedUrl = formImageData instanceof File ? await uploadImage(formImageData) : formImageData;
+      const payload = {
+        text: formText.trim(),
+        rating: numericRating,
+        imageUrl: uploadedUrl,
+      };
       const response = isEditing
         ? await updateReview(item.id, itemType, editingReviewId, payload)
         : await createReview(item.id, itemType, payload);

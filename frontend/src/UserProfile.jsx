@@ -48,31 +48,22 @@ function UserProfile() {
     let file = event.target.files?.[0];
     if (!file) return;
 
-    setIsUploading(true);
     setErrorMessage("");
     const ext = file.name.split(".").pop().toLowerCase();
     if (ext === "heic" || ext === "heif") {
+      setIsUploading(true);
       try {
         const converted = await heic2any({ blob: file, toType: "image/jpeg" });
         file = new File([converted], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" });
       } catch (err) {
         console.error("HEIC conversion failed", err);
         event.target.value = "";
+        setIsUploading(false);
         return;
       }
     }
     setFormImageName(file.name);
-
-
-    try {
-      const url = await uploadImage(file);
-      setFormImageData(url);
-    } catch (err) {
-      console.error("Image upload failed", err);
-      setErrorMessage("Failed to process image file upload.");
-    } finally {
-      setIsUploading(false);
-    }
+    setFormImageData(file);
 
     event.target.value = "";
   };
@@ -91,12 +82,14 @@ function UserProfile() {
       return;
     }
 
+    setIsUploading(true);
     setSuccessMessage("");
     setErrorMessage("");
 
     try {
       // Changed from newPicURL to use the actual R2 cloud link string from image selector
-      const result = await editProfilePic(formImageData);
+      const uploadedUrl = await uploadImage(formImageData);
+      const result = await editProfilePic(uploadedUrl);
       setSuccessMessage("Profile picture updated successfully!");
       setFormImageData("");
       setFormImageName("");
@@ -113,6 +106,8 @@ function UserProfile() {
 
     } catch (err) {
       setErrorMessage(err.message || "Failed to save profile picture changes.");
+    } finally {
+      setIsUploading(false);
     }
   };
 

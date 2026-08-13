@@ -168,7 +168,7 @@ const CommentDrawer = ({ item }) => {
   const [formImageName, setFormImageName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
-  const [formCollapsed, setFormCollapsed] = useState(true);
+  const [formCollapsed, setFormCollapsed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -226,6 +226,7 @@ const CommentDrawer = ({ item }) => {
     const existingImage = review.imageUrl || review.photos?.[0] || "";
     setFormImageData(existingImage);
     setFormImageName(existingImage ? "Existing image" : "");
+    setFormCollapsed(false);
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
@@ -757,7 +758,10 @@ const CommentDrawer = ({ item }) => {
                   {submitLabel}
                 </Button>
                 {isEditing && (
-                  <Button disabled={isSubmitting || isLoading} onClick={resetForm}>
+                  <Button disabled={isSubmitting || isLoading} 
+                  onClick={resetForm}
+                  variant="outlined"
+                  >
                     CANCEL EDIT
                   </Button>
                 )}

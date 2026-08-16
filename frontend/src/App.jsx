@@ -7,6 +7,7 @@ import SignUp from './SignUp.jsx'
 import DiningPage from './DiningPage'
 import DiningItemsPage from './DiningItemsPage'
 import UserProfile from './UserProfile.jsx'
+import SessionExpiredPopup from './components/SessionExpiredPopup.jsx'
 
 import { diningLocations } from './data/diningLocations.js'
 import './styles/App.css'
@@ -55,6 +56,7 @@ function App() {
         <Route path="/dining/:name/items" element={<DiningItemsPage />} />
         <Route path="/user/:id" element={<UserProfile />} />
       </Routes>
+      <SessionExpiredPopup />
     </>
   )
 }

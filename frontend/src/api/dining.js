@@ -1,4 +1,4 @@
-import { authJsonHeaders } from "./auth";
+import { authJsonHeaders, authFetch } from "./auth";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 async function parseErrorMessage(response) {
@@ -28,7 +28,7 @@ export async function fetchDailyMenu(hallSlug, { date, signal } = {}) {
     url.searchParams.set("date", date);
   }
 
-  const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  const response = await authFetch(url, { signal, headers: { Accept: "application/json" } });
   if (!response.ok) {
     throw new Error(await parseErrorMessage(response));
   }
@@ -48,7 +48,7 @@ export async function fetchReviews(id, type, { signal } = {}) {
     API_BASE_URL
   );
 
-  const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  const response = await authFetch(url, { signal, headers: { Accept: "application/json" } });
   if (!response.ok) {
     throw new Error(await parseErrorMessage(response));
   }
@@ -62,8 +62,7 @@ export async function fetchAllMenuItems(hallSlug, { signal } = {}) {
   }
 
   const url = new URL(`/api/dining/items/${encodeURIComponent(hallSlug)}`, API_BASE_URL);
-
-  const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  const response = await authFetch(url, { signal, headers: { Accept: "application/json" } });
   if (!response.ok) {
     throw new Error(await parseErrorMessage(response));
   }
@@ -78,10 +77,9 @@ export async function createReview(id, type, payload, { signal } = {}) {
 
   const url = new URL(`/api/dining/${type}/${encodeURIComponent(id)}/reviews`, API_BASE_URL);
 
-  const response = await fetch(url, {
+  const response = await authFetch(url, {
     method: "POST",
     signal,
-    headers: authJsonHeaders(),
     body: JSON.stringify(payload),
   });
 
@@ -105,10 +103,9 @@ export async function updateReview(id, type, reviewId, payload, { signal } = {})
     API_BASE_URL
   );
 
-  const response = await fetch(url, {
+  const response = await authFetch(url, {
     method: "PUT",
     signal,
-    headers: authJsonHeaders(),
     body: JSON.stringify(payload),
   });
 
@@ -134,10 +131,9 @@ export async function reactToReview(id, type, reviewId, reaction, { signal } = {
     API_BASE_URL
   );
 
-  const response = await fetch(url, {
+  const response = await authFetch(url, {
     method: "POST",
     signal,
-    headers: authJsonHeaders(),
     body: JSON.stringify({ reaction }),
   });
 
@@ -162,10 +158,9 @@ export async function deleteReview(id, type, reviewId, { signal } = {}) {
     API_BASE_URL
   );
 
-  const response = await fetch(url, {
+  const response = await authFetch(url, {
     method: "DELETE",
     signal,
-    headers: authJsonHeaders(),
   });
 
   if (!response.ok) {
@@ -179,7 +174,7 @@ export async function deleteReview(id, type, reviewId, { signal } = {}) {
 export async function fetchDiningHalls({ signal } = {}) {
   const url = new URL(`/api/dining/halls`, API_BASE_URL);
 
-  const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  const response = await authFetch(url, { signal, headers: { Accept: "application/json" } });
   if (!response.ok) {
     throw new Error(await parseErrorMessage(response));
   }
@@ -195,7 +190,7 @@ export async function fetchDiningHall(slug, { signal } = {}) {
 
   const url = new URL(`/api/dining/halls/${encodeURIComponent(slug)}`, API_BASE_URL);
 
-  const response = await fetch(url, { signal, headers: { Accept: "application/json" } });
+  const response = await authFetch(url, { signal, headers: { Accept: "application/json" } });
   if (!response.ok) {
     throw new Error(await parseErrorMessage(response));
   }
@@ -210,7 +205,7 @@ export async function uploadImage(file) {
 
   const url = new URL(`/api/dining/uploadImage`, API_BASE_URL);
 
-  const response = await fetch(url, {
+  const response = await authFetch(url, {
     method: "POST",
     body: formData,
   });

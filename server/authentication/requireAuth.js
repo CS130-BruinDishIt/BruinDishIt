@@ -4,13 +4,6 @@ import User from "../models/User.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-
-/** Issue a JWT for a logged-in user (use after successful login). */
-export function signToken(userId) {
- return jwt.sign({ userId: userId.toString() }, JWT_SECRET, { expiresIn: "7d" });
-}
-
-
 /**
 * Express middleware: requires a valid Bearer JWT.
 * On success, sets req.user to the authenticated User document.

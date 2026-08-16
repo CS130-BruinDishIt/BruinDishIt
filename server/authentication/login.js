@@ -24,7 +24,7 @@ export async function loginController(req, res) {
    }
 
 
-   // 3. Issue a JWT valid for 24 hours
+   // 3. Issue a JWT valid for 7 days
    const token = jwt.sign(
      { userId: user._id, username: user.username },
      JWT_SECRET,

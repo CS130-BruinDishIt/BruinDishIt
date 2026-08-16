@@ -185,6 +185,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: 26px !important;
 }
 
 .upload-icon {

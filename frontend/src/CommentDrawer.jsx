@@ -26,6 +26,7 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
+import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
@@ -172,6 +173,7 @@ const CommentDrawer = ({ item }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef(null);
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
   const [sortBy, setSortBy] = useState("date");
   const [sortAsc, setSortAsc] = useState(false); // false = descending by default
 
@@ -725,15 +727,36 @@ const CommentDrawer = ({ item }) => {
                     </Select>
                   </FormControl>
 
-                  <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleImageSelect} />
-
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleImageSelect}
+                  />
+                  <input
+                    ref={cameraInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    hidden
+                    onChange={handleImageSelect}
+                  />
                   <Box className="upload-container">
                     <IconButton
-                      aria-label="Upload image"
+                      aria-label="Upload photo"
                       onClick={() => fileInputRef.current?.click()}
                       className="upload-icon"
                     >
                       <UploadFileOutlinedIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      aria-label="Take photo"
+                      onClick={() => cameraInputRef.current?.click()}
+                      className="upload-icon"
+                      sx={{"@media (pointer: fine)": { display: "none" },}}
+                    >
+                      <CameraAltOutlinedIcon fontSize="small" />
                     </IconButton>
 
                     <Typography variant="caption" color="text.secondary" className="upload-filename">
@@ -758,9 +781,9 @@ const CommentDrawer = ({ item }) => {
                   {submitLabel}
                 </Button>
                 {isEditing && (
-                  <Button disabled={isSubmitting || isLoading} 
-                  onClick={resetForm}
-                  variant="outlined"
+                  <Button disabled={isSubmitting || isLoading}
+                    onClick={resetForm}
+                    variant="outlined"
                   >
                     CANCEL EDIT
                   </Button>

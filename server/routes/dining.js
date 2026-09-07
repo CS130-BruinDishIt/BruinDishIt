@@ -178,8 +178,8 @@ router.get("/halls/:hallId/reviews", (req, res, next) =>
 	getReviews(req.params.hallId, "hallId", req, res, next)
 );
 
-// Helper function to calculate and update average rating
-async function updateAverageRating(id, idField) {
+// Recalculate cached review statistics after a review changes.
+async function updateReviewStats(id, idField) {
 	try {
 		const objectId = toObjectId(id);
 		if (!objectId) {
@@ -192,20 +192,40 @@ async function updateAverageRating(id, idField) {
 				$group: {
 					_id: null,
 					averageRating: { $avg: "$rating" },
+					reviewCount: { $sum: 1 },
 				},
 			},
 		]);
 
 		const averageRating = result ? roundAverageRating(result.averageRating) : 0;
+		const reviewCount = result?.reviewCount || 0;
+		const stats = { averageRating, reviewCount };
 
 		if (idField === "itemId") {
-			await MenuItem.findByIdAndUpdate(id, { averageRating });
+			await MenuItem.findByIdAndUpdate(id, stats);
 		} else if (idField === "hallId") {
-			await DiningHall.findByIdAndUpdate(id, { averageRating });
+			await DiningHall.findByIdAndUpdate(id, stats);
 		}
 	} catch (error) {
-		console.error(`Failed to update average rating for ${idField} ${id}:`, error);
+		console.error(`Failed to update review stats for ${idField} ${id}:`, error);
 	}
+}
+
+async function updateDiningHallTotalReviewCount(hallSlug) {
+	const hall = await DiningHall.findOne({ slug: hallSlug }).select("_id").lean();
+	if (!hall) {
+		return;
+	}
+
+	const menuItemIds = await MenuItem.find({ hallName: hallSlug }).distinct("_id");
+	const totalReviewCount = await Review.countDocuments({
+		$or: [
+			{ hallId: hall._id },
+			{ itemId: { $in: menuItemIds } },
+		],
+	});
+
+	await DiningHall.findByIdAndUpdate(hall._id, { totalReviewCount });
 }
 
 // Create a new review for a menu item.
@@ -233,7 +253,18 @@ async function createReview(id, idField, req, res, next) {
 		});
 		const review = await created.populate('userId', 'profileImageURL');
 
-		await updateAverageRating(id, idField);
+		await updateReviewStats(id, idField);
+		if (idField === "itemId") {
+			const item = await MenuItem.findById(id).select("hallName").lean();
+			if (item) {
+				await updateDiningHallTotalReviewCount(item.hallName);
+			}
+		} else if (idField === "hallId") {
+			const hall = await DiningHall.findById(id).select("slug").lean();
+			if (hall) {
+				await updateDiningHallTotalReviewCount(hall.slug);
+			}
+		}
 
 		return res.status(201).json({ review: mapReviewForDrawer(review) });
 	} catch (error) {
@@ -297,7 +328,7 @@ async function updateReview(id, idField, reviewId, req, res, next) {
 			return res.status(404).json({ message: "Review not found or You are not the owner of this review." });
 		}
 
-		await updateAverageRating(id, idField);
+		await updateReviewStats(id, idField);
 
 		return res.json({ review: mapReviewForDrawer(review) });
 	} catch (error) {
@@ -393,7 +424,7 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 
 		// get all unique menu items
 		const items = await MenuItem.find({ hallName: hallSlug })
-			.select("name averageRating dateAdded lastSeen")
+			.select("name averageRating reviewCount dateAdded lastSeen")
 			.sort({ name: 1 })
 			.lean();
 
@@ -411,6 +442,7 @@ router.get("/items/:hallSlug", async (req, res, next) => {
 				id: item._id,
 				name: item.name,
 				averageRating: ratingMap[item._id.toString()] ?? item.averageRating ?? 0,
+				reviewCount: item.reviewCount || 0,
 				dateAdded: item.dateAdded,
 				lastSeen: item.lastSeen,
 			})),
@@ -452,6 +484,18 @@ async function deleteReview(id, idField, reviewId, req, res, next) {
 			}));
 		}
 
+		await updateReviewStats(id, idField);
+		if (idField === "itemId") {
+			const item = await MenuItem.findById(id).select("hallName").lean();
+			if (item) {
+				await updateDiningHallTotalReviewCount(item.hallName);
+			}
+		} else if (idField === "hallId") {
+			const hall = await DiningHall.findById(id).select("slug").lean();
+			if (hall) {
+				await updateDiningHallTotalReviewCount(hall.slug);
+			}
+		}
 
 		return res.json({ message: "Review deleted successfully.", reviewId });
 	} catch (error) {
@@ -470,7 +514,7 @@ router.delete("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) 
 // Return a list of all dining halls with basic info for the homepage and navigation.
 router.get("/halls", async (req, res, next) => {
 	try {
-		const halls = await DiningHall.find().select("slug name shortName averageRating level").lean();
+		const halls = await DiningHall.find().select("slug name shortName averageRating reviewCount totalReviewCount level").lean();
 
 		if (!halls.length) {
 			return res.status(404).json({ message: "Dining halls not found." });
@@ -482,6 +526,8 @@ router.get("/halls", async (req, res, next) => {
 				name: hall.name,
 				shortName: hall.shortName,
 				averageRating: hall.averageRating || 0,
+				reviewCount: hall.reviewCount || 0,
+				totalReviewCount: hall.totalReviewCount || 0,
 				level: hall.level,
 			})),
 		});
@@ -499,7 +545,7 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 			return res.status(400).json({ message: "Hall slug is required." });
 		}
 
-		const hall = await DiningHall.findOne({ slug: hallSlug }).select("slug name shortName averageRating level").lean();
+		const hall = await DiningHall.findOne({ slug: hallSlug }).select("slug name shortName averageRating reviewCount totalReviewCount level").lean();
 
 		if (!hall) {
 			return res.status(404).json({ message: "Dining hall not found." });
@@ -511,6 +557,8 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 			name: hall.name,
 			shortName: hall.shortName,
 			averageRating: hall.averageRating || 0,
+			reviewCount: hall.reviewCount || 0,
+			totalReviewCount: hall.totalReviewCount || 0,
 			level: hall.level,
 		});
 	} catch (error) {

@@ -108,7 +108,7 @@ const DiningItemsPage = () => {
 
   if (isLoading) {
     return (
-      <Container maxWidth="md" sx={{ py: 6 }}>
+      <Container maxWidth="md" sx={{ py: 6 }} className="dining-container">
         <Typography variant="h4">Loading menu items...</Typography>
       </Container>
     );

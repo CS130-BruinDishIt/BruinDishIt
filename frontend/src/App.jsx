@@ -10,6 +10,7 @@ import UserProfile from './UserProfile.jsx'
 import SessionExpiredPopup from './components/SessionExpiredPopup.jsx'
 
 import { diningLocations } from './data/diningLocations.js'
+import { fetchDiningHalls } from './api/dining.js'
 import './styles/App.css'
 
 import {
@@ -44,6 +45,13 @@ function Home() {
 }
 
 function App() {
+
+  useEffect(() => {
+    fetchDiningHalls()
+    .then((data) => {
+      console.log(data);
+    });
+  }, []);
 
   return (
     <>

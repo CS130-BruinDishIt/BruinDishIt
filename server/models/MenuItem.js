@@ -17,6 +17,11 @@ const menuItemSchema = new mongoose.Schema({
     default: 0
   },
 
+  reviewCount: {
+    type: Number,
+    default: 0
+  },
+
   lastSeen: {
     type: Date,
     default: Date.now

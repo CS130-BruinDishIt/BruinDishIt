@@ -9,7 +9,6 @@ import DiningItemsPage from './DiningItemsPage'
 import UserProfile from './UserProfile.jsx'
 import SessionExpiredPopup from './components/SessionExpiredPopup.jsx'
 
-import { diningLocations } from './data/diningLocations.js'
 import { fetchDiningHalls } from './api/dining.js'
 import './styles/App.css'
 
@@ -22,20 +21,41 @@ import {
 
 function Home() {
   const navigate = useNavigate();
+  const [diningHalls, setDiningHalls] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchDiningHalls({ signal: controller.signal })
+      .then((data) => setDiningHalls(data.halls || []))
+      .catch((fetchError) => {
+        if (fetchError.name !== "AbortError") {
+          setError(fetchError.message || "Unable to load dining halls.");
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className="app-wrapper" >
       <div className="app-container" >
         <div className="bubble-wrapper">
-          {diningLocations.map((place, index) => (
+          {error && <Typography className="home-status" color="error">{error}</Typography>}
+          {!error && diningHalls.length === 0 && (
+            <Typography className="home-status">Loading dining halls...</Typography>
+          )}
+          {diningHalls.map((hall, index) => (
             <Button
-              key={place.id}
+              key={hall.slug}
               variant="contained"
-              className={`circle-button ${place.id} ${place.level}`}
-              onClick={() => navigate(`/dining/${place.id}`)}
+              className={`circle-button ${hall.slug} ${hall.level}`}
+              onClick={() => navigate(`/dining/${hall.slug}`)}
               style={{ animationDelay: `${index * 0.12}s` }}
             >
-              {place.shortname}
+              <span>{hall.shortName}</span>
+              <small>{hall.totalReviewCount || 0} reviews</small>
             </Button>
           ))}
         </div>
@@ -45,14 +65,6 @@ function Home() {
 }
 
 function App() {
-
-  useEffect(() => {
-    fetchDiningHalls()
-    .then((data) => {
-      console.log(data);
-    });
-  }, []);
-
   return (
     <>
       <Navbar />

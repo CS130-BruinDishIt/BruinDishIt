@@ -514,7 +514,7 @@ router.delete("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) 
 // Return a list of all dining halls with basic info for the homepage and navigation.
 router.get("/halls", async (req, res, next) => {
 	try {
-		const halls = await DiningHall.find().select("slug name shortName averageRating reviewCount totalReviewCount level").lean();
+		const halls = await DiningHall.find().select("slug name shortName averageRating reviewCount totalReviewCount").lean();
 
 		if (!halls.length) {
 			return res.status(404).json({ message: "Dining halls not found." });
@@ -528,7 +528,6 @@ router.get("/halls", async (req, res, next) => {
 				averageRating: hall.averageRating || 0,
 				reviewCount: hall.reviewCount || 0,
 				totalReviewCount: hall.totalReviewCount || 0,
-				level: hall.level,
 			})),
 		});
 	} catch (error) {
@@ -545,7 +544,7 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 			return res.status(400).json({ message: "Hall slug is required." });
 		}
 
-		const hall = await DiningHall.findOne({ slug: hallSlug }).select("slug name shortName averageRating reviewCount totalReviewCount level").lean();
+		const hall = await DiningHall.findOne({ slug: hallSlug }).select("slug name shortName averageRating reviewCount totalReviewCount").lean();
 
 		if (!hall) {
 			return res.status(404).json({ message: "Dining hall not found." });
@@ -559,7 +558,6 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 			averageRating: hall.averageRating || 0,
 			reviewCount: hall.reviewCount || 0,
 			totalReviewCount: hall.totalReviewCount || 0,
-			level: hall.level,
 		});
 	} catch (error) {
 		return next(error);

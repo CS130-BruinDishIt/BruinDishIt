@@ -29,10 +29,6 @@ const diningHallSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
-    level: {
-      type: String,
-      default: "small"
-    }
   },
   {
     timestamps: true,

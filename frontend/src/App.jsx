@@ -19,6 +19,22 @@ import {
   Typography,
 } from "@mui/material";
 
+function getReviewSizeByHall(diningHalls) {
+  const rankedHalls = [...diningHalls].sort((firstHall, secondHall) => {
+    const countDifference =
+      (secondHall.totalReviewCount || 0) - (firstHall.totalReviewCount || 0);
+
+    return countDifference || firstHall.slug.localeCompare(secondHall.slug);
+  });
+
+  return new Map(
+    rankedHalls.map((hall, index) => [
+      hall.slug,
+      index < 4 ? "large" : index < 8 ? "med" : "small",
+    ])
+  );
+}
+
 function Home() {
   const navigate = useNavigate();
   const [diningHalls, setDiningHalls] = useState([]);
@@ -38,6 +54,8 @@ function Home() {
     return () => controller.abort();
   }, []);
 
+  const reviewSizeByHall = getReviewSizeByHall(diningHalls);
+
   return (
     <div className="app-wrapper" >
       <div className="app-container" >
@@ -50,7 +68,7 @@ function Home() {
             <Button
               key={hall.slug}
               variant="contained"
-              className={`circle-button ${hall.slug} ${hall.level}`}
+              className={`circle-button ${hall.slug} ${reviewSizeByHall.get(hall.slug)}`}
               onClick={() => navigate(`/dining/${hall.slug}`)}
               style={{ animationDelay: `${index * 0.12}s` }}
             >

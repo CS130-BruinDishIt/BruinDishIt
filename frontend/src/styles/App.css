@@ -47,6 +47,7 @@ body {
   gap: 0.2rem;
 
   opacity: 0;
+  transform: translate(-50%, -50%);
   animation: fallIn 0.9s ease forwards;
   transition:
     transform 0.25s ease,
@@ -54,7 +55,7 @@ body {
 }
 
 .MuiButton-root.circle-button small {
-  font-size: 0.65em;
+  font-size: 0.8em;
   font-weight: 600;
   line-height: 1;
   opacity: 0.9;
@@ -69,7 +70,7 @@ body {
 }
 
 .MuiButton-root.circle-button:hover {
-  transform: scale(1.1);
+  transform: translate(-50%, -50%) scale(1.1);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   box-shadow:
     0 0 0 6px white,
@@ -97,108 +98,108 @@ body {
 .large {
   width: 15% !important;
   aspect-ratio: 1 / 1;
-  font-size: clamp(1.4rem, 2vw, 2rem) !important;
+  font-size: clamp(2rem, 2.2vw, 2.2rem) !important;
 }
 
 .med {
   width: 10% !important;
   aspect-ratio: 1 / 1;
-  font-size: clamp(1.1rem, 1.6vw, 1.5rem) !important;
+  font-size: clamp(1.3rem, 1.6vw, 1.7rem) !important;
 }
 
 .small {
   width: 7% !important;
   aspect-ratio: 1 / 1;
-  font-size: clamp(0.9rem, 1.2vw, 1.1rem) !important;
+  font-size: clamp(1rem, 1.2vw, 1.3rem) !important;
 }
 
 .bruin-plate {
-  top: 16%;
-  left: 42%;
+  top: 21%;
+  left: 47%;
   z-index: 1;
   --btn-color: #99c0e3 !important;
 }
 
 .de-neve-dining {
-  top: 61%;
-  left: 57%;
+  top: 73%;
+  left: 61%;
   z-index: 2;
   --btn-color: #87b3e0 !important;
 }
 
 .epicuria-at-covel {
-  top: 50%;
-  left: 28%;
+  top: 55%;
+  left: 35%;
   z-index: 3;
   --btn-color: #a5b5de !important;
 }
 
 .spice-kitchen {
-  top: 34%;
-  left: 59%;
+  top: 39%;
+  left: 57%;
   z-index: 4;
   --btn-color: #a1b4eb !important;
 }
 
 .bruin-cafe {
-  top: 22%;
-  left: 28%;
+  top: 27%;
+  left: 33%;
   z-index: 5;
   --btn-color: #6d798d !important;
 }
 
 .rendezvous {
-  top: 76%;
-  left: 42%;
+  top: 83%;
+  left: 44%;
   z-index: 6;
   --btn-color: #5c709b !important;
 }
 
 .the-study-at-hedrick {
-  top: 44%;
+  top: 47%;
   left: 72%;
   z-index: 7;
   --btn-color: #8b98b9 !important;
 }
 
 .the-drey {
-  top: 44%;
-  left: 18%;
+  top: 38%;
+  left: 22%;
   z-index: 8;
   --btn-color: #93ade4 !important;
 }
 
 .cafe-1919 {
-  top: 54%;
+  top: 57%;
   left: 48%;
   z-index: 9;
   --btn-color: #a3b6de !important;
 }
 
 .epicuria-at-ackerman {
-  top: 14%;
-  left: 60%;
+  top: 19%;
+  left: 65%;
   z-index: 10;
   --btn-color: #596291 !important;
 }
 
 .sack-lunch-program {
-  top: 73%;
-  left: 12%;
+  top: 80%;
+  left: 25%;
   z-index: 11;
   --btn-color: #7f9ec4 !important;
 }
 
 .bruin-bowl {
-  top: 72%;
-  left: 72%;
+  top: 77%;
+  left: 75%;
   z-index: 12;
   --btn-color: #718bb1 !important;
 }
 
 .meal-swipe-exchange {
-  top: 24%;
-  left: 76%;
+  top: 22%;
+  left: 77%;
   z-index: 13;
   --btn-color: #6f7898 !important;
 }

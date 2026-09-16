@@ -11,10 +11,11 @@ const getRatingBoxStyle = (rating) => {
   return { bgcolor: '#2e7d32', color: '#fff', borderColor: '#2e7d32' };
 };
 
-const RatingBox = ({ rating, size = "small", sx = {}, }) => {
+const RatingBox = ({ rating, size = "small", sx = {}, className = "" }) => {
   const large = size === "large";
   return (
     <Box
+      className={`rating-box ${className}`.trim()}
       sx={{
         px: large ? 1.5 : 0.75,
         py: large ? 0.5 : 0.75,

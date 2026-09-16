@@ -8,6 +8,7 @@ body {
 .app-wrapper {
   width: 100vw;
   height: calc(100vh - 50px);
+  position: relative;
   overflow-x: hidden;
   overflow-y: auto;
   display: flex;
@@ -16,11 +17,49 @@ body {
 
 .app-container {
   position: relative;
-  width: 1600px;
-  height: 800px;
-  transform-origin: center;
-  transform: scale(min(1, calc(100vw / 1100px), calc((100vh - 50px) / 600px)));
+  width: 1700px;
+  height: 1100px;
+  margin-top: 9rem;
+  transform-origin: top center;
+  transform: scale(min(1, calc(100vw / 1700px), calc((100vh - 50px) / 900px)));
+
+  @media (max-width: 1000px) {
+    transform: scale(min(1, calc(100vw / 1200px), calc((100vh - 50px) / 900px)));
+  }
+
   flex-shrink: 0;
+}
+
+.home-controls {
+  position: absolute;
+  top: 5rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.size-metric-switch {
+  background: white;
+  border-radius: 6px;
+}
+
+.size-metric-switch .MuiToggleButton-root {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.5rem;
+  font-weight:700;
+}
+
+.layout-switch {
+  position: absolute;
+  background: white;
+}
+
+.layout-switch.MuiIconButton-root {
+  font-family: "Nunito", sans-serif;
+  color:  #87b3e0;
 }
 
 .MuiButton-root.circle-button {
@@ -61,6 +100,20 @@ body {
   opacity: 0.9;
 }
 
+.circle-button.large .rating-box {
+  transform: scale(1.5);
+  margin-top: 1rem;
+}
+
+.circle-button.med .rating-box {
+  transform: scale(1.2);
+  margin-top: 0.5rem;
+}
+
+.circle-button.small .rating-box {
+  transform: scale(0.8);
+}
+
 .home-status {
   position: absolute;
   top: 45%;
@@ -95,6 +148,58 @@ body {
   height: 100%;
 }
 
+.app-container.list-layout {
+  width: min(900px, calc(100vw - 2rem));
+  height: auto;
+  margin-top: 10rem;
+  transform: none;
+}
+
+.hall-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.hall-list-item.MuiButton-root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 1rem 1.25rem;
+  color: #1f2937;
+  background: #ffffff;
+  border: 1px solid rgba(25, 118, 210, 0.18);
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(31, 41, 55, 0.08);
+  font-family: "Nunito", sans-serif;
+  text-transform: none;
+  text-align: left;
+}
+
+.hall-list-item.MuiButton-root:hover {
+  background: #f5f9ff;
+  border-color: rgba(25, 118, 210, 0.4);
+}
+
+.hall-list-name {
+  min-width: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.hall-list-details {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
 .large {
   width: 15% !important;
   aspect-ratio: 1 / 1;
@@ -102,104 +207,109 @@ body {
 }
 
 .med {
-  width: 10% !important;
+  width: 11% !important;
   aspect-ratio: 1 / 1;
-  font-size: clamp(1.3rem, 1.6vw, 1.7rem) !important;
+  font-size: clamp(1.5rem, 1.6vw, 1.7rem) !important;
 }
 
 .small {
   width: 7% !important;
   aspect-ratio: 1 / 1;
   font-size: clamp(1rem, 1.2vw, 1.3rem) !important;
+
+  @media (max-width: 600px) {
+    width: 8% !important;
+    font-size: clamp(1.4rem, 1.2vw, 1.3rem) !important;
+  }
 }
 
 .bruin-plate {
-  top: 21%;
-  left: 47%;
+  top: 11%;
+  left: 25%;
   z-index: 1;
   --btn-color: #99c0e3 !important;
 }
 
 .de-neve-dining {
-  top: 73%;
-  left: 61%;
+  top: 11%;
+  left: 41.67%;
   z-index: 2;
   --btn-color: #87b3e0 !important;
 }
 
 .epicuria-at-covel {
-  top: 55%;
-  left: 35%;
+  top: 11%;
+  left: 58.33%;
   z-index: 3;
   --btn-color: #a5b5de !important;
 }
 
 .spice-kitchen {
-  top: 39%;
-  left: 57%;
+  top: 11%;
+  left: 75%;
   z-index: 4;
   --btn-color: #a1b4eb !important;
 }
 
-.bruin-cafe {
-  top: 27%;
-  left: 33%;
+.the-study-at-hedrick {
+  top: 37%;
+  left: 25%;
   z-index: 5;
   --btn-color: #6d798d !important;
 }
 
 .rendezvous {
-  top: 83%;
-  left: 44%;
+  top: 37%;
+  left: 41.67%;
   z-index: 6;
   --btn-color: #5c709b !important;
 }
 
-.the-study-at-hedrick {
-  top: 47%;
-  left: 72%;
+.bruin-cafe {
+  top: 37%;
+  left: 58.33%;
   z-index: 7;
   --btn-color: #8b98b9 !important;
 }
 
-.the-drey {
-  top: 38%;
-  left: 22%;
+.cafe-1919 {
+  top: 37%;
+  left: 75%;
   z-index: 8;
   --btn-color: #93ade4 !important;
 }
 
-.cafe-1919 {
-  top: 57%;
-  left: 48%;
+.the-drey {
+  top: 63%;
+  left: 25%;
   z-index: 9;
   --btn-color: #a3b6de !important;
 }
 
 .epicuria-at-ackerman {
-  top: 19%;
-  left: 65%;
+  top: 63%;
+  left: 41.67%;
   z-index: 10;
   --btn-color: #596291 !important;
 }
 
-.sack-lunch-program {
-  top: 80%;
-  left: 25%;
+.bruin-bowl {
+  top: 63%;
+  left: 58.33%;
   z-index: 11;
   --btn-color: #7f9ec4 !important;
 }
 
-.bruin-bowl {
-  top: 77%;
+.sack-lunch-program {
+  top: 63%;
   left: 75%;
   z-index: 12;
   --btn-color: #718bb1 !important;
 }
 
 .meal-swipe-exchange {
-  top: 22%;
-  left: 77%;
+  top: 89%;
+  left: 50%;
   z-index: 13;
   --btn-color: #6f7898 !important;
 }

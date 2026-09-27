@@ -115,6 +115,8 @@ body {
 }
 
 .home-status {
+  font-size: 1.25rem !important;
+  font-family: "Nunito", sans-serif !important;
   position: absolute;
   top: 45%;
   left: 50%;

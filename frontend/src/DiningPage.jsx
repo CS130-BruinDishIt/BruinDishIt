@@ -91,6 +91,8 @@ const DiningPage = () => {
 
   // Normalize menu data for render without recalculating on every render.
   const meals = useMemo(() => menuData?.meals || [], [menuData]);
+  const hallHours = hall?.hours || {};
+  const hourEntries = Object.entries(hallHours);
   const isLoading = status === "loading" || status === "idle";
 
   // Generate custom URL + jump to for each menu section
@@ -204,11 +206,11 @@ const DiningPage = () => {
             </Box>
             <Stack
               direction="row"
-              spacing={2}
               sx={{
                 display: "flex",
                 alignItems: "center",
                 flexWrap: "wrap",
+                gap: 2,
               }}
             >
               {/* Rating */}
@@ -276,6 +278,52 @@ const DiningPage = () => {
                   View All-Time Menu Items
                 </Button>
               </Stack>
+
+              {hourEntries.length > 0 && (
+                <Box
+                  sx={{
+                    px: 2,
+                    py: 1.5,
+                    borderRadius: 3,
+                    backgroundColor: "white",
+                    border: "1px solid rgba(0,0,0,0.08)",
+                    minWidth: 190,
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: "block",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      fontWeight: 700,
+                      color: "text.secondary",
+                      mb: 0.75,
+                    }}
+                  >
+                    Dining Hours
+                  </Typography>
+                  <Stack spacing={0.5}>
+                    {hourEntries.map(([mealType, hours]) => (
+                      <Box
+                        key={mealType}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: 1.5,
+                        }}
+                      >
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                          {MEALS[mealType]?.label || mealType}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {hours}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              )}
             </Stack>
           </Box>
         </Box>
@@ -297,8 +345,7 @@ const DiningPage = () => {
           </Container>
         ) :
           (
-            <Container>
-              {/* Jump To Section */}
+            <Container>              {/* Jump To Section */}
               < Box
                 sx={{
                   mb: 5,

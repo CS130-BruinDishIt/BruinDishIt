@@ -110,12 +110,12 @@ function Home() {
           </IconButton>
         </Tooltip>
       </div>
+      {error && <Typography className="home-status" color="error">{error}</Typography>}
+      {!error && diningHalls.length === 0 && (
+        <Typography className="home-status">Loading dining halls...</Typography>
+      )}
       <div className={`app-container ${layoutMode === "list" ? "list-layout" : ""}`}>
         <div className={layoutMode === "list" ? "hall-list" : "bubble-wrapper"}>
-          {error && <Typography className="home-status" color="error">{error}</Typography>}
-          {!error && diningHalls.length === 0 && (
-            <Typography className="home-status">Loading dining halls...</Typography>
-          )}
           {layoutMode === "list"
             ? displayedHalls.map((hall) => (
               <Button

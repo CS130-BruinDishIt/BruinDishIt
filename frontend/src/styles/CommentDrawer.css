@@ -20,6 +20,12 @@
   padding: 12px 24px 12px 24px;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.drawer-header:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
 }
 
 .gallery-container {
@@ -189,15 +195,15 @@
 }
 
 .upload-icon {
-  border: 1px solid #e0e0e0 !important; 
-  border-radius: 10px !important; 
-  padding: 8px !important; 
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 10px !important;
+  padding: 8px !important;
   transition: all 0.15s ease !important;
-  background-color: #fff !important; 
+  background-color: #fff !important;
 }
 
 .upload-icon:hover {
-  background-color: rgba(0, 0, 0, 0.04) !important; 
+  background-color: rgba(0, 0, 0, 0.04) !important;
 }
 
 .MuiTypography-root.upload-filename {

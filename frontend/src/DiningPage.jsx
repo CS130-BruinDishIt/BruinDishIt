@@ -357,8 +357,6 @@ const DiningPage = () => {
                   py: 2,
 
                   borderBottom: "1px solid rgba(0,0,0,0.08)",
-
-                  ml: 4,
                 }}
               >
                 {/* TITLE */}
@@ -521,7 +519,7 @@ const DiningPage = () => {
         }
         }
       >
-        <CommentDrawer item={selectedItem} />
+        <CommentDrawer item={selectedItem} onClose={closeComments} />
       </Drawer >
 
       <BackToTop />

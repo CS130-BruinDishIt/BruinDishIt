@@ -1,5 +1,6 @@
 import MenuItem from "../models/MenuItem.js";
 import DailyMenu from "../models/Menu.js";
+import DiningHall from "../models/DiningHall.js";
 import { exec } from "child_process";
 import { promisify } from "util";
 
@@ -23,10 +24,17 @@ async function updateDailyMenus() {
     // parse the JSON and build the new menus
     // loop through each Dining Hall (e.g., "bruin-plate")
     for (const [hallSlug, meals] of Object.entries(scrapedJson)) {
+      const hallHours = {};
 
       // loop through each Meal (e.g., "breakfast", "lunch")
       for (const [mealType, mealData] of Object.entries(meals)) {
         const stationsArray = [];
+
+        if (mealData.hours && typeof mealData.hours === "object") {
+          Object.assign(hallHours, mealData.hours);
+        } else if (mealData.hours) {
+          hallHours[mealType] = mealData.hours;
+        }
 
         // loop through each Station (e.g., "Freshly Bowled", "Harvest")
         for (const [stationName, foodList] of Object.entries(mealData)) {
@@ -69,6 +77,12 @@ async function updateDailyMenus() {
 
         console.log(`Successfully created menu for ${hallSlug} - ${mealType}`);
       }
+
+      await DiningHall.findOneAndUpdate(
+        { slug: hallSlug },
+        { $set: { hours: hallHours } }
+      );
+      console.log(`Updated dining hall hours for ${hallSlug}`);
     }
 
     console.log("All menus updated successfully!");

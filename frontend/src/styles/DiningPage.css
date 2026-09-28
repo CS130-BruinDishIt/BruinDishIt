@@ -144,10 +144,3 @@
         padding: 5% 0%;
     }
 }
-
-@media (max-width: 551px) {
-    .pills-stack {
-        margin-top: 10px !important;
-        margin-left: 0px !important;
-    }
-}

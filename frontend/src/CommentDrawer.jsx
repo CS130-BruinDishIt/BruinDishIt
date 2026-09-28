@@ -144,7 +144,7 @@ const PhotoGrid = ({ photos, onPhotoClick }) => {
   );
 }
 
-const CommentDrawer = ({ item }) => {
+const CommentDrawer = ({ item, onClose }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(null);
   const openImage = (img) => {
@@ -390,7 +390,19 @@ const CommentDrawer = ({ item }) => {
       >
         {/* Drawer Header */}
         <Box className="drawer-container">
-          <Stack direction="row" className="drawer-header">
+          <Stack
+            direction="row"
+            className="drawer-header"
+            onClick={onClose}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onClose?.();
+              }
+            }}
+          >
             <Box>
               <Typography variant="h6" sx={{ fontWeight: "700" }}>{item.name}</Typography>
             </Box>

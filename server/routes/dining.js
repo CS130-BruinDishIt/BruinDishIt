@@ -12,6 +12,31 @@ import 'dotenv/config';
 
 const router = express.Router();
 
+const pacificDateFormatter = new Intl.DateTimeFormat("en-CA", {
+	timeZone: "America/Los_Angeles",
+	year: "numeric",
+	month: "2-digit",
+	day: "2-digit",
+});
+
+function getPacificDate(daysOffset = 0) {
+	const dateParts = pacificDateFormatter.formatToParts(new Date()).reduce((parts, part) => {
+		if (part.type !== "literal") {
+			parts[part.type] = Number(part.value);
+		}
+		return parts;
+	}, {});
+
+	const date = new Date(Date.UTC(
+		dateParts.year,
+		dateParts.month - 1,
+		dateParts.day + daysOffset,
+		12
+	));
+
+	return pacificDateFormatter.format(date);
+}
+
 const toObjectId = (value) => {
 	if (!value || !mongoose.Types.ObjectId.isValid(value)) {
 		return null;
@@ -83,20 +108,19 @@ const upload = multer({
 router.get("/menus/:hallSlug", async (req, res, next) => {
 	try {
 		const { hallSlug } = req.params;
-		// Default to today so the frontend can omit the query param.
-		const date = req.query.date || new Intl.DateTimeFormat('en-CA', {
-			timeZone: 'America/Los_Angeles',
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit'
-		}).format(new Date());;
+		const requestedDate = typeof req.query.date === "string" && req.query.date
+			? req.query.date
+			: null;
+		const today = getPacificDate();
+		let date = requestedDate || today;
+		let usedFallback = false;
 
 		if (!hallSlug) {
 			return res.status(400).json({ message: "Hall slug is required." });
 		}
 
 		// Fetch only what the UI needs and populate item names/ratings.
-		const menus = await DailyMenu.find({ hallName: hallSlug, date })
+		let menus = await DailyMenu.find({ hallName: hallSlug, date })
 			.select("mealType stations")
 			.populate({
 				path: "stations.items",
@@ -104,8 +128,21 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 			})
 			.lean();
 
+		// Only the default request falls back; explicit date requests stay exact.
+		if (!menus.length && !requestedDate) {
+			date = getPacificDate(-1);
+			usedFallback = true;
+			menus = await DailyMenu.find({ hallName: hallSlug, date })
+				.select("mealType stations")
+				.populate({
+					path: "stations.items",
+					select: "name averageRating",
+				})
+				.lean();
+		}
+
 		if (!menus.length) {
-			return res.status(404).json({ message: "Menu not found." });
+			return res.status(404).json({ message: "Menu not found for today or yesterday." });
 		}
 
 		// Get all unique item IDs to compute their ratings on-the-fly
@@ -137,7 +174,7 @@ router.get("/menus/:hallSlug", async (req, res, next) => {
 		}));
 
 		res.set("Cache-Control", "no-store");
-		return res.json({ date, hallSlug, meals });
+		return res.json({ date, hallSlug, meals, usedFallback });
 	} catch (error) {
 		return next(error);
 	}
@@ -514,7 +551,7 @@ router.delete("/halls/:hallId/reviews/:reviewId", requireAuth, (req, res, next) 
 // Return a list of all dining halls with basic info for the homepage and navigation.
 router.get("/halls", async (req, res, next) => {
 	try {
-		const halls = await DiningHall.find().select("slug name shortName averageRating reviewCount totalReviewCount").lean();
+		const halls = await DiningHall.find().select("slug name shortName averageRating reviewCount totalReviewCount hours").lean();
 
 		if (!halls.length) {
 			return res.status(404).json({ message: "Dining halls not found." });
@@ -528,6 +565,7 @@ router.get("/halls", async (req, res, next) => {
 				averageRating: hall.averageRating || 0,
 				reviewCount: hall.reviewCount || 0,
 				totalReviewCount: hall.totalReviewCount || 0,
+				hours: hall.hours || {},
 			})),
 		});
 	} catch (error) {
@@ -544,7 +582,7 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 			return res.status(400).json({ message: "Hall slug is required." });
 		}
 
-		const hall = await DiningHall.findOne({ slug: hallSlug }).select("slug name shortName averageRating reviewCount totalReviewCount").lean();
+		const hall = await DiningHall.findOne({ slug: hallSlug }).select("slug name shortName averageRating reviewCount totalReviewCount hours").lean();
 
 		if (!hall) {
 			return res.status(404).json({ message: "Dining hall not found." });
@@ -558,6 +596,7 @@ router.get("/halls/:hallSlug", async (req, res, next) => {
 			averageRating: hall.averageRating || 0,
 			reviewCount: hall.reviewCount || 0,
 			totalReviewCount: hall.totalReviewCount || 0,
+			hours: hall.hours || {},
 		});
 	} catch (error) {
 		return next(error);

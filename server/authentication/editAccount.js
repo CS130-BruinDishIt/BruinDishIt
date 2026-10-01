@@ -49,24 +49,13 @@ export const updateUsername = async (req, res) => {
   }
 };
 
-export const updateDescriptionOrImage = async (req, res) => {
+export const updateProfilePic = async (req, res) => {
   try {
-    const { profileImageURL, profileDescription } = req.body;
+    const { profileImageURL } = req.body || {};
     const userId = req.user.id; //Same as above, the req should store the user document that is doing this action
 
-    // Build the update object dynamically based on what was provided
-    const updateFields = {};
-
-    if (profileImageURL !== undefined) {
-      updateFields.profileImageURL = profileImageURL;
-    }
-
-    if (profileDescription !== undefined) {
-      updateFields.profileDescription = profileDescription;
-    }
-
     // If the body was empty, don't waste a database trip
-    if (Object.keys(updateFields).length === 0) {
+    if (!profileImageURL) {
       return res.status(400).json({ error: "No update fields provided." });
     }
 
@@ -80,16 +69,12 @@ export const updateDescriptionOrImage = async (req, res) => {
     // Update the document
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      updateFields,
+      { profileImageURL },
       { returnDocument: "after", runValidators: true }
     );
 
     // Delete the old profile image from R2 if it exists and a new one is being uploaded
-    if (
-      updateFields.profileImageURL &&
-      oldImageUrl &&
-      updateFields.profileImageURL !== oldImageUrl
-    ) {
+    if (oldImageUrl && profileImageURL !== oldImageUrl) {
       const key = oldImageUrl.replace(`${process.env.R2_PUBLIC_URL}/`, "");
 
       await r2.send(new DeleteObjectCommand({
@@ -106,7 +91,6 @@ export const updateDescriptionOrImage = async (req, res) => {
       message: "Profile details updated successfully.",
       user: {
         profileImageURL: updatedUser.profileImageURL,
-        profileDescription: updatedUser.profileDescription,
       },
     });
   } catch (error) {

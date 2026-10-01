@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert } from "@mui/material";
-import { getAuthUser, clearAuthSession, getUserProfileAndReviews, uploadImage } from "./api/auth";
+import heic2any from "heic2any";
+import { getAuthUser, clearAuthSession, getUserProfileAndReviews, uploadImage, deleteAccount } from "./api/auth";
 import { updatePW, editProfilePic } from "./api/auth";
 import "./styles/UserProfile.css";
 import {
@@ -36,6 +37,8 @@ function UserProfile() {
   const [formImageData, setFormImageData] = useState("");
   const [formImageName, setFormImageName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const fileInputRef = useRef(null);
 
   const resolvePhotoSrc = (value) => {
@@ -55,11 +58,14 @@ function UserProfile() {
       try {
         const converted = await heic2any({ blob: file, toType: "image/jpeg" });
         file = new File([converted], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" });
+
       } catch (err) {
         console.error("HEIC conversion failed", err);
         event.target.value = "";
-        setIsUploading(false);
         return;
+        
+      } finally {
+        setIsUploading(false);
       }
     }
     setFormImageName(file.name);
@@ -74,6 +80,32 @@ function UserProfile() {
     clearAuthSession();
     navigate("/signin");
   }
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation !== "Delete Account") return;
+
+    const confirmed = window.confirm(
+      "Delete your account and all of your reviews? This action cannot be undone."
+    );
+
+    if (!confirmed) {
+      setDeleteConfirmation("");
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    setDeleteConfirmation("");
+    setErrorMessage("");
+
+    try {
+      await deleteAccount();
+      clearAuthSession();
+      navigate("/signin", { replace: true });
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to delete your account.");
+      setIsDeletingAccount(false);
+    }
+  };
 
   const handleUpdateProfilePic = async (e) => {
     e.preventDefault();
@@ -247,6 +279,33 @@ function UserProfile() {
 
                   <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
                     Update Password
+                  </Button>
+                </Box>
+
+                <Divider />
+
+                <Box className="danger-zone">
+                  <Typography variant="h6">Delete Account</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Permanently delete your account and all of your reviews.
+                  </Typography>
+                  <TextField
+                    label='Type "Delete Account" to confirm'
+                    value={deleteConfirmation}
+                    onChange={(e) => setDeleteConfirmation(e.target.value)}
+                    fullWidth
+                    color="error"
+                    disabled={isDeletingAccount}
+                  />
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    color="error"
+                    fullWidth
+                    onClick={handleDeleteAccount}
+                    disabled={isDeletingAccount || deleteConfirmation !== "Delete Account"}
+                  >
+                    {isDeletingAccount ? "Deleting Account..." : "Delete Account"}
                   </Button>
                 </Box>
 

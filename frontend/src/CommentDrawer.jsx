@@ -205,11 +205,15 @@ const CommentDrawer = ({ item, onClose }) => {
       try {
         const converted = await heic2any({ blob: file, toType: "image/jpeg" });
         file = new File([converted], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" });
+        
       } catch (err) {
         console.error("HEIC conversion failed", err);
         event.target.value = "";
         setIsLoading(false);
         return;
+
+      } finally {
+        setIsLoading(false);
       }
     }
 

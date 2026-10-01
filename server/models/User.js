@@ -34,12 +34,6 @@ const UserSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    profileDescription: {
-      type: String,
-      default: "",
-      trim: true,
-      maxlength: 500,
-    },
   },
   {
     versionKey: false,

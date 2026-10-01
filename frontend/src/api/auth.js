@@ -126,13 +126,28 @@ export async function loginUser({ username, password }) {
 
 
 export async function updatePW({ currentPassword, newPassword }) {
+  const body = JSON.stringify({
+    currentPassword,
+    newPassword
+  });
+
   const response = await fetch(`${API_BASE_URL}/api/auth/changePW`, {
     method: "PATCH",
+    headers: authJsonHeaders({ body }),
+    body,
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseErrorMessage(response));
+  }
+
+  return response.json();
+}
+
+export async function deleteAccount() {
+  const response = await fetch(`${API_BASE_URL}/api/auth/deleteAccount`, {
+    method: "DELETE",
     headers: authJsonHeaders(),
-    body: JSON.stringify({
-      currentPassword,
-      newPassword
-    }),
   });
 
   if (!response.ok) {
@@ -160,12 +175,12 @@ export async function getUserProfileAndReviews(userId) {
 }
 
 export async function editProfilePic(profileImageURL) {
+  const body = JSON.stringify({ profileImageURL });
+
   const response = await fetch(`${API_BASE_URL}/api/auth/editProfilePic`, {
     method: "PATCH",
-    headers: authJsonHeaders(), // Attaches your authentication token and Content-Type headers
-    body: JSON.stringify({
-      profileImageURL
-    }),
+    headers: authJsonHeaders({ body }), // Attaches your authentication token and Content-Type headers
+    body,
   });
 
   if (!response.ok) {
